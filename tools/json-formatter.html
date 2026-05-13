@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON 格式化 - DevToolsBox</title>
+  <meta name="description" content="在线JSON格式化、压缩、验证工具。美化混乱的JSON数据，或压缩为一行。免费在线使用。">
+  <meta property="og:title" content="JSON 格式化工具 - DevToolsBox">
+  <meta property="og:description" content="在线JSON格式化/压缩/验证，免费使用。">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="image-compress.html">图片压缩</a>
+      <a href="base64.html">Base64</a>
+      <a href="qr-code.html">二维码</a>
+    </nav>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header">
+      <h1>📋 JSON 格式化</h1>
+      <p>格式化、压缩、验证 JSON 数据，支持复制和下载</p>
+    </div>
+
+    <div class="ad-slot">📢 广告位</div>
+
+    <div class="tool-panel">
+      <label for="jsonInput">输入 JSON 数据</label>
+      <textarea id="jsonInput" placeholder='粘贴 JSON 数据，例如: {"name":"张三","age":25}'></textarea>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="formatJSON()">✨ 格式化</button>
+      <button class="btn btn-success" onclick="minifyJSON()">📦 压缩</button>
+      <button class="btn btn-secondary" onclick="validateJSON()">✅ 验证</button>
+      <button class="btn btn-secondary" onclick="copyOutput()">📋 复制结果</button>
+      <button class="btn btn-secondary" onclick="clearAll()">🗑️ 清空</button>
+    </div>
+
+    <div class="tool-panel" id="outputPanel" style="display:none">
+      <label for="jsonOutput" id="outputLabel">格式化结果</label>
+      <div class="code-output" id="jsonOutput"></div>
+    </div>
+    <div id="validationMsg" style="display:none"></div>
+
+    <div class="ad-slot">📢 广告位</div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 DevToolsBox · JSON 处理在浏览器本地完成，不上传</p>
+  </footer>
+
+  <script>
+    const input = document.getElementById('jsonInput');
+    const output = document.getElementById('jsonOutput');
+    const outputPanel = document.getElementById('outputPanel');
+    const outputLabel = document.getElementById('outputLabel');
+    const validationMsg = document.getElementById('validationMsg');
+
+    function formatJSON() {
+      try {
+        const obj = JSON.parse(input.value);
+        const formatted = JSON.stringify(obj, null, 2);
+        output.textContent = formatted;
+        outputLabel.textContent = '格式化结果';
+        outputPanel.style.display = 'block';
+        validationMsg.style.display = 'none';
+      } catch (e) {
+        showError('JSON 格式错误: ' + e.message);
+      }
+    }
+
+    function minifyJSON() {
+      try {
+        const obj = JSON.parse(input.value);
+        output.textContent = JSON.stringify(obj);
+        outputLabel.textContent = '压缩结果';
+        outputPanel.style.display = 'block';
+        validationMsg.style.display = 'none';
+      } catch (e) {
+        showError('JSON 格式错误: ' + e.message);
+      }
+    }
+
+    function validateJSON() {
+      validationMsg.style.display = 'block';
+      outputPanel.style.display = 'none';
+      try {
+        const obj = JSON.parse(input.value);
+        const keys = countKeys(obj);
+        const lines = JSON.stringify(obj, null, 2).split('\n').length;
+        validationMsg.className = 'result-bar';
+        validationMsg.innerHTML = '✅ JSON 有效！共 ' + keys + ' 个键，' + lines + ' 行（格式化后）';
+      } catch (e) {
+        validationMsg.className = 'tool-panel';
+        validationMsg.style.cssText = 'background:#fef2f2;border-color:#fecaca;padding:16px;border-radius:8px;margin-bottom:16px';
+        validationMsg.innerHTML = '❌ ' + e.message;
+      }
+    }
+
+    function copyOutput() {
+      if (!output.textContent) { alert('没有可复制的内容'); return; }
+      navigator.clipboard.writeText(output.textContent).then(() => alert('已复制到剪贴板'));
+    }
+
+    function clearAll() {
+      input.value = '';
+      output.textContent = '';
+      outputPanel.style.display = 'none';
+      validationMsg.style.display = 'none';
+    }
+
+    function showError(msg) {
+      output.textContent = msg;
+      outputLabel.textContent = '错误';
+      outputPanel.style.display = 'block';
+      output.style.cssText = 'background:#7f1d1d;color:#fecaca';
+      setTimeout(() => output.style.cssText = '', 3000);
+    }
+
+    function countKeys(obj) {
+      if (typeof obj !== 'object' || obj === null) return 0;
+      let count = 0;
+      for (const key in obj) { count++; if (typeof obj[key] === 'object' && obj[key] !== null) count += countKeys(obj[key]); }
+      return count;
+    }
+  </script>
+</body>
+</html>

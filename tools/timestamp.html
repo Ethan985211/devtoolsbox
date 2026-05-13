@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>时间戳转换 - DevToolsBox</title>
+  <meta name="description" content="在线Unix时间戳转换工具，时间戳转日期、日期转时间戳，自动识别秒/毫秒，实时显示当前时间。">
+  <meta property="og:title" content="时间戳转换工具 - DevToolsBox">
+  <meta property="og:description" content="Unix时间戳与日期互转，实时时钟，免费在线使用。">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="base64.html">Base64</a>
+      <a href="json-formatter.html">JSON</a>
+      <a href="qr-code.html">二维码</a>
+    </nav>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header">
+      <h1>⏰ 时间戳转换</h1>
+      <p>Unix 时间戳与日期时间互转，自动识别秒/毫秒</p>
+    </div>
+
+    <div class="ad-slot">📢 广告位</div>
+
+    <!-- Live clock -->
+    <div class="live-clock" id="liveClock">--</div>
+
+    <!-- Timestamp → Date -->
+    <div class="tool-panel">
+      <h3 style="margin-bottom:12px">🕐 时间戳 → 日期</h3>
+      <label for="tsInput">输入 Unix 时间戳（自动识别秒/毫秒）</label>
+      <div style="display:flex;gap:12px;margin-top:8px">
+        <input type="text" id="tsInput" placeholder="例如: 1700000000 或 1700000000000" style="flex:1">
+        <button class="btn btn-primary" onclick="tsToDate()">转换</button>
+        <button class="btn btn-secondary" onclick="setNow()">当前时间</button>
+      </div>
+      <div class="code-output" id="tsResult" style="display:none;margin-top:12px"></div>
+    </div>
+
+    <!-- Date → Timestamp -->
+    <div class="tool-panel">
+      <h3 style="margin-bottom:12px">📅 日期 → 时间戳</h3>
+      <label for="dateInput">输入日期时间</label>
+      <div style="display:flex;gap:12px;align-items:flex-end;margin-top:8px;flex-wrap:wrap">
+        <input type="datetime-local" id="dateInput" style="flex:1">
+        <button class="btn btn-primary" onclick="dateToTs()">转换</button>
+        <button class="btn btn-secondary" onclick="setDateNow()">当前时间</button>
+      </div>
+      <div class="code-output" id="dateResult" style="display:none;margin-top:12px"></div>
+    </div>
+
+    <div class="ad-slot">📢 广告位</div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 DevToolsBox · 时间戳转换在浏览器本地完成</p>
+  </footer>
+
+  <script>
+    // Live clock
+    function updateClock() {
+      var now = new Date();
+      document.getElementById('liveClock').textContent = now.toLocaleString('zh-CN', {
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+      });
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Initialize date input to now
+    function setDateNow() {
+      var now = new Date();
+      document.getElementById('dateInput').value = now.toISOString().slice(0, 16);
+    }
+    setDateNow();
+
+    function setNow() {
+      var ts = Math.floor(Date.now() / 1000);
+      document.getElementById('tsInput').value = ts;
+      tsToDate();
+    }
+
+    function tsToDate() {
+      var ts = parseInt(document.getElementById('tsInput').value.trim());
+      if (isNaN(ts)) { showTsError('请输入有效的时间戳数字'); return; }
+      var isMs = ts > 1000000000000; // > year 5138 in ms
+      var date = new Date(isMs ? ts : ts * 1000);
+      if (isNaN(date.getTime())) { showTsError('时间戳超出范围'); return; }
+      var result = document.getElementById('tsResult');
+      result.style.display = 'block';
+      result.innerHTML =
+        '<div style="margin-bottom:6px;color:#10b981">✅ 时间戳' + (isMs ? '（毫秒）' : '（秒）') + '</div>' +
+        '<div><b>本地时间:</b> ' + date.toLocaleString('zh-CN') + '</div>' +
+        '<div><b>UTC 时间:</b> ' + date.toUTCString() + '</div>' +
+        '<div><b>ISO 8601:</b> ' + date.toISOString() + '</div>' +
+        '<div style="margin-top:6px"><b>秒级时间戳:</b> ' + Math.floor(date.getTime()/1000) + '</div>' +
+        '<div><b>毫秒级时间戳:</b> ' + date.getTime() + '</div>';
+    }
+
+    function dateToTs() {
+      var val = document.getElementById('dateInput').value;
+      if (!val) { showDateError('请选择日期时间'); return; }
+      var date = new Date(val);
+      var ts = Math.floor(date.getTime() / 1000);
+      var result = document.getElementById('dateResult');
+      result.style.display = 'block';
+      result.innerHTML =
+        '<div style="margin-bottom:6px;color:#10b981">✅ 转换结果</div>' +
+        '<div><b>秒级时间戳:</b> ' + ts + '</div>' +
+        '<div><b>毫秒级时间戳:</b> ' + date.getTime() + '</div>' +
+        '<div style="margin-top:6px"><b>UTC:</b> ' + date.toUTCString() + '</div>';
+    }
+
+    function showTsError(msg) {
+      var r = document.getElementById('tsResult');
+      r.style.display = 'block';
+      r.innerHTML = '<span style="color:#ef4444">❌ ' + msg + '</span>';
+    }
+
+    function showDateError(msg) {
+      var r = document.getElementById('dateResult');
+      r.style.display = 'block';
+      r.innerHTML = '<span style="color:#ef4444">❌ ' + msg + '</span>';
+    }
+  </script>
+</body>
+</html>

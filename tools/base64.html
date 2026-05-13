@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base64 编解码 - DevToolsBox</title>
+  <meta name="description" content="在线Base64编解码工具，支持中文UTF-8。文本转Base64，Base64转文本。免费在线使用。">
+  <meta property="og:title" content="Base64 编解码工具 - DevToolsBox">
+  <meta property="og:description" content="在线Base64编解码，完美支持中文UTF-8编码。">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="json-formatter.html">JSON</a>
+      <a href="qr-code.html">二维码</a>
+      <a href="timestamp.html">时间戳</a>
+    </nav>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header">
+      <h1>🔐 Base64 编解码</h1>
+      <p>文本与 Base64 互转，完美支持中文（UTF-8编码）</p>
+    </div>
+
+    <div class="ad-slot">📢 广告位</div>
+
+    <div class="tool-panel">
+      <label for="inputText">输入内容</label>
+      <textarea id="inputText" placeholder="输入要编码/解码的文本..."></textarea>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="encode()">🔒 编码 (文本 → Base64)</button>
+      <button class="btn btn-success" onclick="decode()">🔓 解码 (Base64 → 文本)</button>
+      <button class="btn btn-secondary" onclick="swap()">🔄 交换</button>
+      <button class="btn btn-secondary" onclick="copyOutput()">📋 复制结果</button>
+      <button class="btn btn-secondary" onclick="clearAll()">🗑️ 清空</button>
+    </div>
+
+    <div class="tool-panel" id="outputPanel" style="display:none">
+      <label for="outputText" id="outputLabel">结果</label>
+      <div class="code-output" id="outputText"></div>
+    </div>
+
+    <div class="ad-slot">📢 广告位</div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 DevToolsBox · Base64 编解码在浏览器本地完成，不上传</p>
+  </footer>
+
+  <script>
+    const inputText = document.getElementById('inputText');
+    const outputText = document.getElementById('outputText');
+    const outputPanel = document.getElementById('outputPanel');
+    const outputLabel = document.getElementById('outputLabel');
+
+    function encode() {
+      try {
+        const encoded = btoa(unescape(encodeURIComponent(inputText.value)));
+        outputText.textContent = encoded;
+        outputLabel.textContent = 'Base64 编码结果';
+        outputPanel.style.display = 'block';
+      } catch (e) {
+        outputText.textContent = '编码失败: ' + e.message;
+        outputLabel.textContent = '错误';
+        outputPanel.style.display = 'block';
+      }
+    }
+
+    function decode() {
+      try {
+        const decoded = decodeURIComponent(escape(atob(inputText.value.trim())));
+        outputText.textContent = decoded;
+        outputLabel.textContent = '解码结果';
+        outputPanel.style.display = 'block';
+      } catch (e) {
+        outputText.textContent = '解码失败: 请检查输入是否为有效的 Base64 字符串';
+        outputLabel.textContent = '错误';
+        outputPanel.style.display = 'block';
+      }
+    }
+
+    function swap() {
+      if (outputText.textContent) {
+        inputText.value = outputText.textContent;
+        outputText.textContent = '';
+        outputPanel.style.display = 'none';
+      }
+    }
+
+    function copyOutput() {
+      if (!outputText.textContent) { alert('没有可复制的内容'); return; }
+      navigator.clipboard.writeText(outputText.textContent).then(() => alert('已复制到剪贴板'));
+    }
+
+    function clearAll() {
+      inputText.value = '';
+      outputText.textContent = '';
+      outputPanel.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

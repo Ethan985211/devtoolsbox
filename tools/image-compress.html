@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片压缩 - DevToolsBox</title>
+  <meta name="description" content="在线图片压缩工具，支持 PNG/JPG/WebP，调节压缩质量，实时预览。纯浏览器处理，不上传。">
+  <meta property="og:title" content="在线图片压缩 - DevToolsBox">
+  <meta property="og:description" content="PNG/JPG/WebP 图片在线压缩，调节质量，免费无限制。">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="image-convert.html">格式转换</a>
+      <a href="json-formatter.html">JSON</a>
+      <a href="qr-code.html">二维码</a>
+    </nav>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header">
+      <h1>🖼️ 图片压缩</h1>
+      <p>支持 PNG、JPG、WebP 格式，调节质量滑块实时预览压缩效果</p>
+    </div>
+
+    <div class="ad-slot">📢 广告位</div>
+
+    <div class="tool-panel">
+      <div class="drop-zone" id="dropZone">
+        <div class="dz-icon">📁</div>
+        <p>拖放图片到此处，或点击选择文件</p>
+        <p style="font-size:12px;color:#94a3b8;margin-top:8px">支持 PNG / JPG / WebP</p>
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" style="display:none">
+      </div>
+    </div>
+
+    <div class="tool-panel" id="controlsPanel" style="display:none">
+      <div class="controls-row">
+        <div>
+          <label>压缩质量</label>
+          <input type="range" id="quality" min="1" max="100" value="80" style="width:100%">
+        </div>
+        <div style="max-width:80px;text-align:center">
+          <label>&nbsp;</label>
+          <span id="qualityVal" style="font-weight:700;font-size:18px">80%</span>
+        </div>
+        <div>
+          <label>输出格式</label>
+          <select id="format">
+            <option value="image/jpeg">JPG</option>
+            <option value="image/png">PNG</option>
+            <option value="image/webp">WebP</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn btn-primary" onclick="compress()">压缩并下载</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:16px">
+        <div style="flex:1;min-width:250px">
+          <label>原图</label>
+          <p id="originalSize" style="font-size:13px;color:var(--text-secondary)"></p>
+          <img id="originalPreview" class="preview-img" style="display:none">
+        </div>
+        <div style="flex:1;min-width:250px">
+          <label>压缩后</label>
+          <p id="compressedSize" style="font-size:13px;color:var(--text-secondary)"></p>
+          <canvas id="previewCanvas" style="display:none;max-width:100%;border-radius:8px;border:1px solid var(--border)"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="ad-slot">📢 广告位</div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 DevToolsBox · 图片处理在浏览器本地完成，不上传</p>
+  </footer>
+
+  <script>
+    let originalFile = null;
+    let originalImg = new Image();
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const controlsPanel = document.getElementById('controlsPanel');
+    const qualityInput = document.getElementById('quality');
+    const qualityVal = document.getElementById('qualityVal');
+    const originalPreview = document.getElementById('originalPreview');
+    const originalSize = document.getElementById('originalSize');
+    const compressedSize = document.getElementById('compressedSize');
+    const previewCanvas = document.getElementById('previewCanvas');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+    qualityInput.addEventListener('input', () => { qualityVal.textContent = qualityInput.value + '%'; updatePreview(); });
+
+    function handleFile(file) {
+      if (!file.type.match(/image\/(png|jpeg|webp)/)) { alert('请选择 PNG / JPG / WebP 图片'); return; }
+      originalFile = file;
+      originalSize.textContent = '大小: ' + formatSize(file.size);
+      const reader = new FileReader();
+      reader.onload = e => {
+        originalImg.onload = () => {
+          originalPreview.src = e.target.result;
+          originalPreview.style.display = 'block';
+          controlsPanel.style.display = 'block';
+          updatePreview();
+        };
+        originalImg.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updatePreview() {
+      if (!originalImg.width) return;
+      const canvas = previewCanvas;
+      const maxW = 400;
+      const scale = Math.min(1, maxW / originalImg.width);
+      canvas.width = originalImg.width * scale;
+      canvas.height = originalImg.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'block';
+      canvas.toBlob(blob => {
+        if (blob) compressedSize.textContent = '预计: ' + formatSize(blob.size);
+      }, document.getElementById('format').value, qualityInput.value / 100);
+    }
+
+    function compress() {
+      if (!originalImg.width) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = originalImg.width;
+      canvas.height = originalImg.height;
+      canvas.getContext('2d').drawImage(originalImg, 0, 0);
+      const fmt = document.getElementById('format').value;
+      const ext = fmt.split('/')[1].replace('jpeg','jpg');
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'compressed.' + ext;
+        a.click();
+        URL.revokeObjectURL(url);
+      }, fmt, qualityInput.value / 100);
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1048576).toFixed(2) + ' MB';
+    }
+  </script>
+</body>
+</html>
