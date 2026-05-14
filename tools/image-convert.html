@@ -1,152 +1,153 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>图片格式转换 - DevToolsBox</title>
-  <meta name="description" content="在线图片格式转换工具，PNG/JPG/WebP/BMP 互转，免费在线转换，数据不上传。">
-  <meta property="og:title" content="图片格式转换 - DevToolsBox">
-  <meta property="og:description" content="在线图片格式互转：PNG、JPG、WebP、BMP，免费无限制。">
-  <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-  <header class="site-header">
-    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
-    <nav>
-      <a href="../index.html">首页</a>
-      <a href="image-compress.html">图片压缩</a>
-      <a href="json-formatter.html">JSON</a>
-      <a href="qr-code.html">二维码</a>
-    </nav>
-  </header>
-
-  <main class="tool-page">
-    <div class="tool-header">
-      <h1>🔄 图片格式转换</h1>
-      <p>上传图片，选择目标格式，一键下载转换结果。支持 PNG / JPG / WebP / BMP</p>
-    </div>
-
-    <div class="ad-slot">📢 广告位</div>
-
-    <div class="tool-panel">
-      <div class="drop-zone" id="dropZone">
-        <div class="dz-icon">📁</div>
-        <p>拖放图片到此处，或点击选择文件</p>
-        <p style="font-size:12px;color:#94a3b8;margin-top:8px">支持 PNG / JPG / WebP / BMP</p>
-        <input type="file" id="fileInput" accept="image/*" style="display:none">
-      </div>
-    </div>
-
-    <div class="tool-panel" id="convertPanel" style="display:none">
-      <div class="controls-row">
-        <div>
-          <label>原格式</label>
-          <input type="text" id="sourceFormat" readonly style="background:#fff">
-        </div>
-        <div>
-          <label>转换为</label>
-          <select id="targetFormat">
-            <option value="image/png">PNG</option>
-            <option value="image/jpeg">JPG</option>
-            <option value="image/webp">WebP</option>
-            <option value="image/bmp">BMP</option>
-          </select>
-        </div>
-        <div style="display:flex;align-items:flex-end">
-          <button class="btn btn-primary" onclick="convert()">转换并下载</button>
-        </div>
-      </div>
-      <div style="margin-top:16px">
-        <label>预览</label>
-        <img id="preview" class="preview-img" style="display:none;max-height:300px;object-fit:contain">
-        <p id="fileInfo" style="font-size:13px;color:var(--text-secondary);margin-top:8px"></p>
-      </div>
-    </div>
-
-    <div class="ad-slot">📢 广告位</div>
-
-    <div class="sponsor-section">
-      <h3>☕ 如果这个工具帮到了你</h3>
-      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
-      <div class="sponsor-qrcodes">
-        <div class="sponsor-qr">
-          <div style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#a16207;">支付宝<br>收款码<br>（替换你的）</div>
-          <span>支付宝</span>
-        </div>
-        <div class="sponsor-qr">
-          <div style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#a16207;">微信<br>收款码<br>（替换你的）</div>
-          <span>微信支付</span>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <p>© 2025 DevToolsBox · 转换在浏览器本地完成，不上传</p>
-  </footer>
-
-  <script>
-    let sourceImg = new Image();
-    let sourceFile = null;
-
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const convertPanel = document.getElementById('convertPanel');
-    const preview = document.getElementById('preview');
-    const fileInfo = document.getElementById('fileInfo');
-    const sourceFormat = document.getElementById('sourceFormat');
-
-    dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropZone.classList.remove('dragover');
-      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-    });
-    fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
-
-    function handleFile(file) {
-      if (!file.type.match(/image\//)) { alert('请选择图片文件'); return; }
-      sourceFile = file;
-      sourceFormat.value = file.type || '未知';
-      const reader = new FileReader();
-      reader.onload = e => {
-        sourceImg.onload = () => {
-          preview.src = e.target.result;
-          preview.style.display = 'block';
-          convertPanel.style.display = 'block';
-        };
-        sourceImg.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-      fileInfo.textContent = '原始大小: ' + formatSize(file.size);
-    }
-
-    function convert() {
-      if (!sourceImg.width) return;
-      const canvas = document.createElement('canvas');
-      canvas.width = sourceImg.width;
-      canvas.height = sourceImg.height;
-      canvas.getContext('2d').drawImage(sourceImg, 0, 0);
-      const fmt = document.getElementById('targetFormat').value;
-      const ext = fmt.split('/')[1].replace('jpeg','jpg');
-      canvas.toBlob(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'converted.' + ext;
-        a.click();
-        URL.revokeObjectURL(url);
-        fileInfo.textContent = '转换后大小: ' + formatSize(blob.size);
-      }, fmt);
-    }
-
-    function formatSize(b) {
-      if (b < 1024) return b + ' B';
-      if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
-      return (b / 1048576).toFixed(2) + ' MB';
-    }
-  </script>
-</body>
-</html>
+     1|<!DOCTYPE html>
+     2|<html lang="zh-CN">
+     3|<head>
+     4|  <meta charset="UTF-8">
+     5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     6|  <title>图片格式转换 - DevToolsBox</title>
+     7|  <meta name="description" content="在线图片格式转换工具，PNG/JPG/WebP/BMP 互转，免费在线转换，数据不上传。">
+     8|  <meta property="og:title" content="图片格式转换 - DevToolsBox">
+     9|  <meta property="og:description" content="在线图片格式互转：PNG、JPG、WebP、BMP，免费无限制。">
+    10|  <link rel="stylesheet" href="../css/style.css">
+    11|</head>
+    12|<body>
+    13|  <header class="site-header">
+    14|    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
+    15|    <nav>
+    16|      <a href="../index.html">首页</a>
+    17|      <a href="image-compress.html">图片压缩</a>
+    18|      <a href="json-formatter.html">JSON</a>
+    19|      <a href="qr-code.html">二维码</a>
+    20|    </nav>
+    21|  </header>
+    22|
+    23|  <main class="tool-page">
+    24|    <div class="tool-header">
+    25|      <h1>🔄 图片格式转换</h1>
+    26|      <p>上传图片，选择目标格式，一键下载转换结果。支持 PNG / JPG / WebP / BMP</p>
+    27|    </div>
+    28|
+    29|    <div class="ad-slot">📢 广告位</div>
+    30|
+    31|    <div class="tool-panel">
+    32|      <div class="drop-zone" id="dropZone">
+    33|        <div class="dz-icon">📁</div>
+    34|        <p>拖放图片到此处，或点击选择文件</p>
+    35|        <p style="font-size:12px;color:#94a3b8;margin-top:8px">支持 PNG / JPG / WebP / BMP</p>
+    36|        <input type="file" id="fileInput" accept="image/*" style="display:none">
+    37|      </div>
+    38|    </div>
+    39|
+    40|    <div class="tool-panel" id="convertPanel" style="display:none">
+    41|      <div class="controls-row">
+    42|        <div>
+    43|          <label>原格式</label>
+    44|          <input type="text" id="sourceFormat" readonly style="background:#fff">
+    45|        </div>
+    46|        <div>
+    47|          <label>转换为</label>
+    48|          <select id="targetFormat">
+    49|            <option value="image/png">PNG</option>
+    50|            <option value="image/jpeg">JPG</option>
+    51|            <option value="image/webp">WebP</option>
+    52|            <option value="image/bmp">BMP</option>
+    53|          </select>
+    54|        </div>
+    55|        <div style="display:flex;align-items:flex-end">
+    56|          <button class="btn btn-primary" onclick="convert()">转换并下载</button>
+    57|        </div>
+    58|      </div>
+    59|      <div style="margin-top:16px">
+    60|        <label>预览</label>
+    61|        <img id="preview" class="preview-img" style="display:none;max-height:300px;object-fit:contain">
+    62|        <p id="fileInfo" style="font-size:13px;color:var(--text-secondary);margin-top:8px"></p>
+    63|      </div>
+    64|    </div>
+    65|
+    66|    <div class="ad-slot">📢 广告位</div>
+    67|
+    68|    <div class="sponsor-section">
+    69|      <h3>☕ 如果这个工具帮到了你</h3>
+    70|      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
+    71|      <div class="sponsor-qrcodes">
+    72|        <div class="sponsor-qr">
+    73|          <img src="../支付宝收款码.jpeg" alt="支付宝收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
+    74|          <span>支付宝</span>
+    75|        </div>
+    76|        <div class="sponsor-qr">
+    77|          <img src="../微信收款码.jpeg" alt="微信收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
+    78|          <span>微信支付</span>
+    79|        </div>
+    80|      </div>
+    81|    </div>
+    82|  </main>
+    83|
+    84|  <footer class="site-footer">
+    85|    <p>© 2025 DevToolsBox · 转换在浏览器本地完成，不上传</p>
+    86|  </footer>
+    87|
+    88|  <script>
+    89|    let sourceImg = new Image();
+    90|    let sourceFile = null;
+    91|
+    92|    const dropZone = document.getElementById('dropZone');
+    93|    const fileInput = document.getElementById('fileInput');
+    94|    const convertPanel = document.getElementById('convertPanel');
+    95|    const preview = document.getElementById('preview');
+    96|    const fileInfo = document.getElementById('fileInfo');
+    97|    const sourceFormat = document.getElementById('sourceFormat');
+    98|
+    99|    dropZone.addEventListener('click', () => fileInput.click());
+   100|    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+   101|    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+   102|    dropZone.addEventListener('drop', e => {
+   103|      e.preventDefault();
+   104|      dropZone.classList.remove('dragover');
+   105|      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+   106|    });
+   107|    fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+   108|
+   109|    function handleFile(file) {
+   110|      if (!file.type.match(/image\//)) { alert('请选择图片文件'); return; }
+   111|      sourceFile = file;
+   112|      sourceFormat.value = file.type || '未知';
+   113|      const reader = new FileReader();
+   114|      reader.onload = e => {
+   115|        sourceImg.onload = () => {
+   116|          preview.src = e.target.result;
+   117|          preview.style.display = 'block';
+   118|          convertPanel.style.display = 'block';
+   119|        };
+   120|        sourceImg.src = e.target.result;
+   121|      };
+   122|      reader.readAsDataURL(file);
+   123|      fileInfo.textContent = '原始大小: ' + formatSize(file.size);
+   124|    }
+   125|
+   126|    function convert() {
+   127|      if (!sourceImg.width) return;
+   128|      const canvas = document.createElement('canvas');
+   129|      canvas.width = sourceImg.width;
+   130|      canvas.height = sourceImg.height;
+   131|      canvas.getContext('2d').drawImage(sourceImg, 0, 0);
+   132|      const fmt = document.getElementById('targetFormat').value;
+   133|      const ext = fmt.split('/')[1].replace('jpeg','jpg');
+   134|      canvas.toBlob(blob => {
+   135|        const url = URL.createObjectURL(blob);
+   136|        const a = document.createElement('a');
+   137|        a.href = url;
+   138|        a.download = 'converted.' + ext;
+   139|        a.click();
+   140|        URL.revokeObjectURL(url);
+   141|        fileInfo.textContent = '转换后大小: ' + formatSize(blob.size);
+   142|      }, fmt);
+   143|    }
+   144|
+   145|    function formatSize(b) {
+   146|      if (b < 1024) return b + ' B';
+   147|      if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+   148|      return (b / 1048576).toFixed(2) + ' MB';
+   149|    }
+   150|  </script>
+   151|</body>
+   152|</html>
+   153|

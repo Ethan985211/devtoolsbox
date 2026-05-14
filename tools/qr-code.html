@@ -1,355 +1,356 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>二维码生成器 - DevToolsBox</title>
-  <meta name="description" content="免费在线二维码生成器，文本/网址一键生成二维码，自定义颜色和大小。纯浏览器处理，不上传。">
-  <meta property="og:title" content="二维码生成器 - DevToolsBox">
-  <meta property="og:description" content="免费在线二维码生成，自定义颜色大小，一键下载。">
-  <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-  <header class="site-header">
-    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
-    <nav>
-      <a href="../index.html">首页</a>
-      <a href="image-compress.html">图片压缩</a>
-      <a href="json-formatter.html">JSON</a>
-      <a href="base64.html">Base64</a>
-    </nav>
-  </header>
-
-  <main class="tool-page">
-    <div class="tool-header">
-      <h1>📱 二维码生成器</h1>
-      <p>输入文本或网址，一键生成二维码。支持自定义颜色和大小</p>
-    </div>
-
-    <div class="ad-slot">📢 广告位</div>
-
-    <div class="tool-panel">
-      <label for="qrText">输入内容</label>
-      <textarea id="qrText" placeholder="输入网址或文本..." rows="3"></textarea>
-    </div>
-
-    <div class="tool-panel">
-      <div class="controls-row">
-        <div>
-          <label>二维码大小</label>
-          <input type="range" id="qrSize" min="150" max="400" value="250" style="width:100%">
-          <span id="sizeVal" style="font-size:13px;color:var(--text-secondary)">250px</span>
-        </div>
-        <div>
-          <label>前景色</label>
-          <input type="color" id="fgColor" value="#000000" style="width:60px;height:36px;border:none;cursor:pointer">
-        </div>
-        <div>
-          <label>背景色</label>
-          <input type="color" id="bgColor" value="#ffffff" style="width:60px;height:36px;border:none;cursor:pointer">
-        </div>
-        <div style="display:flex;align-items:flex-end">
-          <button class="btn btn-primary" onclick="generateQR()">生成二维码</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="tool-panel" id="qrResult" style="display:none;text-align:center">
-      <canvas id="qrCanvas"></canvas>
-      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center">
-        <button class="btn btn-primary" onclick="downloadQR()">💾 下载 PNG</button>
-        <button class="btn btn-secondary" onclick="downloadQR('svg')">💾 下载 SVG</button>
-      </div>
-    </div>
-
-    <div class="ad-slot">📢 广告位</div>
-
-    <div class="sponsor-section">
-      <h3>☕ 如果这个工具帮到了你</h3>
-      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
-      <div class="sponsor-qrcodes">
-        <div class="sponsor-qr">
-          <div style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#a16207;">支付宝<br>收款码<br>（替换你的）</div>
-          <span>支付宝</span>
-        </div>
-        <div class="sponsor-qr">
-          <div style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#a16207;">微信<br>收款码<br>（替换你的）</div>
-          <span>微信支付</span>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <p>© 2025 DevToolsBox · 二维码在浏览器本地生成，不上传</p>
-  </footer>
-
-  <script>
-    // Inline QR Code Generator - Based on qrcode-generator algorithm (MIT)
-    var QR = (function() {
-      var qr, PAD0, PAD1, modules, moduleCount, dataList;
-
-      function createData(typeNumber, errorCorrectLevel, data) {
-        var rs = [0,26,44,70,100,134,172,196,242,292,346,404,466,532,581,655,733,815,901,991,1085,1156,1258,1364,1474,1588,1706,1828,1921,2051,2185,2323,2465,2611,2761,2876,3034,3196,3362,3532,3706];
-        var totalDC = rs[typeNumber];
-        var ecDC = [0,7,10,13,17,10,16,22,28,26,18,24,28,26,28,28,24,28,28,28,28,28,28,26,28,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26];
-        var ecBlocks = ecDC[typeNumber * 4 + errorCorrectLevel];
-        var buffer = [];
-        buffer.push(4 << 4 | data.length);
-        var bits = 4;
-        for (var i = 0; i < data.length; i++) {
-          buffer.push(data.charCodeAt(i) & 0xff);
-          bits += 8;
-        }
-        var term = Math.min(4, totalDC * 8 - bits);
-        if (term > 0) buffer.push(0);
-        bits += term;
-        while (bits % 8 !== 0) { buffer.push(0); bits++; }
-        while (bits < totalDC * 8) { buffer.push(0xec); buffer.push(0x11); bits += 16; }
-        return buffer;
-      }
-
-      function getPatternPosition(typeNumber) {
-        return [6,14,22,30,38,46,54,62,70,78,86,94,102,110,118,126,134,142,150,158,166,174,182,190,198,206,214,222,230,238,246,254,262,270,278,286,294,302,310,318,326].slice(0, typeNumber-1);
-      }
-
-      function getMask(mp, i, j) {
-        switch (mp) {
-          case 0: return (i+j)%2===0;
-          case 1: return i%2===0;
-          case 2: return j%3===0;
-          case 3: return (i+j)%3===0;
-          case 4: return (Math.floor(i/2)+Math.floor(j/3))%2===0;
-          case 5: return (i*j)%2+(i*j)%3===0;
-          case 6: return ((i*j)%2+(i*j)%3)%2===0;
-          case 7: return ((i*j)%3+(i+j)%2)%2===0;
-        }
-        return false;
-      }
-
-      function getBCHTypeInfo(data) {
-        var d = data << 10;
-        while (getBCHDigit(d) - getBCHDigit(0x537) >= 0) d ^= 0x537 << (getBCHDigit(d) - getBCHDigit(0x537));
-        return ((data << 10) | d) ^ 0x5412;
-      }
-      function getBCHDigit(d) {
-        var digit = 0;
-        while (d !== 0) { digit++; d >>>= 1; }
-        return digit;
-      }
-
-      function makeImpl(test, maskPattern) {
-        moduleCount = qr.typeNumber * 4 + 17;
-        modules = [];
-        for (var r = 0; r < moduleCount; r++) { modules[r] = []; for (var c = 0; c < moduleCount; c++) modules[r][c] = null; }
-        setupPositionProbePattern(0, 0);
-        setupPositionProbePattern(moduleCount-7, 0);
-        setupPositionProbePattern(0, moduleCount-7);
-        setupPositionAdjustPattern();
-        setupTimingPattern();
-        setupTypeInfo(test, maskPattern);
-        if (qr.typeNumber >= 7) setupTypeNumber(test);
-        var data = createData(qr.typeNumber, qr.errorCorrectLevel, qr.dataList);
-        var inc = -1, row = moduleCount-1, bitIndex = 7, byteIndex = 0;
-        for (var col = moduleCount-1; col > 0; col -= 2) {
-          if (col === 6) col--;
-          while (true) {
-            for (var c = 0; c < 2; c++) {
-              if (modules[row][col-c] === null) {
-                var dark = false;
-                if (byteIndex < data.length) dark = ((data[byteIndex] >>> bitIndex) & 1) === 1;
-                var mask = getMask(maskPattern, row, col-c);
-                if (mask) dark = !dark;
-                modules[row][col-c] = dark;
-                bitIndex--;
-                if (bitIndex === -1) { byteIndex++; bitIndex = 7; }
-              }
-            }
-            row += inc;
-            if (row < 0 || row >= moduleCount) { row -= inc; inc = -inc; break; }
-          }
-        }
-      }
-
-      function setupPositionProbePattern(r, c) {
-        for (var i = -1; i <= 7; i++)
-          for (var j = -1; j <= 7; j++)
-            if (r+i > -1 && r+i < moduleCount && c+j > -1 && c+j < moduleCount)
-              modules[r+i][c+j] = (i>=0 && i<=6 && (j===0||j===6)) || (j>=0 && j<=6 && (i===0||i===6)) || (i>=2 && i<=4 && j>=2 && j<=4);
-      }
-
-      function setupTimingPattern() {
-        for (var i = 8; i < moduleCount - 8; i++) if (modules[i][6] === null) modules[i][6] = i % 2 === 0;
-        for (var i = 8; i < moduleCount - 8; i++) if (modules[6][i] === null) modules[6][i] = i % 2 === 0;
-      }
-
-      function setupPositionAdjustPattern() {
-        var pos = getPatternPosition(qr.typeNumber);
-        for (var i = 0; i < pos.length; i++)
-          for (var j = 0; j < pos.length; j++) {
-            var r = pos[i], c = pos[j];
-            if (modules[r][c] !== null) continue;
-            for (var dr = -2; dr <= 2; dr++)
-              for (var dc = -2; dc <= 2; dc++)
-                modules[r+dr][c+dc] = (dr===-2||dr===2||dc===-2||dc===2||(dr===0&&dc===0));
-          }
-      }
-
-      function setupTypeInfo(test, maskPattern) {
-        var data = (qr.errorCorrectLevel << 3) | maskPattern;
-        var d = getBCHTypeInfo(data);
-        for (var i = 0; i < 15; i++) {
-          var m = ((d >> i) & 1) === 1;
-          if (i < 6) modules[i][8] = m;
-          else if (i < 8) modules[i+1][8] = m;
-          else modules[moduleCount-15+i][8] = m;
-          if (i < 8) modules[8][moduleCount-i-1] = m;
-          else if (i < 9) modules[8][15-i-1+1] = m;
-          else modules[8][15-i-1] = m;
-        }
-        modules[moduleCount-8][8] = !test;
-      }
-
-      function setupTypeNumber(test) {
-        var bits = getBCHTypeNumber(qr.typeNumber);
-        for (var i = 0; i < 18; i++) {
-          var m = !test && ((bits >> i) & 1) === 1;
-          modules[Math.floor(i/3)][i%3+moduleCount-8-3] = m;
-          modules[i%3+moduleCount-8-3][Math.floor(i/3)] = m;
-        }
-      }
-      function getBCHTypeNumber(data) {
-        var d = data << 12;
-        while (getBCHDigit(d) - getBCHDigit(0x1f25) >= 0) d ^= 0x1f25 << (getBCHDigit(d) - getBCHDigit(0x1f25));
-        return (data << 12) | d;
-      }
-
-      return {
-        stringToBytes: function(s) { return s.split('').map(function(c) { return c.charCodeAt(0) & 0xff; }); },
-        createStringToBytes: function(text, sBytes) {
-          var data = [];
-          for (var i = 0; i < text.length; i++) {
-            var code = text.charCodeAt(i);
-            if (code < 0x80) { data.push(code); }
-            else if (code < 0x800) { data.push(0xc0 | (code >>> 6)); data.push(0x80 | (code & 0x3f)); }
-            else if (code < 0x10000) { data.push(0xe0 | (code >>> 12)); data.push(0x80 | ((code >>> 6) & 0x3f)); data.push(0x80 | (code & 0x3f)); }
-            else { data.push(0xf0 | (code >>> 18)); data.push(0x80 | ((code >>> 12) & 0x3f)); data.push(0x80 | ((code >>> 6) & 0x3f)); data.push(0x80 | (code & 0x3f)); }
-          }
-          return data;
-        },
-        createQRCode: function(typeNumber, errorCorrectLevel, text) {
-          qr = {typeNumber: typeNumber, errorCorrectLevel: errorCorrectLevel, dataList: []};
-          qr.dataList = this.createStringToBytes(text, this.stringToBytes);
-          var minMask = 0, minPenalty = Infinity;
-          for (var mask = 0; mask < 8; mask++) {
-            makeImpl(true, mask);
-            var penalty = 0;
-            for (var r = 0; r < moduleCount; r++) {
-              for (var c = 0; c < moduleCount; c++) {
-                if (r < moduleCount-1 && modules[r][c] === modules[r+1][c]) {
-                  var count = 2;
-                  for (var rr = r+2; rr < moduleCount && modules[rr][c] === modules[r][c]; rr++) count++;
-                  if (count >= 5) penalty += 3 + count - 5;
-                }
-              }
-            }
-            for (var r = 0; r < moduleCount; r++) {
-              for (var c = 0; c < moduleCount-4; c++) {
-                if (modules[r][c] && !modules[r][c+1] && modules[r][c+2] && modules[r][c+3] && modules[r][c+4] && !modules[r][c+5] && modules[r][c+6]) penalty += 40;
-              }
-            }
-            var darkCount = 0;
-            for (var r = 0; r < moduleCount; r++) for (var c = 0; c < moduleCount; c++) if (modules[r][c]) darkCount++;
-            var percent = darkCount / (moduleCount * moduleCount) * 100;
-            penalty += Math.abs(Math.floor(percent/5)-10) * 10;
-            if (penalty < minPenalty) { minPenalty = penalty; minMask = mask; }
-          }
-          makeImpl(true, minMask);
-          return {modules: modules, moduleCount: moduleCount};
-        }
-      };
-    })();
-
-    // UI Logic
-    const qrText = document.getElementById('qrText');
-    const qrCanvas = document.getElementById('qrCanvas');
-    const qrResult = document.getElementById('qrResult');
-    const qrSize = document.getElementById('qrSize');
-    const sizeVal = document.getElementById('sizeVal');
-    let lastData = null;
-
-    qrSize.addEventListener('input', () => {
-      sizeVal.textContent = qrSize.value + 'px';
-      redrawQR();
-    });
-
-    function generateQR() {
-      var text = qrText.value.trim();
-      if (!text) { alert('请输入内容'); return; }
-      var typeNumber = 0;
-      for (var t = 1; t <= 40; t++) {
-        var td = [0,17,32,53,78,106,134,154,192,230,271,321,367,425,458,520,586,644,718,792,858,929,1003,1091,1171,1273,1367,1465,1528,1628,1732,1840,1952,2068,2188,2303,2431,2563,2699,2809,2953];
-        var b = QR.createStringToBytes(text, QR.stringToBytes);
-        if (b.length <= td[t]) { typeNumber = t; break; }
-      }
-      if (typeNumber === 0) { alert('内容过长，请缩短文本'); return; }
-      var qrData = QR.createQRCode(typeNumber, 0, text);
-      lastData = qrData;
-      drawQR(qrData);
-    }
-
-    function drawQR(qrData) {
-      var size = parseInt(qrSize.value);
-      var fg = document.getElementById('fgColor').value;
-      var bg = document.getElementById('bgColor').value;
-      var count = qrData.moduleCount;
-      var scale = Math.floor(size / count);
-      var actualSize = scale * count;
-      qrCanvas.width = actualSize;
-      qrCanvas.height = actualSize;
-      var ctx = qrCanvas.getContext('2d');
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, actualSize, actualSize);
-      ctx.fillStyle = fg;
-      for (var r = 0; r < count; r++)
-        for (var c = 0; c < count; c++)
-          if (qrData.modules[r][c])
-            ctx.fillRect(c*scale, r*scale, scale, scale);
-      qrResult.style.display = 'block';
-    }
-
-    function redrawQR() { if (lastData) drawQR(lastData); }
-
-    function downloadQR(format) {
-      if (!lastData) { alert('请先生成二维码'); return; }
-      if (format === 'svg') {
-        var count = lastData.moduleCount;
-        var size = parseInt(qrSize.value);
-        var scale = Math.floor(size / count);
-        var fg = document.getElementById('fgColor').value;
-        var bg = document.getElementById('bgColor').value;
-        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + (scale*count) + '" height="' + (scale*count) + '" viewBox="0 0 ' + count + ' ' + count + '">';
-        svg += '<rect width="' + count + '" height="' + count + '" fill="' + bg + '"/>';
-        for (var r = 0; r < count; r++)
-          for (var c = 0; c < count; c++)
-            if (lastData.modules[r][c])
-              svg += '<rect x="' + c + '" y="' + r + '" width="1" height="1" fill="' + fg + '"/>';
-        svg += '</svg>';
-        var blob = new Blob([svg], {type: 'image/svg+xml'});
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url; a.download = 'qrcode.svg'; a.click();
-        URL.revokeObjectURL(url);
-      } else {
-        var a = document.createElement('a');
-        a.href = qrCanvas.toDataURL('image/png');
-        a.download = 'qrcode.png'; a.click();
-      }
-    }
-
-    qrText.addEventListener('keydown', function(e) {
-      if (e.ctrlKey && e.key === 'Enter') generateQR();
-    });
-  </script>
-</body>
-</html>
+     1|<!DOCTYPE html>
+     2|<html lang="zh-CN">
+     3|<head>
+     4|  <meta charset="UTF-8">
+     5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     6|  <title>二维码生成器 - DevToolsBox</title>
+     7|  <meta name="description" content="免费在线二维码生成器，文本/网址一键生成二维码，自定义颜色和大小。纯浏览器处理，不上传。">
+     8|  <meta property="og:title" content="二维码生成器 - DevToolsBox">
+     9|  <meta property="og:description" content="免费在线二维码生成，自定义颜色大小，一键下载。">
+    10|  <link rel="stylesheet" href="../css/style.css">
+    11|</head>
+    12|<body>
+    13|  <header class="site-header">
+    14|    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
+    15|    <nav>
+    16|      <a href="../index.html">首页</a>
+    17|      <a href="image-compress.html">图片压缩</a>
+    18|      <a href="json-formatter.html">JSON</a>
+    19|      <a href="base64.html">Base64</a>
+    20|    </nav>
+    21|  </header>
+    22|
+    23|  <main class="tool-page">
+    24|    <div class="tool-header">
+    25|      <h1>📱 二维码生成器</h1>
+    26|      <p>输入文本或网址，一键生成二维码。支持自定义颜色和大小</p>
+    27|    </div>
+    28|
+    29|    <div class="ad-slot">📢 广告位</div>
+    30|
+    31|    <div class="tool-panel">
+    32|      <label for="qrText">输入内容</label>
+    33|      <textarea id="qrText" placeholder="输入网址或文本..." rows="3"></textarea>
+    34|    </div>
+    35|
+    36|    <div class="tool-panel">
+    37|      <div class="controls-row">
+    38|        <div>
+    39|          <label>二维码大小</label>
+    40|          <input type="range" id="qrSize" min="150" max="400" value="250" style="width:100%">
+    41|          <span id="sizeVal" style="font-size:13px;color:var(--text-secondary)">250px</span>
+    42|        </div>
+    43|        <div>
+    44|          <label>前景色</label>
+    45|          <input type="color" id="fgColor" value="#000000" style="width:60px;height:36px;border:none;cursor:pointer">
+    46|        </div>
+    47|        <div>
+    48|          <label>背景色</label>
+    49|          <input type="color" id="bgColor" value="#ffffff" style="width:60px;height:36px;border:none;cursor:pointer">
+    50|        </div>
+    51|        <div style="display:flex;align-items:flex-end">
+    52|          <button class="btn btn-primary" onclick="generateQR()">生成二维码</button>
+    53|        </div>
+    54|      </div>
+    55|    </div>
+    56|
+    57|    <div class="tool-panel" id="qrResult" style="display:none;text-align:center">
+    58|      <canvas id="qrCanvas"></canvas>
+    59|      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center">
+    60|        <button class="btn btn-primary" onclick="downloadQR()">💾 下载 PNG</button>
+    61|        <button class="btn btn-secondary" onclick="downloadQR('svg')">💾 下载 SVG</button>
+    62|      </div>
+    63|    </div>
+    64|
+    65|    <div class="ad-slot">📢 广告位</div>
+    66|
+    67|    <div class="sponsor-section">
+    68|      <h3>☕ 如果这个工具帮到了你</h3>
+    69|      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
+    70|      <div class="sponsor-qrcodes">
+    71|        <div class="sponsor-qr">
+    72|          <img src="../支付宝收款码.jpeg" alt="支付宝收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
+    73|          <span>支付宝</span>
+    74|        </div>
+    75|        <div class="sponsor-qr">
+    76|          <img src="../微信收款码.jpeg" alt="微信收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
+    77|          <span>微信支付</span>
+    78|        </div>
+    79|      </div>
+    80|    </div>
+    81|  </main>
+    82|
+    83|  <footer class="site-footer">
+    84|    <p>© 2025 DevToolsBox · 二维码在浏览器本地生成，不上传</p>
+    85|  </footer>
+    86|
+    87|  <script>
+    88|    // Inline QR Code Generator - Based on qrcode-generator algorithm (MIT)
+    89|    var QR = (function() {
+    90|      var qr, PAD0, PAD1, modules, moduleCount, dataList;
+    91|
+    92|      function createData(typeNumber, errorCorrectLevel, data) {
+    93|        var rs = [0,26,44,70,100,134,172,196,242,292,346,404,466,532,581,655,733,815,901,991,1085,1156,1258,1364,1474,1588,1706,1828,1921,2051,2185,2323,2465,2611,2761,2876,3034,3196,3362,3532,3706];
+    94|        var totalDC = rs[typeNumber];
+    95|        var ecDC = [0,7,10,13,17,10,16,22,28,26,18,24,28,26,28,28,24,28,28,28,28,28,28,26,28,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26];
+    96|        var ecBlocks = ecDC[typeNumber * 4 + errorCorrectLevel];
+    97|        var buffer = [];
+    98|        buffer.push(4 << 4 | data.length);
+    99|        var bits = 4;
+   100|        for (var i = 0; i < data.length; i++) {
+   101|          buffer.push(data.charCodeAt(i) & 0xff);
+   102|          bits += 8;
+   103|        }
+   104|        var term = Math.min(4, totalDC * 8 - bits);
+   105|        if (term > 0) buffer.push(0);
+   106|        bits += term;
+   107|        while (bits % 8 !== 0) { buffer.push(0); bits++; }
+   108|        while (bits < totalDC * 8) { buffer.push(0xec); buffer.push(0x11); bits += 16; }
+   109|        return buffer;
+   110|      }
+   111|
+   112|      function getPatternPosition(typeNumber) {
+   113|        return [6,14,22,30,38,46,54,62,70,78,86,94,102,110,118,126,134,142,150,158,166,174,182,190,198,206,214,222,230,238,246,254,262,270,278,286,294,302,310,318,326].slice(0, typeNumber-1);
+   114|      }
+   115|
+   116|      function getMask(mp, i, j) {
+   117|        switch (mp) {
+   118|          case 0: return (i+j)%2===0;
+   119|          case 1: return i%2===0;
+   120|          case 2: return j%3===0;
+   121|          case 3: return (i+j)%3===0;
+   122|          case 4: return (Math.floor(i/2)+Math.floor(j/3))%2===0;
+   123|          case 5: return (i*j)%2+(i*j)%3===0;
+   124|          case 6: return ((i*j)%2+(i*j)%3)%2===0;
+   125|          case 7: return ((i*j)%3+(i+j)%2)%2===0;
+   126|        }
+   127|        return false;
+   128|      }
+   129|
+   130|      function getBCHTypeInfo(data) {
+   131|        var d = data << 10;
+   132|        while (getBCHDigit(d) - getBCHDigit(0x537) >= 0) d ^= 0x537 << (getBCHDigit(d) - getBCHDigit(0x537));
+   133|        return ((data << 10) | d) ^ 0x5412;
+   134|      }
+   135|      function getBCHDigit(d) {
+   136|        var digit = 0;
+   137|        while (d !== 0) { digit++; d >>>= 1; }
+   138|        return digit;
+   139|      }
+   140|
+   141|      function makeImpl(test, maskPattern) {
+   142|        moduleCount = qr.typeNumber * 4 + 17;
+   143|        modules = [];
+   144|        for (var r = 0; r < moduleCount; r++) { modules[r] = []; for (var c = 0; c < moduleCount; c++) modules[r][c] = null; }
+   145|        setupPositionProbePattern(0, 0);
+   146|        setupPositionProbePattern(moduleCount-7, 0);
+   147|        setupPositionProbePattern(0, moduleCount-7);
+   148|        setupPositionAdjustPattern();
+   149|        setupTimingPattern();
+   150|        setupTypeInfo(test, maskPattern);
+   151|        if (qr.typeNumber >= 7) setupTypeNumber(test);
+   152|        var data = createData(qr.typeNumber, qr.errorCorrectLevel, qr.dataList);
+   153|        var inc = -1, row = moduleCount-1, bitIndex = 7, byteIndex = 0;
+   154|        for (var col = moduleCount-1; col > 0; col -= 2) {
+   155|          if (col === 6) col--;
+   156|          while (true) {
+   157|            for (var c = 0; c < 2; c++) {
+   158|              if (modules[row][col-c] === null) {
+   159|                var dark = false;
+   160|                if (byteIndex < data.length) dark = ((data[byteIndex] >>> bitIndex) & 1) === 1;
+   161|                var mask = getMask(maskPattern, row, col-c);
+   162|                if (mask) dark = !dark;
+   163|                modules[row][col-c] = dark;
+   164|                bitIndex--;
+   165|                if (bitIndex === -1) { byteIndex++; bitIndex = 7; }
+   166|              }
+   167|            }
+   168|            row += inc;
+   169|            if (row < 0 || row >= moduleCount) { row -= inc; inc = -inc; break; }
+   170|          }
+   171|        }
+   172|      }
+   173|
+   174|      function setupPositionProbePattern(r, c) {
+   175|        for (var i = -1; i <= 7; i++)
+   176|          for (var j = -1; j <= 7; j++)
+   177|            if (r+i > -1 && r+i < moduleCount && c+j > -1 && c+j < moduleCount)
+   178|              modules[r+i][c+j] = (i>=0 && i<=6 && (j===0||j===6)) || (j>=0 && j<=6 && (i===0||i===6)) || (i>=2 && i<=4 && j>=2 && j<=4);
+   179|      }
+   180|
+   181|      function setupTimingPattern() {
+   182|        for (var i = 8; i < moduleCount - 8; i++) if (modules[i][6] === null) modules[i][6] = i % 2 === 0;
+   183|        for (var i = 8; i < moduleCount - 8; i++) if (modules[6][i] === null) modules[6][i] = i % 2 === 0;
+   184|      }
+   185|
+   186|      function setupPositionAdjustPattern() {
+   187|        var pos = getPatternPosition(qr.typeNumber);
+   188|        for (var i = 0; i < pos.length; i++)
+   189|          for (var j = 0; j < pos.length; j++) {
+   190|            var r = pos[i], c = pos[j];
+   191|            if (modules[r][c] !== null) continue;
+   192|            for (var dr = -2; dr <= 2; dr++)
+   193|              for (var dc = -2; dc <= 2; dc++)
+   194|                modules[r+dr][c+dc] = (dr===-2||dr===2||dc===-2||dc===2||(dr===0&&dc===0));
+   195|          }
+   196|      }
+   197|
+   198|      function setupTypeInfo(test, maskPattern) {
+   199|        var data = (qr.errorCorrectLevel << 3) | maskPattern;
+   200|        var d = getBCHTypeInfo(data);
+   201|        for (var i = 0; i < 15; i++) {
+   202|          var m = ((d >> i) & 1) === 1;
+   203|          if (i < 6) modules[i][8] = m;
+   204|          else if (i < 8) modules[i+1][8] = m;
+   205|          else modules[moduleCount-15+i][8] = m;
+   206|          if (i < 8) modules[8][moduleCount-i-1] = m;
+   207|          else if (i < 9) modules[8][15-i-1+1] = m;
+   208|          else modules[8][15-i-1] = m;
+   209|        }
+   210|        modules[moduleCount-8][8] = !test;
+   211|      }
+   212|
+   213|      function setupTypeNumber(test) {
+   214|        var bits = getBCHTypeNumber(qr.typeNumber);
+   215|        for (var i = 0; i < 18; i++) {
+   216|          var m = !test && ((bits >> i) & 1) === 1;
+   217|          modules[Math.floor(i/3)][i%3+moduleCount-8-3] = m;
+   218|          modules[i%3+moduleCount-8-3][Math.floor(i/3)] = m;
+   219|        }
+   220|      }
+   221|      function getBCHTypeNumber(data) {
+   222|        var d = data << 12;
+   223|        while (getBCHDigit(d) - getBCHDigit(0x1f25) >= 0) d ^= 0x1f25 << (getBCHDigit(d) - getBCHDigit(0x1f25));
+   224|        return (data << 12) | d;
+   225|      }
+   226|
+   227|      return {
+   228|        stringToBytes: function(s) { return s.split('').map(function(c) { return c.charCodeAt(0) & 0xff; }); },
+   229|        createStringToBytes: function(text, sBytes) {
+   230|          var data = [];
+   231|          for (var i = 0; i < text.length; i++) {
+   232|            var code = text.charCodeAt(i);
+   233|            if (code < 0x80) { data.push(code); }
+   234|            else if (code < 0x800) { data.push(0xc0 | (code >>> 6)); data.push(0x80 | (code & 0x3f)); }
+   235|            else if (code < 0x10000) { data.push(0xe0 | (code >>> 12)); data.push(0x80 | ((code >>> 6) & 0x3f)); data.push(0x80 | (code & 0x3f)); }
+   236|            else { data.push(0xf0 | (code >>> 18)); data.push(0x80 | ((code >>> 12) & 0x3f)); data.push(0x80 | ((code >>> 6) & 0x3f)); data.push(0x80 | (code & 0x3f)); }
+   237|          }
+   238|          return data;
+   239|        },
+   240|        createQRCode: function(typeNumber, errorCorrectLevel, text) {
+   241|          qr = {typeNumber: typeNumber, errorCorrectLevel: errorCorrectLevel, dataList: []};
+   242|          qr.dataList = this.createStringToBytes(text, this.stringToBytes);
+   243|          var minMask = 0, minPenalty = Infinity;
+   244|          for (var mask = 0; mask < 8; mask++) {
+   245|            makeImpl(true, mask);
+   246|            var penalty = 0;
+   247|            for (var r = 0; r < moduleCount; r++) {
+   248|              for (var c = 0; c < moduleCount; c++) {
+   249|                if (r < moduleCount-1 && modules[r][c] === modules[r+1][c]) {
+   250|                  var count = 2;
+   251|                  for (var rr = r+2; rr < moduleCount && modules[rr][c] === modules[r][c]; rr++) count++;
+   252|                  if (count >= 5) penalty += 3 + count - 5;
+   253|                }
+   254|              }
+   255|            }
+   256|            for (var r = 0; r < moduleCount; r++) {
+   257|              for (var c = 0; c < moduleCount-4; c++) {
+   258|                if (modules[r][c] && !modules[r][c+1] && modules[r][c+2] && modules[r][c+3] && modules[r][c+4] && !modules[r][c+5] && modules[r][c+6]) penalty += 40;
+   259|              }
+   260|            }
+   261|            var darkCount = 0;
+   262|            for (var r = 0; r < moduleCount; r++) for (var c = 0; c < moduleCount; c++) if (modules[r][c]) darkCount++;
+   263|            var percent = darkCount / (moduleCount * moduleCount) * 100;
+   264|            penalty += Math.abs(Math.floor(percent/5)-10) * 10;
+   265|            if (penalty < minPenalty) { minPenalty = penalty; minMask = mask; }
+   266|          }
+   267|          makeImpl(true, minMask);
+   268|          return {modules: modules, moduleCount: moduleCount};
+   269|        }
+   270|      };
+   271|    })();
+   272|
+   273|    // UI Logic
+   274|    const qrText = document.getElementById('qrText');
+   275|    const qrCanvas = document.getElementById('qrCanvas');
+   276|    const qrResult = document.getElementById('qrResult');
+   277|    const qrSize = document.getElementById('qrSize');
+   278|    const sizeVal = document.getElementById('sizeVal');
+   279|    let lastData = null;
+   280|
+   281|    qrSize.addEventListener('input', () => {
+   282|      sizeVal.textContent = qrSize.value + 'px';
+   283|      redrawQR();
+   284|    });
+   285|
+   286|    function generateQR() {
+   287|      var text = qrText.value.trim();
+   288|      if (!text) { alert('请输入内容'); return; }
+   289|      var typeNumber = 0;
+   290|      for (var t = 1; t <= 40; t++) {
+   291|        var td = [0,17,32,53,78,106,134,154,192,230,271,321,367,425,458,520,586,644,718,792,858,929,1003,1091,1171,1273,1367,1465,1528,1628,1732,1840,1952,2068,2188,2303,2431,2563,2699,2809,2953];
+   292|        var b = QR.createStringToBytes(text, QR.stringToBytes);
+   293|        if (b.length <= td[t]) { typeNumber = t; break; }
+   294|      }
+   295|      if (typeNumber === 0) { alert('内容过长，请缩短文本'); return; }
+   296|      var qrData = QR.createQRCode(typeNumber, 0, text);
+   297|      lastData = qrData;
+   298|      drawQR(qrData);
+   299|    }
+   300|
+   301|    function drawQR(qrData) {
+   302|      var size = parseInt(qrSize.value);
+   303|      var fg = document.getElementById('fgColor').value;
+   304|      var bg = document.getElementById('bgColor').value;
+   305|      var count = qrData.moduleCount;
+   306|      var scale = Math.floor(size / count);
+   307|      var actualSize = scale * count;
+   308|      qrCanvas.width = actualSize;
+   309|      qrCanvas.height = actualSize;
+   310|      var ctx = qrCanvas.getContext('2d');
+   311|      ctx.fillStyle = bg;
+   312|      ctx.fillRect(0, 0, actualSize, actualSize);
+   313|      ctx.fillStyle = fg;
+   314|      for (var r = 0; r < count; r++)
+   315|        for (var c = 0; c < count; c++)
+   316|          if (qrData.modules[r][c])
+   317|            ctx.fillRect(c*scale, r*scale, scale, scale);
+   318|      qrResult.style.display = 'block';
+   319|    }
+   320|
+   321|    function redrawQR() { if (lastData) drawQR(lastData); }
+   322|
+   323|    function downloadQR(format) {
+   324|      if (!lastData) { alert('请先生成二维码'); return; }
+   325|      if (format === 'svg') {
+   326|        var count = lastData.moduleCount;
+   327|        var size = parseInt(qrSize.value);
+   328|        var scale = Math.floor(size / count);
+   329|        var fg = document.getElementById('fgColor').value;
+   330|        var bg = document.getElementById('bgColor').value;
+   331|        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + (scale*count) + '" height="' + (scale*count) + '" viewBox="0 0 ' + count + ' ' + count + '">';
+   332|        svg += '<rect width="' + count + '" height="' + count + '" fill="' + bg + '"/>';
+   333|        for (var r = 0; r < count; r++)
+   334|          for (var c = 0; c < count; c++)
+   335|            if (lastData.modules[r][c])
+   336|              svg += '<rect x="' + c + '" y="' + r + '" width="1" height="1" fill="' + fg + '"/>';
+   337|        svg += '</svg>';
+   338|        var blob = new Blob([svg], {type: 'image/svg+xml'});
+   339|        var url = URL.createObjectURL(blob);
+   340|        var a = document.createElement('a');
+   341|        a.href = url; a.download = 'qrcode.svg'; a.click();
+   342|        URL.revokeObjectURL(url);
+   343|      } else {
+   344|        var a = document.createElement('a');
+   345|        a.href = qrCanvas.toDataURL('image/png');
+   346|        a.download = 'qrcode.png'; a.click();
+   347|      }
+   348|    }
+   349|
+   350|    qrText.addEventListener('keydown', function(e) {
+   351|      if (e.ctrlKey && e.key === 'Enter') generateQR();
+   352|    });
+   353|  </script>
+   354|</body>
+   355|</html>
+   356|

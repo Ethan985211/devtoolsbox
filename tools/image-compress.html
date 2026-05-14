@@ -1,181 +1,182 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>图片压缩 - DevToolsBox</title>
-  <meta name="description" content="在线图片压缩工具，支持 PNG/JPG/WebP，调节压缩质量，实时预览。纯浏览器处理，不上传。">
-  <meta property="og:title" content="在线图片压缩 - DevToolsBox">
-  <meta property="og:description" content="PNG/JPG/WebP 图片在线压缩，调节质量，免费无限制。">
-  <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-  <header class="site-header">
-    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
-    <nav>
-      <a href="../index.html">首页</a>
-      <a href="image-convert.html">格式转换</a>
-      <a href="json-formatter.html">JSON</a>
-      <a href="qr-code.html">二维码</a>
-    </nav>
-  </header>
-
-  <main class="tool-page">
-    <div class="tool-header">
-      <h1>🖼️ 图片压缩</h1>
-      <p>支持 PNG、JPG、WebP 格式，调节质量滑块实时预览压缩效果</p>
-    </div>
-
-    <div class="ad-slot">📢 广告位</div>
-
-    <div class="tool-panel">
-      <div class="drop-zone" id="dropZone">
-        <div class="dz-icon">📁</div>
-        <p>拖放图片到此处，或点击选择文件</p>
-        <p style="font-size:12px;color:#94a3b8;margin-top:8px">支持 PNG / JPG / WebP</p>
-        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" style="display:none">
-      </div>
-    </div>
-
-    <div class="tool-panel" id="controlsPanel" style="display:none">
-      <div class="controls-row">
-        <div>
-          <label>压缩质量</label>
-          <input type="range" id="quality" min="1" max="100" value="80" style="width:100%">
-        </div>
-        <div style="max-width:80px;text-align:center">
-          <label>&nbsp;</label>
-          <span id="qualityVal" style="font-weight:700;font-size:18px">80%</span>
-        </div>
-        <div>
-          <label>输出格式</label>
-          <select id="format">
-            <option value="image/jpeg">JPG</option>
-            <option value="image/png">PNG</option>
-            <option value="image/webp">WebP</option>
-          </select>
-        </div>
-        <div style="display:flex;align-items:flex-end">
-          <button class="btn btn-primary" onclick="compress()">压缩并下载</button>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:16px">
-        <div style="flex:1;min-width:250px">
-          <label>原图</label>
-          <p id="originalSize" style="font-size:13px;color:var(--text-secondary)"></p>
-          <img id="originalPreview" class="preview-img" style="display:none">
-        </div>
-        <div style="flex:1;min-width:250px">
-          <label>压缩后</label>
-          <p id="compressedSize" style="font-size:13px;color:var(--text-secondary)"></p>
-          <canvas id="previewCanvas" style="display:none;max-width:100%;border-radius:8px;border:1px solid var(--border)"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <div class="ad-slot">📢 广告位</div>
-
-    <div class="sponsor-section">
-      <h3>☕ 如果这个工具帮到了你</h3>
-      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
-      <div class="sponsor-qrcodes">
-        <div class="sponsor-qr">
-          <div style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#a16207;">支付宝<br>收款码<br>（替换你的）</div>
-          <span>支付宝</span>
-        </div>
-        <div class="sponsor-qr">
-          <div style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#a16207;">微信<br>收款码<br>（替换你的）</div>
-          <span>微信支付</span>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <p>© 2025 DevToolsBox · 图片处理在浏览器本地完成，不上传</p>
-  </footer>
-
-  <script>
-    let originalFile = null;
-    let originalImg = new Image();
-
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const controlsPanel = document.getElementById('controlsPanel');
-    const qualityInput = document.getElementById('quality');
-    const qualityVal = document.getElementById('qualityVal');
-    const originalPreview = document.getElementById('originalPreview');
-    const originalSize = document.getElementById('originalSize');
-    const compressedSize = document.getElementById('compressedSize');
-    const previewCanvas = document.getElementById('previewCanvas');
-
-    dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropZone.classList.remove('dragover');
-      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-    });
-    fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
-    qualityInput.addEventListener('input', () => { qualityVal.textContent = qualityInput.value + '%'; updatePreview(); });
-
-    function handleFile(file) {
-      if (!file.type.match(/image\/(png|jpeg|webp)/)) { alert('请选择 PNG / JPG / WebP 图片'); return; }
-      originalFile = file;
-      originalSize.textContent = '大小: ' + formatSize(file.size);
-      const reader = new FileReader();
-      reader.onload = e => {
-        originalImg.onload = () => {
-          originalPreview.src = e.target.result;
-          originalPreview.style.display = 'block';
-          controlsPanel.style.display = 'block';
-          updatePreview();
-        };
-        originalImg.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function updatePreview() {
-      if (!originalImg.width) return;
-      const canvas = previewCanvas;
-      const maxW = 400;
-      const scale = Math.min(1, maxW / originalImg.width);
-      canvas.width = originalImg.width * scale;
-      canvas.height = originalImg.height * scale;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
-      canvas.style.display = 'block';
-      canvas.toBlob(blob => {
-        if (blob) compressedSize.textContent = '预计: ' + formatSize(blob.size);
-      }, document.getElementById('format').value, qualityInput.value / 100);
-    }
-
-    function compress() {
-      if (!originalImg.width) return;
-      const canvas = document.createElement('canvas');
-      canvas.width = originalImg.width;
-      canvas.height = originalImg.height;
-      canvas.getContext('2d').drawImage(originalImg, 0, 0);
-      const fmt = document.getElementById('format').value;
-      const ext = fmt.split('/')[1].replace('jpeg','jpg');
-      canvas.toBlob(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'compressed.' + ext;
-        a.click();
-        URL.revokeObjectURL(url);
-      }, fmt, qualityInput.value / 100);
-    }
-
-    function formatSize(bytes) {
-      if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-      return (bytes / 1048576).toFixed(2) + ' MB';
-    }
-  </script>
-</body>
-</html>
+     1|<!DOCTYPE html>
+     2|<html lang="zh-CN">
+     3|<head>
+     4|  <meta charset="UTF-8">
+     5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     6|  <title>图片压缩 - DevToolsBox</title>
+     7|  <meta name="description" content="在线图片压缩工具，支持 PNG/JPG/WebP，调节压缩质量，实时预览。纯浏览器处理，不上传。">
+     8|  <meta property="og:title" content="在线图片压缩 - DevToolsBox">
+     9|  <meta property="og:description" content="PNG/JPG/WebP 图片在线压缩，调节质量，免费无限制。">
+    10|  <link rel="stylesheet" href="../css/style.css">
+    11|</head>
+    12|<body>
+    13|  <header class="site-header">
+    14|    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
+    15|    <nav>
+    16|      <a href="../index.html">首页</a>
+    17|      <a href="image-convert.html">格式转换</a>
+    18|      <a href="json-formatter.html">JSON</a>
+    19|      <a href="qr-code.html">二维码</a>
+    20|    </nav>
+    21|  </header>
+    22|
+    23|  <main class="tool-page">
+    24|    <div class="tool-header">
+    25|      <h1>🖼️ 图片压缩</h1>
+    26|      <p>支持 PNG、JPG、WebP 格式，调节质量滑块实时预览压缩效果</p>
+    27|    </div>
+    28|
+    29|    <div class="ad-slot">📢 广告位</div>
+    30|
+    31|    <div class="tool-panel">
+    32|      <div class="drop-zone" id="dropZone">
+    33|        <div class="dz-icon">📁</div>
+    34|        <p>拖放图片到此处，或点击选择文件</p>
+    35|        <p style="font-size:12px;color:#94a3b8;margin-top:8px">支持 PNG / JPG / WebP</p>
+    36|        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" style="display:none">
+    37|      </div>
+    38|    </div>
+    39|
+    40|    <div class="tool-panel" id="controlsPanel" style="display:none">
+    41|      <div class="controls-row">
+    42|        <div>
+    43|          <label>压缩质量</label>
+    44|          <input type="range" id="quality" min="1" max="100" value="80" style="width:100%">
+    45|        </div>
+    46|        <div style="max-width:80px;text-align:center">
+    47|          <label>&nbsp;</label>
+    48|          <span id="qualityVal" style="font-weight:700;font-size:18px">80%</span>
+    49|        </div>
+    50|        <div>
+    51|          <label>输出格式</label>
+    52|          <select id="format">
+    53|            <option value="image/jpeg">JPG</option>
+    54|            <option value="image/png">PNG</option>
+    55|            <option value="image/webp">WebP</option>
+    56|          </select>
+    57|        </div>
+    58|        <div style="display:flex;align-items:flex-end">
+    59|          <button class="btn btn-primary" onclick="compress()">压缩并下载</button>
+    60|        </div>
+    61|      </div>
+    62|
+    63|      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:16px">
+    64|        <div style="flex:1;min-width:250px">
+    65|          <label>原图</label>
+    66|          <p id="originalSize" style="font-size:13px;color:var(--text-secondary)"></p>
+    67|          <img id="originalPreview" class="preview-img" style="display:none">
+    68|        </div>
+    69|        <div style="flex:1;min-width:250px">
+    70|          <label>压缩后</label>
+    71|          <p id="compressedSize" style="font-size:13px;color:var(--text-secondary)"></p>
+    72|          <canvas id="previewCanvas" style="display:none;max-width:100%;border-radius:8px;border:1px solid var(--border)"></canvas>
+    73|        </div>
+    74|      </div>
+    75|    </div>
+    76|
+    77|    <div class="ad-slot">📢 广告位</div>
+    78|
+    79|    <div class="sponsor-section">
+    80|      <h3>☕ 如果这个工具帮到了你</h3>
+    81|      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
+    82|      <div class="sponsor-qrcodes">
+    83|        <div class="sponsor-qr">
+    84|          <img src="../支付宝收款码.jpeg" alt="支付宝收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
+    85|          <span>支付宝</span>
+    86|        </div>
+    87|        <div class="sponsor-qr">
+    88|          <img src="../微信收款码.jpeg" alt="微信收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
+    89|          <span>微信支付</span>
+    90|        </div>
+    91|      </div>
+    92|    </div>
+    93|  </main>
+    94|
+    95|  <footer class="site-footer">
+    96|    <p>© 2025 DevToolsBox · 图片处理在浏览器本地完成，不上传</p>
+    97|  </footer>
+    98|
+    99|  <script>
+   100|    let originalFile = null;
+   101|    let originalImg = new Image();
+   102|
+   103|    const dropZone = document.getElementById('dropZone');
+   104|    const fileInput = document.getElementById('fileInput');
+   105|    const controlsPanel = document.getElementById('controlsPanel');
+   106|    const qualityInput = document.getElementById('quality');
+   107|    const qualityVal = document.getElementById('qualityVal');
+   108|    const originalPreview = document.getElementById('originalPreview');
+   109|    const originalSize = document.getElementById('originalSize');
+   110|    const compressedSize = document.getElementById('compressedSize');
+   111|    const previewCanvas = document.getElementById('previewCanvas');
+   112|
+   113|    dropZone.addEventListener('click', () => fileInput.click());
+   114|    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+   115|    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+   116|    dropZone.addEventListener('drop', e => {
+   117|      e.preventDefault();
+   118|      dropZone.classList.remove('dragover');
+   119|      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+   120|    });
+   121|    fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+   122|    qualityInput.addEventListener('input', () => { qualityVal.textContent = qualityInput.value + '%'; updatePreview(); });
+   123|
+   124|    function handleFile(file) {
+   125|      if (!file.type.match(/image\/(png|jpeg|webp)/)) { alert('请选择 PNG / JPG / WebP 图片'); return; }
+   126|      originalFile = file;
+   127|      originalSize.textContent = '大小: ' + formatSize(file.size);
+   128|      const reader = new FileReader();
+   129|      reader.onload = e => {
+   130|        originalImg.onload = () => {
+   131|          originalPreview.src = e.target.result;
+   132|          originalPreview.style.display = 'block';
+   133|          controlsPanel.style.display = 'block';
+   134|          updatePreview();
+   135|        };
+   136|        originalImg.src = e.target.result;
+   137|      };
+   138|      reader.readAsDataURL(file);
+   139|    }
+   140|
+   141|    function updatePreview() {
+   142|      if (!originalImg.width) return;
+   143|      const canvas = previewCanvas;
+   144|      const maxW = 400;
+   145|      const scale = Math.min(1, maxW / originalImg.width);
+   146|      canvas.width = originalImg.width * scale;
+   147|      canvas.height = originalImg.height * scale;
+   148|      const ctx = canvas.getContext('2d');
+   149|      ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
+   150|      canvas.style.display = 'block';
+   151|      canvas.toBlob(blob => {
+   152|        if (blob) compressedSize.textContent = '预计: ' + formatSize(blob.size);
+   153|      }, document.getElementById('format').value, qualityInput.value / 100);
+   154|    }
+   155|
+   156|    function compress() {
+   157|      if (!originalImg.width) return;
+   158|      const canvas = document.createElement('canvas');
+   159|      canvas.width = originalImg.width;
+   160|      canvas.height = originalImg.height;
+   161|      canvas.getContext('2d').drawImage(originalImg, 0, 0);
+   162|      const fmt = document.getElementById('format').value;
+   163|      const ext = fmt.split('/')[1].replace('jpeg','jpg');
+   164|      canvas.toBlob(blob => {
+   165|        const url = URL.createObjectURL(blob);
+   166|        const a = document.createElement('a');
+   167|        a.href = url;
+   168|        a.download = 'compressed.' + ext;
+   169|        a.click();
+   170|        URL.revokeObjectURL(url);
+   171|      }, fmt, qualityInput.value / 100);
+   172|    }
+   173|
+   174|    function formatSize(bytes) {
+   175|      if (bytes < 1024) return bytes + ' B';
+   176|      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+   177|      return (bytes / 1048576).toFixed(2) + ' MB';
+   178|    }
+   179|  </script>
+   180|</body>
+   181|</html>
+   182|
