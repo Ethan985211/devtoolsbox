@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF 拆分 - DevToolsBox</title>
+<meta name="description" content="免费在线PDF拆分工具，按页码范围提取PDF页面。支持逗号分隔和范围语法(如1,3-5,8)。纯浏览器本地处理，数据安全零上传。">
+<link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="navbar">
+<div class="navbar-inner">
+<a href="../index.html" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+<div style="display:flex;align-items:center;">
+<nav class="navbar-links">
+<a href="../index.html">首页</a>
+<a href="pdf-to-text.html">PDF提取</a>
+<a href="pdf-merge.html">PDF合并</a>
+<a href="image-compress.html">图片压缩</a>
+</nav>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+</div>
+</div>
+</header>
+
+<main class="tool-page">
+<div class="tool-header"><h1>PDF 拆分</h1><p>上传 PDF，指定页码范围，提取对应页面为新 PDF。例如：1,3,5-8 或 2-4,7</p></div>
+
+<a href="https://www.vmssr.net/#/register?code=fGN3KQqi" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<div>
+<span class="promo-tag">推荐</span>
+<div class="promo-title">VMSSR 高速网络 — 全球多节点覆盖</div>
+<div class="promo-desc">稳定低延迟，注册即用无需配置。通过邀请链接注册支持本站持续运营</div>
+</div>
+<span class="promo-cta">立即使用</span>
+</a>
+
+<div class="tool-panel" id="uploadPanel" style="text-align:center;padding:40px 20px;border:2px dashed var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:border-color var(--transition)" onclick="document.getElementById('pdfFile').click()">
+<div style="font-size:48px;margin-bottom:12px">✂️</div>
+<div style="font-size:18px;font-weight:600;margin-bottom:6px">点击选择 PDF 文件</div>
+<div style="color:var(--text-secondary);font-size:14px">或拖放文件到此处</div>
+<input type="file" id="pdfFile" accept=".pdf,application/pdf" style="display:none" onchange="loadPdf(event)">
+</div>
+
+<div class="tool-panel" id="infoPanel" style="display:none">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+<span style="font-size:24px">📄</span>
+<div>
+<div style="font-weight:600" id="pdfName"></div>
+<div style="font-size:13px;color:var(--text-secondary)">共 <span id="pageTotal">0</span> 页</div>
+</div>
+<button class="btn btn-secondary" style="margin-left:auto;font-size:12px;padding:4px 10px" onclick="resetPdf()">重新选择</button>
+</div>
+</div>
+
+<div class="tool-panel" id="splitPanel" style="display:none">
+<label for="pageRange">页码范围</label>
+<input type="text" id="pageRange" placeholder="例如：1,3,5-8 或 2-4" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:15px;background:var(--bg);color:var(--text)">
+<div style="font-size:13px;color:var(--text-secondary);margin-top:6px">支持逗号分隔和范围（如 1-5），页码从 1 开始。留空则提取全部页面。</div>
+
+<div class="tool-panel" style="margin-top:12px;padding:12px;background:var(--bg-secondary);border-radius:var(--radius)">
+<label style="font-size:14px;margin-bottom:6px;display:block">拆分模式</label>
+<div style="display:flex;gap:16px">
+<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px">
+<input type="radio" name="splitMode" value="extract" checked> 提取指定页（合并为一个PDF）
+</label>
+<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px">
+<input type="radio" name="splitMode" value="perpage"> 每页拆为独立PDF（ZIP下载）
+</label>
+</div>
+</div>
+
+<div style="display:flex;gap:8px;margin-top:12px">
+<button class="btn btn-primary" onclick="splitPdf()">拆分并下载</button>
+</div>
+</div>
+
+<div class="tool-panel" id="progressPanel" style="display:none;text-align:center">
+<div class="spinner" style="width:24px;height:24px;border:3px solid var(--border);border-top:3px solid var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px"></div>
+<p id="progressText">正在处理...</p>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<div class="tool-panel" id="errorPanel" style="display:none;border-left:3px solid var(--danger)">
+<p style="color:var(--danger);margin:0" id="errorMsg"></p>
+</div>
+
+<div class="sponsor-section">
+<h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+<div class="sponsor-qrcodes">
+<div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+<div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+</div>
+</div>
+</main>
+
+<footer class="site-footer">
+<div class="footer-inner">
+<div class="footer-brand"><strong>🧰 DevToolsBox</strong>开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+<div class="footer-links">
+<div><h5>工具</h5>
+<a href="pdf-to-text.html">PDF提取</a><a href="pdf-merge.html">PDF合并</a><a href="image-compress.html">图片压缩</a>
+</div>
+<div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a><a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a></div>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span>
+<span>Cloudflare Pages ⚡ 全球加速</span>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+const { PDFDocument } = PDFLib;
+let pdfDoc = null;
+let pageCount = 0;
+let pdfName = '';
+
+// 拖放支持
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', async e => {
+e.preventDefault();
+const file = e.dataTransfer.files[0];
+if (file && file.type === 'application/pdf') await handlePdfFile(file);
+});
+
+async function loadPdf(event) {
+const file = event.target.files[0];
+if (!file) return;
+if (file.type !== 'application/pdf') { showError('请选择 PDF 文件'); return; }
+await handlePdfFile(file);
+}
+
+async function handlePdfFile(file) {
+try {
+const buf = await file.arrayBuffer();
+pdfDoc = await PDFDocument.load(buf);
+pageCount = pdfDoc.getPageCount();
+pdfName = file.name;
+
+document.getElementById('uploadPanel').style.display = 'none';
+document.getElementById('infoPanel').style.display = 'block';
+document.getElementById('splitPanel').style.display = 'block';
+document.getElementById('pdfName').textContent = pdfName;
+document.getElementById('pageTotal').textContent = pageCount;
+document.getElementById('pageRange').placeholder = '例如：1,3,5-8 或 2-4（共' + pageCount + '页）';
+errorPanel.style.display = 'none';
+
+} catch (err) { showError('加载失败：' + err.message); }
+}
+
+function resetPdf() {
+pdfDoc = null;
+document.getElementById('uploadPanel').style.display = 'block';
+document.getElementById('infoPanel').style.display = 'none';
+document.getElementById('splitPanel').style.display = 'none';
+document.getElementById('pdfFile').value = '';
+}
+
+function parsePageRange(input, max) {
+if (!input.trim()) return Array.from({ length: max }, (_, i) => i); // 全部
+
+const pages = new Set();
+const parts = input.split(',').map(s => s.trim()).filter(Boolean);
+for (const part of parts) {
+if (part.includes('-')) {
+const [start, end] = part.split('-').map(Number);
+if (isNaN(start) || isNaN(end) || start < 1 || end > max || start > end) throw new Error(`无效范围: ${part}`);
+for (let i = start; i <= end; i++) pages.add(i - 1);
+} else {
+const n = Number(part);
+if (isNaN(n) || n < 1 || n > max) throw new Error(`无效页码: ${part}`);
+pages.add(n - 1);
+}
+}
+return Array.from(pages).sort((a, b) => a - b);
+}
+
+async function splitPdf() {
+if (!pdfDoc) return;
+const mode = document.querySelector('input[name="splitMode"]:checked').value;
+
+try {
+const pageIndices = parsePageRange(document.getElementById('pageRange').value, pageCount);
+if (!pageIndices.length) { showError('请指定有效的页码'); return; }
+
+document.getElementById('splitPanel').style.display = 'none';
+document.getElementById('infoPanel').style.display = 'none';
+document.getElementById('progressPanel').style.display = 'block';
+errorPanel.style.display = 'none';
+
+if (mode === 'extract') {
+document.getElementById('progressText').textContent = `正在提取 ${pageIndices.length} 页...`;
+const newDoc = await PDFDocument.create();
+const copied = await newDoc.copyPages(pdfDoc, pageIndices);
+copied.forEach(p => newDoc.addPage(p));
+const bytes = await newDoc.save();
+downloadBlob(new Blob([bytes], { type: 'application/pdf' }), pdfName.replace('.pdf', '') + '-extracted.pdf');
+
+} else {
+// 每页独立 + ZIP
+const zip = new JSZip();
+for (let i = 0; i < pageIndices.length; i++) {
+document.getElementById('progressText').textContent = `正在拆分第 ${i+1}/${pageIndices.length} 页...`;
+const pageDoc = await PDFDocument.create();
+const [copied] = await pageDoc.copyPages(pdfDoc, [pageIndices[i]]);
+pageDoc.addPage(copied);
+const bytes = await pageDoc.save();
+const pageNum = pageIndices[i] + 1;
+zip.file(`page-${pageNum}.pdf`, bytes);
+}
+const zipBlob = await zip.generateAsync({ type: 'blob' });
+downloadBlob(zipBlob, pdfName.replace('.pdf', '') + '-split.zip');
+}
+
+document.getElementById('progressPanel').style.display = 'none';
+document.getElementById('infoPanel').style.display = 'block';
+document.getElementById('splitPanel').style.display = 'block';
+
+} catch (err) {
+document.getElementById('progressPanel').style.display = 'none';
+document.getElementById('infoPanel').style.display = 'block';
+document.getElementById('splitPanel').style.display = 'block';
+showError(err.message || '拆分失败');
+}
+}
+
+function downloadBlob(blob, name) {
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url; a.download = name;
+document.body.appendChild(a); a.click();
+document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function showError(msg) {
+document.getElementById('errorPanel').style.display = 'block';
+document.getElementById('errorMsg').textContent = msg;
+}
+
+// Theme
+(function() {
+const html = document.documentElement;
+const toggle = document.querySelector('.theme-toggle');
+const saved = localStorage.getItem('devtoolsbox-theme');
+if (saved) html.setAttribute('data-theme', saved);
+updateIcon();
+window.toggleTheme = function() {
+const n = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+html.setAttribute('data-theme', n);
+localStorage.setItem('devtoolsbox-theme', n);
+updateIcon();
+};
+function updateIcon() { toggle.textContent = html.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; }
+})();
+</script>
+</body>
+</html>

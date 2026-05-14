@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF 文本提取 - DevToolsBox</title>
+<meta name="description" content="免费在线PDF文本提取工具，上传PDF即可提取文字内容并下载为TXT或DOC文件。纯浏览器本地处理，数据安全零上传。">
+<link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="navbar">
+<div class="navbar-inner">
+<a href="../index.html" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+<div style="display:flex;align-items:center;">
+<nav class="navbar-links">
+<a href="../index.html">首页</a>
+<a href="image-compress.html">图片压缩</a>
+<a href="json-formatter.html">JSON</a>
+<a href="base64.html">Base64</a>
+</nav>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+</div>
+</div>
+</header>
+
+<main class="tool-page">
+<div class="tool-header"><h1>PDF 文本提取</h1><p>上传 PDF 文件，提取文字内容并下载为 TXT 或 Word 可打开的 DOC 文件。处理完全在浏览器本地完成</p></div>
+
+<a href="https://www.aliyun.com/benefit?userCode=xqdanc4i" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<div>
+<span class="promo-tag">推荐</span>
+<div class="promo-title">阿里云服务器 — 个人开发者首选</div>
+<div class="promo-desc">国内三网高速 BGP，新用户低至 ¥68/年。云大使专属链接，购买即支持本站</div>
+</div>
+<span class="promo-cta">立即购买</span>
+</a>
+
+<div class="tool-panel" id="uploadPanel" style="text-align:center;padding:40px 20px;border:2px dashed var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:border-color var(--transition)" onclick="document.getElementById('pdfFile').click()">
+<div style="font-size:48px;margin-bottom:12px">📄</div>
+<div style="font-size:18px;font-weight:600;margin-bottom:6px">点击选择 PDF 文件</div>
+<div style="color:var(--text-secondary);font-size:14px">或拖放文件到此处</div>
+<input type="file" id="pdfFile" accept=".pdf,application/pdf" style="display:none" onchange="handleFileSelect(event)">
+</div>
+
+<div class="tool-panel" id="progressPanel" style="display:none">
+<div style="display:flex;align-items:center;gap:12px">
+<div class="spinner" style="width:24px;height:24px;border:3px solid var(--border);border-top:3px solid var(--accent);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+<span id="progressText">正在提取文本...</span>
+</div>
+<div style="margin-top:12px;background:var(--bg-secondary);border-radius:var(--radius-sm);height:6px;overflow:hidden">
+<div id="progressBar" style="height:100%;background:var(--accent);width:0%;transition:width 0.3s;border-radius:var(--radius-sm)"></div>
+</div>
+</div>
+
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<div class="tool-panel" id="resultPanel" style="display:none">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<label>提取的文本内容 (<span id="pageCount">0</span> 页)</label>
+<span id="charCount" style="font-size:13px;color:var(--text-secondary)"></span>
+</div>
+<textarea id="outputText" readonly rows="15" style="width:100%;font-family:var(--font-mono);font-size:13px;resize:vertical;min-height:300px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:12px;color:var(--text)"></textarea>
+<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+<button class="btn btn-primary" onclick="downloadTxt()">下载 TXT</button>
+<button class="btn btn-success" onclick="downloadDoc()">下载 DOC (Word可打开)</button>
+<button class="btn btn-secondary" onclick="copyText()">复制文本</button>
+</div>
+</div>
+
+<div class="tool-panel" id="errorPanel" style="display:none;border-left:3px solid var(--danger)">
+<p style="color:var(--danger);margin:0" id="errorMsg"></p>
+</div>
+
+<div class="sponsor-section">
+<h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+<div class="sponsor-qrcodes">
+<div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+<div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+</div>
+</div>
+</main>
+
+<footer class="site-footer">
+<div class="footer-inner">
+<div class="footer-brand"><strong>🧰 DevToolsBox</strong>开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+<div class="footer-links">
+<div><h5>工具</h5>
+<a href="image-compress.html">图片压缩</a><a href="json-formatter.html">JSON 格式化</a><a href="base64.html">Base64</a>
+</div>
+<div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a><a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a></div>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span>
+<span>Cloudflare Pages ⚡ 全球加速</span>
+</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const fileInput = document.getElementById('pdfFile');
+const uploadPanel = document.getElementById('uploadPanel');
+const progressPanel = document.getElementById('progressPanel');
+const resultPanel = document.getElementById('resultPanel');
+const errorPanel = document.getElementById('errorPanel');
+
+let extractedText = '';
+let totalPages = 0;
+
+// 拖放支持
+uploadPanel.addEventListener('dragover', e => { e.preventDefault(); uploadPanel.style.borderColor = 'var(--accent)'; });
+uploadPanel.addEventListener('dragleave', () => uploadPanel.style.borderColor = 'var(--border)');
+uploadPanel.addEventListener('drop', e => {
+e.preventDefault();
+uploadPanel.style.borderColor = 'var(--border)';
+const file = e.dataTransfer.files[0];
+if (file && file.type === 'application/pdf') { processFile(file); }
+else showError('请拖放 PDF 文件');
+});
+
+async function handleFileSelect(event) {
+const file = event.target.files[0];
+if (!file) return;
+if (file.type !== 'application/pdf') { showError('请选择 PDF 文件'); return; }
+await processFile(file);
+}
+
+async function processFile(file) {
+hideAll();
+progressPanel.style.display = 'block';
+errorPanel.style.display = 'none';
+
+try {
+const arrayBuffer = await file.arrayBuffer();
+const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+totalPages = pdf.numPages;
+document.getElementById('pageCount').textContent = totalPages;
+
+const texts = [];
+for (let i = 1; i <= totalPages; i++) {
+document.getElementById('progressText').textContent = `正在提取第 ${i}/${totalPages} 页...`;
+document.getElementById('progressBar').style.width = (i / totalPages * 100) + '%';
+
+const page = await pdf.getPage(i);
+const content = await page.getTextContent();
+const pageText = content.items.map(item => item.str).join(' ');
+texts.push(pageText);
+}
+
+extractedText = texts.join('\n\n--- 第 ' + (texts.length > 1 ? '?' : '1') + ' 页 ---\n\n'.replace('?', () => {
+let result = '';
+for (let j = 1; j <= totalPages; j++) result += '\n--- 第 ' + j + ' 页 ---\n' + texts[j-1];
+return result;
+}));
+
+// Fix: rejoin properly
+extractedText = texts.map((t, i) => `--- 第 ${i+1} 页 ---\n${t}`).join('\n\n');
+
+document.getElementById('outputText').value = extractedText;
+document.getElementById('charCount').textContent = extractedText.length.toLocaleString() + ' 字符';
+
+progressPanel.style.display = 'none';
+resultPanel.style.display = 'block';
+
+} catch (err) {
+progressPanel.style.display = 'none';
+showError('提取失败：' + (err.message || '未知错误，请确认文件为有效 PDF'));
+console.error(err);
+}
+}
+
+function showError(msg) {
+errorPanel.style.display = 'block';
+document.getElementById('errorMsg').textContent = msg;
+}
+
+function hideAll() {
+resultPanel.style.display = 'none';
+errorPanel.style.display = 'none';
+progressPanel.style.display = 'none';
+}
+
+function downloadTxt() {
+if (!extractedText) return;
+const blob = new Blob(['\uFEFF' + extractedText], { type: 'text/plain;charset=utf-8' });
+downloadBlob(blob, 'extracted-text.txt');
+}
+
+function downloadDoc() {
+if (!extractedText) return;
+const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+<head><meta charset="utf-8"><style>body{font-family:'Microsoft YaHei',sans-serif;line-height:1.8;padding:2em;color:#333}
+.page-break{page-break-before:always;border-top:2px dashed #ccc;margin-top:2em;padding-top:1em}
+</style></head><body>` +
+extractedText.replace(/\n/g, '<br>').replace(/--- 第 (\d+) 页 ---/g, '<div class="page-break"><strong>第 $1 页</strong></div>') +
+'</body></html>';
+const blob = new Blob(['\uFEFF' + html], { type: 'application/msword;charset=utf-8' });
+downloadBlob(blob, 'extracted-text.doc');
+}
+
+function copyText() {
+if (!extractedText) return;
+navigator.clipboard.writeText(extractedText).then(() => {
+const btn = event.target;
+const orig = btn.textContent;
+btn.textContent = '已复制!';
+setTimeout(() => btn.textContent = orig, 1500);
+}).catch(() => {
+document.getElementById('outputText').select();
+document.execCommand('copy');
+});
+}
+
+function downloadBlob(blob, filename) {
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = filename;
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+URL.revokeObjectURL(url);
+}
+
+// Theme
+(function() {
+const html = document.documentElement;
+const toggle = document.querySelector('.theme-toggle');
+const saved = localStorage.getItem('devtoolsbox-theme');
+if (saved) html.setAttribute('data-theme', saved);
+updateIcon();
+window.toggleTheme = function() {
+const n = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+html.setAttribute('data-theme', n);
+localStorage.setItem('devtoolsbox-theme', n);
+updateIcon();
+};
+function updateIcon() { toggle.textContent = html.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; }
+})();
+</script>
+</body>
+</html>
