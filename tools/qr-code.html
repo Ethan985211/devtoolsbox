@@ -297,7 +297,7 @@
   <div>
     <span class="promo-tag">推荐</span>
     <div class="promo-title">阿里云服务器 - 个人开发者首选</div>
-    <div class="promo-desc">国内三网高速 BGP，新用户低至 ¥68/年。云大使专属链接，购买即支持本站</div>
+    <div class="promo-desc">国内三网高速 BGP，新用户低至 ¥68/年。购买即支持本站</div>
   </div>
   <span class="promo-cta">立即购买</span>
 </a>
@@ -622,7 +622,24 @@ var modules, moduleCount, qrInfo;
 function getBCHDigit(d){var n=0;while(d){n++;d>>>=1}return n}
 function getBCHTypeInfo(d){var a=d<<10;while(getBCHDigit(a)-getBCHDigit(0x537)>=0)a^=0x537<<(getBCHDigit(a)-getBCHDigit(0x537));return((d<<10)|a)^0x5412}
 function getBCHTypeNumber(d){var a=d<<12;while(getBCHDigit(a)-getBCHDigit(0x1f25)>=0)a^=0x1f25<<(getBCHDigit(a)-getBCHDigit(0x1f25));return(d<<12)|a}
-function getPatternPosition(v){return[6,14,22,30,38,46,54,62,70,78,86,94,102,110,118,126,134,142,150,158,166,174,182,190,198,206,214,222,230,238,246,254,262,270,278,286,294,302,310,318,326].slice(0,v-1)}
+function getPatternPosition(v){
+  var t=[
+    [],                   // v1
+    [6,18],[6,22],[6,26],[6,30],[6,34],
+    [6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],
+    [6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],
+    [6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],
+    [6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],
+    [6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],
+    [6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],
+    [6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],
+    [6,34,62,90,118,146],[6,30,54,78,102,126,150],
+    [6,24,50,76,102,128,154],[6,28,54,80,106,132,158],
+    [6,32,58,84,110,136,162],[6,26,54,82,110,138,166],
+    [6,30,58,86,114,142,170]
+  ];
+  return t[v-1]||[];
+}
 
 function getMask(mp,i,j){
   switch(mp){
@@ -667,7 +684,7 @@ function sTypeInfo(test,mask){
     else if(i<9)modules[8][15-i-1+1]=m;
     else modules[8][15-i-1]=m;
   }
-  modules[moduleCount-8][8]=!test;
+  modules[moduleCount-8][8]=true; // dark module — always black
 }
 function sTypeNum(test){
   var bits=getBCHTypeNumber(qrInfo.typeNumber);
@@ -883,8 +900,9 @@ window.QR = {
         fg = fgEl.value,
         bg = bgEl.value,
         c = d.moduleCount,
-        sc = Math.floor(s / c),
-        as = sc * c;
+        sc = Math.floor(s / (c + 8)), // +8 for quiet zone (4 modules each side)
+        qz = sc * 4,                  // quiet zone pixels
+        as = sc * (c + 8);            // total canvas size with quiet zone
 
     qc.width = qc.height = as;
     var ctx = qc.getContext('2d');
@@ -894,7 +912,7 @@ window.QR = {
     for(var r=0;r<c;r++)
       for(var cc=0;cc<c;cc++)
         if(d.modules[r][cc])
-          ctx.fillRect(cc*sc, r*sc, sc, sc);
+          ctx.fillRect(qz + cc*sc, qz + r*sc, sc, sc);
   }
 
   // ── Meta info ────────────────────────────────────
@@ -921,8 +939,9 @@ window.QR = {
         fg = fgEl.value,
         bg = bgEl.value,
         c = qrData.moduleCount,
-        sc = Math.floor(s / c),
-        as = sc * c;
+        sc = Math.floor(s / (c + 8)),
+        qz = sc * 4,
+        as = sc * (c + 8);
     var c2 = document.createElement('canvas');
     c2.width = c2.height = as;
     var ctx = c2.getContext('2d');
@@ -931,7 +950,7 @@ window.QR = {
     for(var r=0;r<c;r++)
       for(var cc=0;cc<c;cc++)
         if(qrData.modules[r][cc])
-          ctx.fillRect(cc*sc, r*sc, sc, sc);
+          ctx.fillRect(qz + cc*sc, qz + r*sc, sc, sc);
     var a = document.createElement('a');
     a.href = c2.toDataURL('image/png');
     a.download = 'qrcode@2x.png';
@@ -943,11 +962,13 @@ window.QR = {
     var c = qrData.moduleCount,
         fg = fgEl.value,
         bg = bgEl.value,
-        svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+c+'" height="'+c+'" viewBox="0 0 '+c+' '+c+'"><rect width="'+c+'" height="'+c+'" fill="'+bg+'"/>';
+        qz = 4,                        // 4-module quiet zone
+        size = c + 2*qz,
+        svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><rect width="'+size+'" height="'+size+'" fill="'+bg+'"/>';
     for(var r=0;r<c;r++)
       for(var cc=0;cc<c;cc++)
         if(qrData.modules[r][cc])
-          svg += '<rect x="'+cc+'" y="'+r+'" width="1" height="1" fill="'+fg+'"/>';
+          svg += '<rect x="'+(qz+cc)+'" y="'+(qz+r)+'" width="1" height="1" fill="'+fg+'"/>';
     svg += '</svg>';
     var blob = new Blob([svg],{type:'image/svg+xml'});
     var url = URL.createObjectURL(blob);
