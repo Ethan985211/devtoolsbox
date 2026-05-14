@@ -1,91 +1,99 @@
-<!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>图片压缩 - DevToolsBox</title>
-  <meta name="description" content="在线图片压缩工具，支持 PNG/JPG/WebP，调节压缩质量，实时预览。纯浏览器处理，不上传。">
-  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
-  <link rel="stylesheet" href="../css/style.css">
-  <style>.drop-zone{min-height:160px}</style>
-</head>
-<body>
-  <header class="navbar">
-    <div class="navbar-inner">
-      <a href="../index.html" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
-      <div style="display:flex;align-items:center;">
-        <nav class="navbar-links">
-          <a href="../index.html">首页</a>
-          <a href="image-compress.html">图片压缩</a>
-          <a href="json-formatter.html">JSON</a>
-          <a href="qr-code.html">二维码</a>
-        </nav>
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
-      </div>
-    </div>
-  </header>
-
-  <main class="tool-page">
-    <div class="tool-header">
-      <h1>🖼️ 图片压缩</h1>
-      <p>支持 PNG、JPG、WebP 格式，调节质量滑块实时预览压缩效果</p>
-    </div>
-
-    <div class="ad-slot">📢 <a href="mailto:2917834376@qq.com" style="color:inherit">广告位合作联系：2917834376@qq.com</a></div>
-
-    <div class="tool-panel">
-      <div class="drop-zone" id="dropZone">
-        <div class="dz-icon">📁</div>
-        <p>拖放图片到此处，或点击选择文件</p>
-        <p style="font-size:12px;opacity:.6;margin-top:8px">支持 PNG / JPG / WebP</p>
-        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" style="display:none">
-      </div>
-    </div>
-
-    <div class="tool-panel" id="controlsPanel" style="display:none">
-      <div class="controls-row">
-        <div><label>压缩质量</label><input type="range" id="quality" min="1" max="100" value="80" style="width:100%"></div>
-        <div style="max-width:80px;text-align:center"><label>&nbsp;</label><span id="qualityVal" style="font-weight:700;font-size:18px">80%</span></div>
-        <div><label>输出格式</label><select id="format"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></div>
-        <div style="display:flex;align-items:flex-end"><button class="btn btn-primary" id="compressBtn">压缩并下载</button></div>
-      </div>
-      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:16px">
-        <div style="flex:1;min-width:250px"><label>原图</label><p id="originalSize" style="font-size:13px;opacity:.7"></p><img id="originalPreview" class="preview-img" style="display:none" alt="原图预览" width="400" height="300"></div>
-        <div style="flex:1;min-width:250px"><label>压缩后</label><p id="compressedSize" style="font-size:13px;opacity:.7"></p><canvas id="previewCanvas" style="display:none;max-width:100%;border-radius:8px"></canvas></div>
-      </div>
-    </div>
-
-    <div class="sponsor-section">
-      <h3>☕ 如果这个工具帮到了你</h3>
-      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
-      <div class="sponsor-qrcodes">
-        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
-        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
-      </div>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
-      <div class="footer-links">
-        <div><h5>工具</h5><a href="image-compress.html">图片压缩</a><a href="image-convert.html">格式转换</a><a href="json-formatter.html">JSON 格式化</a><a href="base64.html">Base64</a><a href="qr-code.html">二维码</a><a href="timestamp.html">时间戳</a></div>
-        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">📧 广告合作</a><a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a></div>
-      </div>
-    </div>
-    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span><span>Cloudflare Pages ⚡ 全球加速</span></div>
-  </footer>
-
-<script>
-(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();
-</script>
-<script>
-(function(){var oF=null,oImg=new Image,dz=document.getElementById("dropZone"),fi=document.getElementById("fileInput"),cp=document.getElementById("controlsPanel"),qi=document.getElementById("quality"),qv=document.getElementById("qualityVal"),op=document.getElementById("originalPreview"),os=document.getElementById("originalSize"),cs=document.getElementById("compressedSize"),pC=document.getElementById("previewCanvas");dz.addEventListener("click",function(){fi.click()});dz.addEventListener("dragover",function(e){e.preventDefault();dz.classList.add("dragover")},{passive:false});dz.addEventListener("dragleave",function(){dz.classList.remove("dragover")});dz.addEventListener("drop",function(e){e.preventDefault();dz.classList.remove("dragover");if(e.dataTransfer.files.length)hF(e.dataTransfer.files[0])});fi.addEventListener("change",function(e){if(e.target.files.length)hF(e.target.files[0])});qi.addEventListener("input",function(){qv.textContent=qi.value+"%";uP()});document.getElementById("compressBtn").addEventListener("click",compress);
-function hF(file){if(!file.type.match(/image\/(png|jpeg|webp)/)){alert("请选择 PNG / JPG / WebP 图片");return}oF=file;os.textContent="大小: "+fS(file.size);var r=new FileReader();r.onload=function(e){oImg.onload=function(){op.src=e.target.result;op.style.display="block";cp.style.display="block";uP()};oImg.src=e.target.result};r.readAsDataURL(file)}
-function uP(){if(!oImg.width)return;var c=pC,mW=400,s=Math.min(1,mW/oImg.width);c.width=oImg.width*s;c.height=oImg.height*s;var ctx=c.getContext("2d");ctx.drawImage(oImg,0,0,c.width,c.height);c.style.display="block";c.toBlob(function(b){if(b)cs.textContent="预计: "+fS(b.size)},document.getElementById("format").value,qi.value/100)}
-function compress(){if(!oImg.width)return;var c=document.createElement("canvas");c.width=oImg.width;c.height=oImg.height;c.getContext("2d").drawImage(oImg,0,0);var f=document.getElementById("format").value,e=f.split("/")[1].replace("jpeg","jpg");c.toBlob(function(b){var u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="compressed."+e;a.click();URL.revokeObjectURL(u)},f,qi.value/100)}
-function fS(b){if(b<1024)return b+" B";if(b<1048576)return(b/1024).toFixed(1)+" KB";return(b/1048576).toFixed(2)+" MB"}
-})();
-</script>
-</body>
-</html>
+     1|<!DOCTYPE html>
+     2|<html lang="zh-CN" data-theme="light">
+     3|<head>
+     4|  <meta charset="UTF-8">
+     5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     6|  <title>图片压缩 - DevToolsBox</title>
+     7|  <meta name="description" content="在线图片压缩工具，支持 PNG/JPG/WebP，调节压缩质量，实时预览。纯浏览器处理，不上传。">
+     8|  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+     9|  <link rel="stylesheet" href="../css/style.css">
+    10|  <style>.drop-zone{min-height:160px}</style>
+    11|</head>
+    12|<body>
+    13|  <header class="navbar">
+    14|    <div class="navbar-inner">
+    15|      <a href="../index.html" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+    16|      <div style="display:flex;align-items:center;">
+    17|        <nav class="navbar-links">
+    18|          <a href="../index.html">首页</a>
+    19|          <a href="image-compress.html">图片压缩</a>
+    20|          <a href="json-formatter.html">JSON</a>
+    21|          <a href="qr-code.html">二维码</a>
+    22|        </nav>
+    23|        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+    24|      </div>
+    25|    </div>
+    26|  </header>
+    27|
+    28|  <main class="tool-page">
+    29|    <div class="tool-header">
+    30|      <h1>🖼️ 图片压缩</h1>
+    31|      <p>支持 PNG、JPG、WebP 格式，调节质量滑块实时预览压缩效果</p>
+    32|    </div>
+    33|
+    34|    <a href="https://www.aliyun.com/benefit?userCode=xqdanc4i" class="promo-banner" target="_blank" rel="nofollow sponsored">
+  <div>
+    <span class="promo-tag">推荐</span>
+    <div class="promo-title">阿里云服务器 — 个人开发者首选</div>
+    <div class="promo-desc">国内三网高速 BGP，新用户低至 ¥68/年。云大使专属链接，购买即支持本站</div>
+  </div>
+  <span class="promo-cta">立即购买</span>
+</a>
+    35|
+    36|    <div class="tool-panel">
+    37|      <div class="drop-zone" id="dropZone">
+    38|        <div class="dz-icon">📁</div>
+    39|        <p>拖放图片到此处，或点击选择文件</p>
+    40|        <p style="font-size:12px;opacity:.6;margin-top:8px">支持 PNG / JPG / WebP</p>
+    41|        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" style="display:none">
+    42|      </div>
+    43|    </div>
+    44|
+    45|    <div class="tool-panel" id="controlsPanel" style="display:none">
+    46|      <div class="controls-row">
+    47|        <div><label>压缩质量</label><input type="range" id="quality" min="1" max="100" value="80" style="width:100%"></div>
+    48|        <div style="max-width:80px;text-align:center"><label>&nbsp;</label><span id="qualityVal" style="font-weight:700;font-size:18px">80%</span></div>
+    49|        <div><label>输出格式</label><select id="format"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></div>
+    50|        <div style="display:flex;align-items:flex-end"><button class="btn btn-primary" id="compressBtn">压缩并下载</button></div>
+    51|      </div>
+    52|      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:16px">
+    53|        <div style="flex:1;min-width:250px"><label>原图</label><p id="originalSize" style="font-size:13px;opacity:.7"></p><img id="originalPreview" class="preview-img" style="display:none" alt="原图预览" width="400" height="300"></div>
+    54|        <div style="flex:1;min-width:250px"><label>压缩后</label><p id="compressedSize" style="font-size:13px;opacity:.7"></p><canvas id="previewCanvas" style="display:none;max-width:100%;border-radius:8px"></canvas></div>
+    55|      </div>
+    56|    </div>
+    57|
+    58|    <div class="sponsor-section">
+    59|      <h3>如果这些工具对你有帮助</h3>
+    60|      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
+    61|      <div class="sponsor-qrcodes">
+    62|        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+    63|        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+    64|      </div>
+    65|    </div>
+    66|  </main>
+    67|
+    68|  <footer class="site-footer">
+    69|    <div class="footer-inner">
+    70|      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+    71|      <div class="footer-links">
+    72|        <div><h5>工具</h5><a href="image-compress.html">图片压缩</a><a href="image-convert.html">格式转换</a><a href="json-formatter.html">JSON 格式化</a><a href="base64.html">Base64</a><a href="qr-code.html">二维码</a><a href="timestamp.html">时间戳</a></div>
+    73|        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">📧 广告合作</a><a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a></div>
+    74|      </div>
+    75|    </div>
+    76|    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span><span>Cloudflare Pages ⚡ 全球加速</span></div>
+    77|  </footer>
+    78|
+    79|<script>
+    80|(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();
+    81|</script>
+    82|<script>
+    83|(function(){var oF=null,oImg=new Image,dz=document.getElementById("dropZone"),fi=document.getElementById("fileInput"),cp=document.getElementById("controlsPanel"),qi=document.getElementById("quality"),qv=document.getElementById("qualityVal"),op=document.getElementById("originalPreview"),os=document.getElementById("originalSize"),cs=document.getElementById("compressedSize"),pC=document.getElementById("previewCanvas");dz.addEventListener("click",function(){fi.click()});dz.addEventListener("dragover",function(e){e.preventDefault();dz.classList.add("dragover")},{passive:false});dz.addEventListener("dragleave",function(){dz.classList.remove("dragover")});dz.addEventListener("drop",function(e){e.preventDefault();dz.classList.remove("dragover");if(e.dataTransfer.files.length)hF(e.dataTransfer.files[0])});fi.addEventListener("change",function(e){if(e.target.files.length)hF(e.target.files[0])});qi.addEventListener("input",function(){qv.textContent=qi.value+"%";uP()});document.getElementById("compressBtn").addEventListener("click",compress);
+    84|function hF(file){if(!file.type.match(/image\/(png|jpeg|webp)/)){alert("请选择 PNG / JPG / WebP 图片");return}oF=file;os.textContent="大小: "+fS(file.size);var r=new FileReader();r.onload=function(e){oImg.onload=function(){op.src=e.target.result;op.style.display="block";cp.style.display="block";uP()};oImg.src=e.target.result};r.readAsDataURL(file)}
+    85|function uP(){if(!oImg.width)return;var c=pC,mW=400,s=Math.min(1,mW/oImg.width);c.width=oImg.width*s;c.height=oImg.height*s;var ctx=c.getContext("2d");ctx.drawImage(oImg,0,0,c.width,c.height);c.style.display="block";c.toBlob(function(b){if(b)cs.textContent="预计: "+fS(b.size)},document.getElementById("format").value,qi.value/100)}
+    86|function compress(){if(!oImg.width)return;var c=document.createElement("canvas");c.width=oImg.width;c.height=oImg.height;c.getContext("2d").drawImage(oImg,0,0);var f=document.getElementById("format").value,e=f.split("/")[1].replace("jpeg","jpg");c.toBlob(function(b){var u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="compressed."+e;a.click();URL.revokeObjectURL(u)},f,qi.value/100)}
+    87|function fS(b){if(b<1024)return b+" B";if(b<1048576)return(b/1024).toFixed(1)+" KB";return(b/1048576).toFixed(2)+" MB"}
+    88|})();
+    89|</script>
+    90|</body>
+    91|</html>
+    92|
