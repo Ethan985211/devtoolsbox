@@ -4,11 +4,273 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>二维码生成器 - DevToolsBox</title>
-<meta name="description" content="免费在线二维码生成器，文本/网址一键生成二维码，自定义颜色和大小。纯浏览器处理，不上传。">
-<link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+<meta name="description" content="免费在线二维码生成器，文本/网址一键生成二维码。4级纠错、自定义颜色、实时预览。纯浏览器处理，不上传。">
 <link rel="stylesheet" href="../css/style.css">
+<style>
+/* ═══ QR Tool - Premium Styles ═══ */
+.qr-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+@media(max-width:900px){.qr-layout{grid-template-columns:1fr}}
+
+.qr-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.qr-control-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.qr-control-card h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 16px 0;
+}
+
+/* Input area */
+.qr-input-wrap {
+  position: relative;
+}
+.qr-input-wrap textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 15px;
+  font-family: var(--font-mono);
+  background: var(--bg);
+  color: var(--text);
+  resize: vertical;
+  min-height: 72px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  line-height: 1.5;
+}
+.qr-input-wrap textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.qr-char-count {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+/* EC Level Pills */
+.ec-levels {
+  display: flex;
+  gap: 8px;
+}
+.ec-pill {
+  flex: 1;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition);
+  font-size: 13px;
+  user-select: none;
+}
+.ec-pill:hover { border-color: var(--accent); background: var(--surface-hover); }
+.ec-pill.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.ec-pill .ec-name { display: block; font-weight: 600; margin-bottom: 2px; }
+.ec-pill .ec-rate { display: block; font-size: 11px; opacity: 0.7; }
+
+/* Size slider */
+.qr-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.qr-slider-wrap input[type=range] {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  outline: none;
+}
+.qr-slider-wrap input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.qr-size-val {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 48px;
+  text-align: right;
+}
+
+/* Color pickers */
+.qr-colors {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.qr-color-field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.qr-color-field input[type=color] {
+  width: 40px; height: 40px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  padding: 2px;
+  background: none;
+}
+.qr-color-field label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.qr-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.qr-preset-dot {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform var(--transition);
+}
+.qr-preset-dot:hover { transform: scale(1.2); }
+
+/* Preview area */
+.qr-preview {
+  position: sticky;
+  top: 24px;
+}
+.qr-preview-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+.qr-preview-card canvas {
+  display: block;
+  margin: 0 auto;
+  border-radius: var(--radius-sm);
+  image-rendering: pixelated;
+}
+.qr-canvas-wrap {
+  display: inline-block;
+  padding: 16px;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+}
+[data-theme=dark] .qr-canvas-wrap { background: #fff; box-shadow: 0 2px 24px rgba(0,0,0,0.4); }
+.qr-canvas-wrap.anim-in {
+  animation: qrPopIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes qrPopIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* QR Info */
+.qr-meta {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.qr-meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.qr-meta-val {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.qr-meta-label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Download buttons */
+.qr-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.qr-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Empty state */
+.qr-empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--text-tertiary);
+}
+.qr-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+.qr-empty p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Responsive */
+@media(max-width:640px) {
+  .qr-preview-card { padding: 20px; }
+  .ec-levels { flex-wrap: wrap; }
+  .ec-pill { flex: 1 1 45%; }
+}
+</style>
 </head>
 <body>
+
 <header class="navbar">
 <div class="navbar-inner">
 <a href="../index.html" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
@@ -26,41 +288,119 @@
 </header>
 
 <main class="tool-page">
-<div class="tool-header"><h1>📱 二维码生成器</h1><p>输入文本或网址，一键生成二维码。支持自定义颜色和大小</p></div>
+<div class="tool-header">
+  <h1>二维码生成器</h1>
+  <p>输入文本或网址，实时生成高质量二维码。支持四级纠错、自定义颜色与尺寸</p>
+</div>
+
 <a href="https://www.aliyun.com/benefit?userCode=xqdanc4i" class="promo-banner" target="_blank" rel="nofollow sponsored">
   <div>
     <span class="promo-tag">推荐</span>
-    <div class="promo-title">阿里云服务器 — 个人开发者首选</div>
+    <div class="promo-title">阿里云服务器 - 个人开发者首选</div>
     <div class="promo-desc">国内三网高速 BGP，新用户低至 ¥68/年。云大使专属链接，购买即支持本站</div>
   </div>
   <span class="promo-cta">立即购买</span>
 </a>
 
-<div class="tool-panel"><label for="qrText">输入内容</label><textarea id="qrText" placeholder="输入网址或文本..." rows="3"></textarea></div>
+<div class="qr-layout">
 
-<div class="tool-panel">
-<div class="controls-row">
-<div><label>二维码大小</label><input type="range" id="qrSize" min="150" max="400" value="250" style="width:100%"><span id="sizeVal" style="font-size:13px;opacity:.7">250px</span></div>
-<div><label>前景色</label><input type="color" id="fgColor" value="#000000" style="width:50px;height:36px;border:none;cursor:pointer;padding:0"></div>
-<div><label>背景色</label><input type="color" id="bgColor" value="#ffffff" style="width:50px;height:36px;border:none;cursor:pointer;padding:0"></div>
-<div style="display:flex;align-items:flex-end"><button class="btn btn-primary" id="genBtn">生成二维码</button></div>
-</div>
-</div>
+  <!-- Left: Controls -->
+  <div class="qr-controls">
 
-<div class="tool-panel" id="qrResult" style="display:none;text-align:center">
-<canvas id="qrCanvas"></canvas>
-<div style="margin-top:16px;display:flex;gap:12px;justify-content:center">
-<button class="btn btn-primary" id="dlPng">下载 PNG</button>
-<button class="btn btn-secondary" id="dlSvg">下载 SVG</button>
-</div>
+    <div class="qr-control-card">
+      <h3>输入内容</h3>
+      <div class="qr-input-wrap">
+        <textarea id="qrText" placeholder="输入网址或文本，比如 https://example.com ..." rows="2"></textarea>
+        <span class="qr-char-count" id="charCount">0 字符</span>
+      </div>
+    </div>
+
+    <div class="qr-control-card">
+      <h3>纠错等级</h3>
+      <div class="ec-levels" id="ecLevels">
+        <div class="ec-pill active" data-ec="0">
+          <span class="ec-name">L</span><span class="ec-rate">7% 可修复</span>
+        </div>
+        <div class="ec-pill" data-ec="1">
+          <span class="ec-name">M</span><span class="ec-rate">15% 可修复</span>
+        </div>
+        <div class="ec-pill" data-ec="2">
+          <span class="ec-name">Q</span><span class="ec-rate">25% 可修复</span>
+        </div>
+        <div class="ec-pill" data-ec="3">
+          <span class="ec-name">H</span><span class="ec-rate">30% 可修复</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="qr-control-card">
+      <h3>尺寸</h3>
+      <div class="qr-slider-wrap">
+        <input type="range" id="qrSize" min="180" max="500" value="280">
+        <span class="qr-size-val" id="sizeVal">280px</span>
+      </div>
+    </div>
+
+    <div class="qr-control-card">
+      <h3>颜色</h3>
+      <div class="qr-colors">
+        <div class="qr-color-field">
+          <input type="color" id="fgColor" value="#000000">
+          <label>前景</label>
+        </div>
+        <div class="qr-color-field">
+          <input type="color" id="bgColor" value="#ffffff">
+          <label>背景</label>
+        </div>
+      </div>
+      <div class="qr-presets">
+        <span class="qr-preset-dot" style="background:#000" data-fg="#000000" data-bg="#ffffff" title="经典黑白"></span>
+        <span class="qr-preset-dot" style="background:#6366f1" data-fg="#6366f1" data-bg="#ffffff" title="靛蓝白底"></span>
+        <span class="qr-preset-dot" style="background:#0f172a" data-fg="#ffffff" data-bg="#0f172a" title="白字暗底"></span>
+        <span class="qr-preset-dot" style="background:#dc2626" data-fg="#dc2626" data-bg="#ffffff" title="红白"></span>
+        <span class="qr-preset-dot" style="background:#059669" data-fg="#059669" data-bg="#ffffff" title="绿白"></span>
+        <span class="qr-preset-dot" style="background:#d97706" data-fg="#d97706" data-bg="#ffffff" title="琥珀白"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right: Preview -->
+  <div class="qr-preview">
+    <div class="qr-preview-card">
+      <div id="qrEmpty" class="qr-empty">
+        <div class="qr-empty-icon">⊞</div>
+        <p>输入内容开始生成二维码</p>
+      </div>
+      <div id="qrResult" style="display:none">
+        <div class="qr-canvas-wrap" id="qrCanvasWrap">
+          <canvas id="qrCanvas"></canvas>
+        </div>
+        <div class="qr-meta" id="qrMeta">
+          <div class="qr-meta-item"><span class="qr-meta-val" id="metaVersion">-</span><span class="qr-meta-label">版本</span></div>
+          <div class="qr-meta-item"><span class="qr-meta-val" id="metaModules">-</span><span class="qr-meta-label">模块</span></div>
+          <div class="qr-meta-item"><span class="qr-meta-val" id="metaData">-</span><span class="qr-meta-label">字节</span></div>
+          <div class="qr-meta-item"><span class="qr-meta-val" id="metaEC">-</span><span class="qr-meta-label">纠错率</span></div>
+        </div>
+        <div class="qr-actions">
+          <button class="btn btn-primary qr-btn-icon" id="dlPng">PNG 下载</button>
+          <button class="btn btn-secondary qr-btn-icon" id="dlPng2x">PNG 2×</button>
+          <button class="btn btn-secondary qr-btn-icon" id="dlSvg">SVG 下载</button>
+          <button class="btn btn-secondary qr-btn-icon" id="copyImg">复制图片</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div class="sponsor-section">
-<h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
-<div class="sponsor-qrcodes">
-<div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
-<div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
-</div>
+  <h3>如果这些工具对你有帮助</h3>
+  <p>请我喝杯咖啡，支持我开发更多免费工具</p>
+  <div class="sponsor-qrcodes">
+    <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+    <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+  </div>
 </div>
 </main>
 
@@ -76,38 +416,32 @@
 </footer>
 
 <script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+
 <script>
 /* ═══════════════════════════════════════════════════════
-   QR Code Generator — 修复版
-   修复:
-   1. 字符计数指示器(CCI)：原版将模式4位+计数拼入1字节，
-      超过15字节的字符串模式位错乱导致不可扫描。
-      现用位级缓冲正确编码模式+CCI+数据。
-   2. Reed-Solomon纠错码：原版完全缺失EC码字，
-      现实现GF(256) RS编码，正确生成全部EC码字。
+   QR Code Generator — 完整重写
+   - Byte 模式 / UTF-8 编码
+   - 4级纠错 (L/M/Q/H)
+   - 正确 CCI 位宽 (版本1-9: 8位, 版本10+: 16位)
+   - GF(256) Reed-Solomon 纠错编码
+   - 多块交错排列 (ISO 18004)
+   - 掩码评估 (最小惩罚分)
    ═══════════════════════════════════════════════════════ */
 
-var QR;(function(){
+;(function(){
 'use strict';
 
-// ── GF(256) 算术 ──
-var GF_EXP = new Array(512);
-var GF_LOG = new Array(256);
-(function initGF(){
+// ── GF(256) ──────────────────────────────────────────
+var GF_EXP = new Array(512), GF_LOG = new Array(256);
+(function(){
   for(var i=0;i<256;i++){GF_EXP[i]=0;GF_LOG[i]=0}
-  var x=1;
-  for(var i=0;i<255;i++){
-    GF_EXP[i]=x;GF_EXP[i+255]=x;
+  for(var x=1,i=0;i<255;i++){
+    GF_EXP[i]=x; GF_EXP[i+255]=x;
     GF_LOG[x]=i;
-    x<<=1;
-    if(x&0x100)x^=0x11D;
+    x<<=1; if(x&0x100)x^=0x11D;
   }
 })();
-
-function gfMul(a,b){
-  if(a===0||b===0)return 0;
-  return GF_EXP[GF_LOG[a]+GF_LOG[b]];
-}
+function gfMul(a,b){ return (a===0||b===0)?0:GF_EXP[GF_LOG[a]+GF_LOG[b]]; }
 function gfPolyMul(p,q){
   var r=new Array(p.length+q.length-1);
   for(var i=0;i<r.length;i++)r[i]=0;
@@ -122,160 +456,160 @@ function gfGenPoly(deg){
   return g;
 }
 
-// ── 版本/容量表 ──
-// totalCodewords[v] = 该版本总码字数(数据+EC)
-var TOTAL_CODEWORDS=[0,26,44,70,100,134,172,196,242,292,346,404,466,532,581,655,733,815,901,991,1085,1156,1258,1364,1474,1588,1706,1828,1921,2051,2185,2323,2465,2611,2761,2876,3034,3196,3362,3532,3706];
-// 数据容量(字节数) — 可用于用户数据量
-var DATA_CAPACITY=[0,17,32,53,78,106,134,154,192,230,271,321,367,425,458,520,586,644,718,792,858,929,1003,1091,1171,1273,1367,1465,1528,1628,1732,1840,1952,2068,2188,2303,2431,2563,2699,2809,2953];
-
-// EC块结构 [version][ecLevel] → [{numBlocks, dataPerBlock, ecPerBlock},...]
-// ecLevel: 0=L, 1=M, 2=Q, 3=H
-var EC_BLOCKS=[
+// ── 容量表 ───────────────────────────────────────────
+// dataCapacity[version][ecLevel] = 最大数据字节数
+var DATA_CAP = [
   null,
-  [[{n:1,d:19,e:7}]],
-  [[{n:1,d:34,e:10}]],
-  [[{n:1,d:55,e:15}]],
-  [[{n:1,d:80,e:20}]],
-  [[{n:1,d:108,e:26}]],
-  [[{n:2,d:68,e:18}]],
-  [[{n:2,d:78,e:20}]],
-  [[{n:2,d:97,e:24}]],
-  [[{n:2,d:116,e:30}]],
-  [[{n:2,d:68,e:18},{n:2,d:69,e:18}]],
-  [[{n:4,d:81,e:20}]],
-  [[{n:2,d:92,e:24},{n:2,d:93,e:24}]],
-  [[{n:4,d:107,e:26}]],
-  [[{n:3,d:115,e:30},{n:1,d:116,e:30}]],
-  [[{n:5,d:87,e:22},{n:1,d:88,e:22}]],
-  [[{n:5,d:98,e:24},{n:1,d:99,e:24}]],
-  [[{n:1,d:107,e:28},{n:5,d:108,e:28}]],
-  [[{n:5,d:120,e:30},{n:1,d:121,e:30}]],
-  [[{n:3,d:113,e:28},{n:4,d:114,e:28}]],
-  [[{n:3,d:107,e:28},{n:5,d:108,e:28}]],
-  [[{n:4,d:116,e:28},{n:4,d:117,e:28}]],
-  [[{n:2,d:111,e:28},{n:7,d:112,e:28}]],
-  [[{n:4,d:121,e:30},{n:5,d:122,e:30}]],
-  [[{n:6,d:117,e:30},{n:4,d:118,e:30}]],
-  [[{n:8,d:106,e:26},{n:4,d:107,e:26}]],
-  [[{n:10,d:114,e:28},{n:2,d:115,e:28}]],
-  [[{n:8,d:122,e:30},{n:4,d:123,e:30}]],
-  [[{n:3,d:117,e:30},{n:10,d:118,e:30}]],
-  [[{n:7,d:116,e:30},{n:7,d:117,e:30}]],
-  [[{n:5,d:115,e:30},{n:10,d:116,e:30}]],
-  [[{n:13,d:115,e:30},{n:3,d:116,e:30}]],
-  [[{n:17,d:115,e:30}]],
-  [[{n:17,d:115,e:30},{n:1,d:116,e:30}]],
-  [[{n:13,d:115,e:30},{n:6,d:116,e:30}]],
-  [[{n:12,d:121,e:30},{n:7,d:122,e:30}]],
-  [[{n:6,d:121,e:30},{n:14,d:122,e:30}]],
-  [[{n:17,d:122,e:30},{n:4,d:123,e:30}]],
-  [[{n:4,d:122,e:30},{n:18,d:123,e:30}]],
-  [[{n:20,d:117,e:30},{n:4,d:118,e:30}]],
-  [[{n:19,d:118,e:30},{n:6,d:119,e:30}]]
+  [17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],
+  [134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],
+  [321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],
+  [586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],
+  [929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],
+  [1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],
+  [1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],
+  [2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273]
 ];
 
-// ── 工具函数 ──
+// Total codewords per version
+var TOTAL_CW = [0,26,44,70,100,134,172,196,242,292,346,404,466,532,581,655,733,815,901,991,1085,1156,1258,1364,1474,1588,1706,1828,1921,2051,2185,2323,2465,2611,2761,2876,3034,3196,3362,3532,3706];
+
+// EC_BLOCKS[version][ecLevel] → array of {n,d,e}
+// n=blocks in group, d=data codewords per block, e=ec codewords per block
+var EC_BLOCKS = [
+  null,
+  [[{n:1,d:19,e:7}],[{n:1,d:16,e:10}],[{n:1,d:13,e:13}],[{n:1,d:9,e:17}]],
+  [[{n:1,d:34,e:10}],[{n:1,d:28,e:16}],[{n:1,d:22,e:22}],[{n:1,d:16,e:28}]],
+  [[{n:1,d:55,e:15}],[{n:1,d:44,e:26}],[{n:2,d:17,e:18}],[{n:2,d:13,e:22}]],
+  [[{n:1,d:80,e:20}],[{n:2,d:32,e:18}],[{n:2,d:24,e:26}],[{n:4,d:9,e:16}]],
+  [[{n:1,d:108,e:26}],[{n:2,d:43,e:24}],[{n:2,d:15,e:18},{n:2,d:16,e:18}],[{n:2,d:11,e:22},{n:2,d:12,e:22}]],
+  [[{n:2,d:68,e:18}],[{n:4,d:27,e:16}],[{n:4,d:19,e:24}],[{n:4,d:15,e:28}]],
+  [[{n:2,d:78,e:20}],[{n:4,d:31,e:18}],[{n:2,d:14,e:18},{n:4,d:15,e:18}],[{n:4,d:13,e:26},{n:1,d:14,e:26}]],
+  [[{n:2,d:97,e:24}],[{n:2,d:38,e:22},{n:2,d:39,e:22}],[{n:4,d:18,e:22},{n:2,d:19,e:22}],[{n:4,d:14,e:26},{n:2,d:15,e:26}]],
+  [[{n:2,d:116,e:30}],[{n:3,d:36,e:22},{n:2,d:37,e:22}],[{n:4,d:16,e:20},{n:4,d:17,e:20}],[{n:4,d:12,e:24},{n:4,d:13,e:24}]],
+  [[{n:2,d:68,e:18},{n:2,d:69,e:18}],[{n:4,d:43,e:26},{n:1,d:44,e:26}],[{n:6,d:19,e:24},{n:2,d:20,e:24}],[{n:6,d:15,e:28},{n:2,d:16,e:28}]],
+  [[{n:4,d:81,e:20}],[{n:1,d:50,e:30},{n:4,d:51,e:30}],[{n:4,d:22,e:28},{n:4,d:23,e:28}],[{n:3,d:12,e:24},{n:8,d:13,e:24}]],
+  [[{n:2,d:92,e:24},{n:2,d:93,e:24}],[{n:6,d:36,e:22},{n:2,d:37,e:22}],[{n:4,d:20,e:26},{n:6,d:21,e:26}],[{n:7,d:14,e:28},{n:4,d:15,e:28}]],
+  [[{n:4,d:107,e:26}],[{n:8,d:37,e:22},{n:1,d:38,e:22}],[{n:8,d:20,e:24},{n:4,d:21,e:24}],[{n:12,d:11,e:22},{n:4,d:12,e:22}]],
+  [[{n:3,d:115,e:30},{n:1,d:116,e:30}],[{n:4,d:40,e:24},{n:5,d:41,e:24}],[{n:11,d:16,e:20},{n:5,d:17,e:20}],[{n:11,d:12,e:24},{n:5,d:13,e:24}]],
+  [[{n:5,d:87,e:22},{n:1,d:88,e:22}],[{n:5,d:41,e:24},{n:5,d:42,e:24}],[{n:5,d:24,e:30},{n:7,d:25,e:30}],[{n:11,d:12,e:24},{n:7,d:13,e:24}]],
+  [[{n:5,d:98,e:24},{n:1,d:99,e:24}],[{n:7,d:45,e:28},{n:3,d:46,e:28}],[{n:15,d:19,e:24},{n:2,d:20,e:24}],[{n:3,d:15,e:30},{n:13,d:16,e:30}]],
+  [[{n:1,d:107,e:28},{n:5,d:108,e:28}],[{n:10,d:46,e:28},{n:1,d:47,e:28}],[{n:1,d:22,e:28},{n:15,d:23,e:28}],[{n:2,d:14,e:28},{n:17,d:15,e:28}]],
+  [[{n:5,d:120,e:30},{n:1,d:121,e:30}],[{n:9,d:43,e:26},{n:4,d:44,e:26}],[{n:17,d:22,e:28},{n:1,d:23,e:28}],[{n:2,d:14,e:28},{n:19,d:15,e:28}]],
+  [[{n:3,d:113,e:28},{n:4,d:114,e:28}],[{n:3,d:44,e:28},{n:11,d:45,e:28}],[{n:17,d:21,e:26},{n:4,d:22,e:26}],[{n:9,d:13,e:26},{n:16,d:14,e:26}]],
+  [[{n:3,d:107,e:28},{n:5,d:108,e:28}],[{n:3,d:41,e:26},{n:13,d:42,e:26}],[{n:15,d:24,e:30},{n:5,d:25,e:30}],[{n:15,d:15,e:28},{n:10,d:16,e:28}]],
+  [[{n:4,d:116,e:28},{n:4,d:117,e:28}],[{n:17,d:42,e:26}],[{n:17,d:22,e:28},{n:6,d:23,e:28}],[{n:19,d:16,e:30},{n:6,d:17,e:30}]],
+  [[{n:2,d:111,e:28},{n:7,d:112,e:28}],[{n:17,d:46,e:28}],[{n:7,d:24,e:30},{n:16,d:25,e:30}],[{n:34,d:13,e:24}]],
+  [[{n:4,d:121,e:30},{n:5,d:122,e:30}],[{n:4,d:47,e:28},{n:14,d:48,e:28}],[{n:11,d:24,e:30},{n:14,d:25,e:30}],[{n:16,d:15,e:30},{n:14,d:16,e:30}]],
+  [[{n:6,d:117,e:30},{n:4,d:118,e:30}],[{n:6,d:45,e:28},{n:14,d:46,e:28}],[{n:11,d:24,e:30},{n:16,d:25,e:30}],[{n:30,d:16,e:30},{n:2,d:17,e:30}]],
+  [[{n:8,d:106,e:26},{n:4,d:107,e:26}],[{n:8,d:47,e:28},{n:13,d:48,e:28}],[{n:7,d:24,e:30},{n:22,d:25,e:30}],[{n:22,d:15,e:28},{n:13,d:16,e:28}]],
+  [[{n:10,d:114,e:28},{n:2,d:115,e:28}],[{n:19,d:46,e:28},{n:4,d:47,e:28}],[{n:28,d:22,e:28},{n:6,d:23,e:28}],[{n:33,d:16,e:30},{n:4,d:17,e:30}]],
+  [[{n:8,d:122,e:30},{n:4,d:123,e:30}],[{n:22,d:45,e:28},{n:3,d:46,e:28}],[{n:8,d:23,e:30},{n:26,d:24,e:30}],[{n:12,d:15,e:30},{n:28,d:16,e:30}]],
+  [[{n:3,d:117,e:30},{n:10,d:118,e:30}],[{n:3,d:45,e:28},{n:23,d:46,e:28}],[{n:4,d:24,e:30},{n:31,d:25,e:30}],[{n:11,d:15,e:30},{n:31,d:16,e:30}]],
+  [[{n:7,d:116,e:30},{n:7,d:117,e:30}],[{n:21,d:45,e:28},{n:7,d:46,e:28}],[{n:1,d:23,e:30},{n:37,d:24,e:30}],[{n:19,d:15,e:30},{n:26,d:16,e:30}]],
+  [[{n:5,d:115,e:30},{n:10,d:116,e:30}],[{n:19,d:47,e:28},{n:10,d:48,e:28}],[{n:15,d:24,e:30},{n:25,d:25,e:30}],[{n:23,d:15,e:30},{n:25,d:16,e:30}]],
+  [[{n:13,d:115,e:30},{n:3,d:116,e:30}],[{n:2,d:46,e:28},{n:29,d:47,e:28}],[{n:42,d:24,e:30},{n:1,d:25,e:30}],[{n:23,d:15,e:30},{n:28,d:16,e:30}]],
+  [[{n:17,d:115,e:30}],[{n:10,d:46,e:28},{n:23,d:47,e:28}],[{n:10,d:24,e:30},{n:35,d:25,e:30}],[{n:19,d:15,e:30},{n:35,d:16,e:30}]],
+  [[{n:17,d:115,e:30},{n:1,d:116,e:30}],[{n:14,d:46,e:28},{n:21,d:47,e:28}],[{n:29,d:24,e:30},{n:19,d:25,e:30}],[{n:11,d:15,e:30},{n:46,d:16,e:30}]],
+  [[{n:13,d:115,e:30},{n:6,d:116,e:30}],[{n:14,d:46,e:28},{n:23,d:47,e:28}],[{n:44,d:24,e:30},{n:7,d:25,e:30}],[{n:59,d:16,e:30},{n:1,d:17,e:30}]],
+  [[{n:12,d:121,e:30},{n:7,d:122,e:30}],[{n:12,d:47,e:28},{n:26,d:48,e:28}],[{n:39,d:24,e:30},{n:14,d:25,e:30}],[{n:22,d:15,e:30},{n:41,d:16,e:30}]],
+  [[{n:6,d:121,e:30},{n:14,d:122,e:30}],[{n:6,d:47,e:28},{n:34,d:48,e:28}],[{n:46,d:24,e:30},{n:10,d:25,e:30}],[{n:2,d:15,e:30},{n:64,d:16,e:30}]],
+  [[{n:17,d:122,e:30},{n:4,d:123,e:30}],[{n:29,d:46,e:28},{n:14,d:47,e:28}],[{n:49,d:24,e:30},{n:10,d:25,e:30}],[{n:24,d:15,e:30},{n:46,d:16,e:30}]],
+  [[{n:4,d:122,e:30},{n:18,d:123,e:30}],[{n:13,d:46,e:28},{n:32,d:47,e:28}],[{n:48,d:24,e:30},{n:14,d:25,e:30}],[{n:42,d:15,e:30},{n:32,d:16,e:30}]],
+  [[{n:20,d:117,e:30},{n:4,d:118,e:30}],[{n:40,d:47,e:28},{n:7,d:48,e:28}],[{n:43,d:24,e:30},{n:22,d:25,e:30}],[{n:10,d:15,e:30},{n:67,d:16,e:30}]],
+  [[{n:19,d:118,e:30},{n:6,d:119,e:30}],[{n:18,d:47,e:28},{n:31,d:48,e:28}],[{n:34,d:24,e:30},{n:34,d:25,e:30}],[{n:20,d:15,e:30},{n:61,d:16,e:30}]]
+];
+
+// ── 辅助 ─────────────────────────────────────────────
 function bitsToBytes(bits){
-  var bytes=[];
+  var r=[];
   for(var i=0;i<bits.length;i+=8){
     var b=0;
     for(var j=0;j<8;j++)b=(b<<1)|(bits[i+j]||0);
-    bytes.push(b);
+    r.push(b);
   }
-  return bytes;
+  return r;
 }
 
-// Reed-Solomon 纠错码计算
 function computeEC(data, ecCount){
   var gen=gfGenPoly(ecCount);
   var msg=new Array(data.length+ecCount);
   for(var i=0;i<data.length;i++)msg[i]=data[i];
   for(var i=data.length;i<msg.length;i++)msg[i]=0;
   for(var i=0;i<data.length;i++){
-    var coef=msg[i];
-    if(coef!==0)
+    var c=msg[i];
+    if(c!==0)
       for(var j=1;j<gen.length;j++)
-        msg[i+j]^=gfMul(gen[j],coef);
+        msg[i+j]^=gfMul(gen[j],c);
   }
   return msg.slice(data.length);
 }
 
-// ── 数据编码(修复版) ──
-// 返回完整的码字序列：[数据码字] + [EC码字]
-function encodeCodewords(version, dataBytes){
-  var totalDC=TOTAL_CODEWORDS[version];
-  var blocks=EC_BLOCKS[version][0]; // EC level L = 0
-
-  // 计算总EC码字
-  var totalEC=0,totalData=0;
+// ── 编码码字 → [dataCW...] + [ecCW...] ──────────────
+function encodeCodewords(version, ecLevel, dataBytes){
+  var blocks=EC_BLOCKS[version][ecLevel];
+  var totalData=0, totalEC=0;
   for(var i=0;i<blocks.length;i++){
     totalData+=blocks[i].n*blocks[i].d;
     totalEC+=blocks[i].n*blocks[i].e;
   }
-  // totalDC应等于 totalData+totalEC
-  // 数据编码后应填充到 totalData 字节
+  var totalDC=totalData+totalEC;
 
-  // Step 1: 构建位流
-  var mode=4; // Byte模式=0100
+  // 位流
+  var mode=4; // Byte = 0100
   var ccBits=version<=9?8:16;
-  var bitstream=[];
+  var bs=[];
 
-  // 模式指示器(4位)
-  bitstream.push((mode>>3)&1,(mode>>2)&1,(mode>>1)&1,(mode>>0)&1);
+  // 模式(4)
+  bs.push((mode>>3)&1,(mode>>2)&1,(mode>>1)&1,mode&1);
 
-  // 字符计数指示器(8或16位)
-  for(var i=ccBits-1;i>=0;i--)bitstream.push((dataBytes.length>>i)&1);
+  // CCI (8 or 16)
+  for(var i=ccBits-1;i>=0;i--)bs.push((dataBytes.length>>i)&1);
 
-  // 数据位
+  // 数据
   for(var i=0;i<dataBytes.length;i++)
     for(var j=7;j>=0;j--)
-      bitstream.push((dataBytes[i]>>j)&1);
+      bs.push((dataBytes[i]>>j)&1);
 
-  // 终止符(最多4个0)
-  var term=Math.min(4,totalData*8-bitstream.length);
-  if(term>0)for(var i=0;i<term;i++)bitstream.push(0);
+  // 终止符
+  var term=Math.min(4,totalData*8-bs.length);
+  if(term>0)for(var i=0;i<term;i++)bs.push(0);
 
-  // 填充到8位边界
-  while(bitstream.length%8!==0)bitstream.push(0);
+  // 字节对齐
+  while(bs.length%8!==0)bs.push(0);
 
-  // 交替填充 11101100 / 00010001 到数据容量
-  var padToggle=true;
-  while(bitstream.length<totalData*8){
-    var padByte=padToggle?0xEC:0x11;
-    for(var j=7;j>=0;j--)bitstream.push((padByte>>j)&1);
-    padToggle=!padToggle;
+  // 填充到数据容量
+  var pad=1; // toggle: true=0xEC, false=0x11
+  while(bs.length<totalData*8){
+    var pb=pad?0xEC:0x11; pad=!pad;
+    for(var j=7;j>=0;j--)bs.push((pb>>j)&1);
   }
 
-  // Step 2: 位流转字节
-  var dataCW=bitsToBytes(bitstream);
+  var dataCW=bitsToBytes(bs);
 
-  // Step 3: 按块计算EC
+  // 分块算EC
   var allBlocks=[];
-  var offset=0;
+  var off=0;
   for(var i=0;i<blocks.length;i++){
     var b=blocks[i];
     for(var j=0;j<b.n;j++){
-      var blockData=dataCW.slice(offset,offset+b.d);
-      var blockEC=computeEC(blockData,b.e);
-      allBlocks.push({data:blockData,ec:blockEC});
-      offset+=b.d;
+      var bd=dataCW.slice(off,off+b.d);
+      allBlocks.push({data:bd, ec:computeEC(bd,b.e)});
+      off+=b.d;
     }
   }
 
-  // Step 4: 交错排列 — 先交错数据码字，再交错EC码字
+  // 交错：先数据，后EC
   var result=[];
-  // 数据交错
-  var maxDataLen=0;
-  for(var i=0;i<allBlocks.length;i++)maxDataLen=Math.max(maxDataLen,allBlocks[i].data.length);
-  for(var col=0;col<maxDataLen;col++)
+  var maxD=0, maxE=0;
+  for(var i=0;i<allBlocks.length;i++){
+    maxD=Math.max(maxD,allBlocks[i].data.length);
+    maxE=Math.max(maxE,allBlocks[i].ec.length);
+  }
+  for(var col=0;col<maxD;col++)
     for(var row=0;row<allBlocks.length;row++)
       if(col<allBlocks[row].data.length)
         result.push(allBlocks[row].data[col]);
-
-  // EC交错
-  var maxECLen=0;
-  for(var i=0;i<allBlocks.length;i++)maxECLen=Math.max(maxECLen,allBlocks[i].ec.length);
-  for(var col=0;col<maxECLen;col++)
+  for(var col=0;col<maxE;col++)
     for(var row=0;row<allBlocks.length;row++)
       if(col<allBlocks[row].ec.length)
         result.push(allBlocks[row].ec[col]);
@@ -283,17 +617,17 @@ function encodeCodewords(version, dataBytes){
   return result; // 恰好 totalDC 字节
 }
 
-// ── 模块布局 ──
-var modules,moduleCount;
-function getBCHDigit(d){var n=0;while(d!==0){n++;d>>>=1}return n;}
-function getBCHTypeInfo(d){var a=d<<10;while(getBCHDigit(a)-getBCHDigit(0x537)>=0)a^=0x537<<(getBCHDigit(a)-getBCHDigit(0x537));return((d<<10)|a)^0x5412;}
-function getBCHTypeNumber(d){var a=d<<12;while(getBCHDigit(a)-getBCHDigit(0x1f25)>=0)a^=0x1f25<<(getBCHDigit(a)-getBCHDigit(0x1f25));return(d<<12)|a;}
-function getPatternPosition(v){return[6,14,22,30,38,46,54,62,70,78,86,94,102,110,118,126,134,142,150,158,166,174,182,190,198,206,214,222,230,238,246,254,262,270,278,286,294,302,310,318,326].slice(0,v-1);}
+// ── 模块布局 ─────────────────────────────────────────
+var modules, moduleCount, qrInfo;
+function getBCHDigit(d){var n=0;while(d){n++;d>>>=1}return n}
+function getBCHTypeInfo(d){var a=d<<10;while(getBCHDigit(a)-getBCHDigit(0x537)>=0)a^=0x537<<(getBCHDigit(a)-getBCHDigit(0x537));return((d<<10)|a)^0x5412}
+function getBCHTypeNumber(d){var a=d<<12;while(getBCHDigit(a)-getBCHDigit(0x1f25)>=0)a^=0x1f25<<(getBCHDigit(a)-getBCHDigit(0x1f25));return(d<<12)|a}
+function getPatternPosition(v){return[6,14,22,30,38,46,54,62,70,78,86,94,102,110,118,126,134,142,150,158,166,174,182,190,198,206,214,222,230,238,246,254,262,270,278,286,294,302,310,318,326].slice(0,v-1)}
 
 function getMask(mp,i,j){
   switch(mp){
-    case 0:return(i+j)%2===0;case 1:return i%2===0;
-    case 2:return j%3===0;case 3:return(i+j)%3===0;
+    case 0:return(i+j)%2===0; case 1:return i%2===0;
+    case 2:return j%3===0; case 3:return(i+j)%3===0;
     case 4:return(Math.floor(i/2)+Math.floor(j/3))%2===0;
     case 5:return(i*j)%2+(i*j)%3===0;
     case 6:return((i*j)%2+(i*j)%3)%2===0;
@@ -301,20 +635,18 @@ function getMask(mp,i,j){
   }return false;
 }
 
-function setupPositionProbe(r,c){
+function sp(r,c){
   for(var i=-1;i<=7;i++)
     for(var j=-1;j<=7;j++)
       if(r+i>-1&&r+i<moduleCount&&c+j>-1&&c+j<moduleCount)
         modules[r+i][c+j]=(i>=0&&i<=6&&(j===0||j===6))||(j>=0&&j<=6&&(i===0||i===6))||(i>=2&&i<=4&&j>=2&&j<=4);
 }
-
-function setupTimingPattern(){
-  for(var i=8;i<moduleCount-8;i++){if(modules[i][6]===null)modules[i][6]=i%2===0;}
-  for(var i=8;i<moduleCount-8;i++){if(modules[6][i]===null)modules[6][i]=i%2===0;}
+function st(){
+  for(var i=8;i<moduleCount-8;i++){if(modules[i][6]===null)modules[i][6]=i%2===0}
+  for(var i=8;i<moduleCount-8;i++){if(modules[6][i]===null)modules[6][i]=i%2===0}
 }
-
-function setupPositionAdjust(){
-  var pos=getPatternPosition(qr.typeNumber);
+function spa(){
+  var pos=getPatternPosition(qrInfo.typeNumber);
   for(var i=0;i<pos.length;i++)
     for(var j=0;j<pos.length;j++){
       var r=pos[i],c=pos[j];
@@ -324,12 +656,10 @@ function setupPositionAdjust(){
           modules[r+dr][c+dc]=(dr===-2||dr===2||dc===-2||dc===2||(dr===0&&dc===0));
     }
 }
-
-function setupTypeInfo(test,maskPattern){
-  var data=(qr.errorCorrectLevel<<3)|maskPattern;
-  var d=getBCHTypeInfo(data);
+function sTypeInfo(test,mask){
+  var d=(qrInfo.errorCorrectLevel<<3)|mask, v=getBCHTypeInfo(d);
   for(var i=0;i<15;i++){
-    var m=((d>>i)&1)===1;
+    var m=((v>>i)&1)===1;
     if(i<6)modules[i][8]=m;
     else if(i<8)modules[i+1][8]=m;
     else modules[moduleCount-15+i][8]=m;
@@ -339,9 +669,8 @@ function setupTypeInfo(test,maskPattern){
   }
   modules[moduleCount-8][8]=!test;
 }
-
-function setupTypeNumber(test){
-  var bits=getBCHTypeNumber(qr.typeNumber);
+function sTypeNum(test){
+  var bits=getBCHTypeNumber(qrInfo.typeNumber);
   for(var i=0;i<18;i++){
     var m=!test&&((bits>>i)&1)===1;
     modules[Math.floor(i/3)][i%3+moduleCount-8-3]=m;
@@ -349,161 +678,320 @@ function setupTypeNumber(test){
   }
 }
 
-var qr=null;
-
 function makeImpl(test,maskPattern,codewords){
-  moduleCount=qr.typeNumber*4+17;
+  moduleCount=qrInfo.typeNumber*4+17;
   modules=[];
-  for(var r=0;r<moduleCount;r++){modules[r]=[];for(var c=0;c<moduleCount;c++)modules[r][c]=null;}
+  for(var r=0;r<moduleCount;r++){modules[r]=[];for(var c=0;c<moduleCount;c++)modules[r][c]=null}
+  sp(0,0); sp(moduleCount-7,0); sp(0,moduleCount-7);
+  spa(); st(); sTypeInfo(test,maskPattern);
+  if(qrInfo.typeNumber>=7)sTypeNum(test);
 
-  setupPositionProbe(0,0);
-  setupPositionProbe(moduleCount-7,0);
-  setupPositionProbe(0,moduleCount-7);
-  setupPositionAdjust();
-  setupTimingPattern();
-  setupTypeInfo(test,maskPattern);
-  if(qr.typeNumber>=7)setupTypeNumber(test);
-
-  // 放置码字位
-  var inc=-1,row=moduleCount-1,bitIndex=7,byteIndex=0;
+  var inc=-1,row=moduleCount-1,bi=7,by=0;
   for(var col=moduleCount-1;col>0;col-=2){
     if(col===6)col--;
     while(true){
       for(var c=0;c<2;c++){
         if(modules[row][col-c]===null){
           var dark=false;
-          if(byteIndex<codewords.length)dark=((codewords[byteIndex]>>>bitIndex)&1)===1;
+          if(by<codewords.length)dark=((codewords[by]>>>bi)&1)===1;
           var mask=getMask(maskPattern,row,col-c);
           if(mask)dark=!dark;
           modules[row][col-c]=dark;
-          bitIndex--;
-          if(bitIndex===-1){byteIndex++;bitIndex=7;}
+          bi--; if(bi===-1){by++;bi=7}
         }
       }
       row+=inc;
-      if(row<0||row>=moduleCount){row-=inc;inc=-inc;break;}
+      if(row<0||row>=moduleCount){row-=inc;inc=-inc;break}
     }
   }
 }
 
-// ── 公开 API ──
-QR={
-  createQRCode:function(typeNumber,errorCorrectLevel,text){
-    qr={typeNumber:typeNumber,errorCorrectLevel:errorCorrectLevel};
-
-    // UTF-8编码
-    var bytes=[];
+// ── 公开 API ─────────────────────────────────────────
+window.QR = {
+  // 查找合适的版本号
+  getVersion: function(text, ecLevel){
+    var bytes=[], code;
     for(var i=0;i<text.length;i++){
-      var code=text.charCodeAt(i);
-      if(code<0x80){bytes.push(code);}
-      else if(code<0x800){bytes.push(0xc0|(code>>>6));bytes.push(0x80|(code&0x3f));}
-      else if(code<0x10000){bytes.push(0xe0|(code>>>12));bytes.push(0x80|((code>>>6)&0x3f));bytes.push(0x80|(code&0x3f));}
-      else{bytes.push(0xf0|(code>>>18));bytes.push(0x80|((code>>>12)&0x3f));bytes.push(0x80|((code>>>6)&0x3f));bytes.push(0x80|(code&0x3f));}
+      code=text.charCodeAt(i);
+      if(code<0x80)bytes.push(code);
+      else if(code<0x800){bytes.push(0xc0|(code>>>6));bytes.push(0x80|(code&0x3f))}
+      else if(code<0x10000){bytes.push(0xe0|(code>>>12));bytes.push(0x80|((code>>>6)&0x3f));bytes.push(0x80|(code&0x3f))}
+      else{bytes.push(0xf0|(code>>>18));bytes.push(0x80|((code>>>12)&0x3f));bytes.push(0x80|((code>>>6)&0x3f));bytes.push(0x80|(code&0x3f))}
+    }
+    for(var v=1;v<=40;v++){
+      if(bytes.length<=DATA_CAP[v][ecLevel])return v;
+    }
+    return -1; // 内容过长
+  },
+
+  createQRCode: function(version, ecLevel, text){
+    qrInfo={typeNumber:version, errorCorrectLevel:ecLevel};
+
+    // UTF-8
+    var bytes=[], code;
+    for(var i=0;i<text.length;i++){
+      code=text.charCodeAt(i);
+      if(code<0x80)bytes.push(code);
+      else if(code<0x800){bytes.push(0xc0|(code>>>6));bytes.push(0x80|(code&0x3f))}
+      else if(code<0x10000){bytes.push(0xe0|(code>>>12));bytes.push(0x80|((code>>>6)&0x3f));bytes.push(0x80|(code&0x3f))}
+      else{bytes.push(0xf0|(code>>>18));bytes.push(0x80|((code>>>12)&0x3f));bytes.push(0x80|((code>>>6)&0x3f));bytes.push(0x80|(code&0x3f))}
     }
 
-    // 编码数据+EC码字
-    var codewords=encodeCodewords(typeNumber,bytes);
+    var codewords=encodeCodewords(version, ecLevel, bytes);
 
-    // 评估掩码
-    var bestMask=0,bestPenalty=1e9;
+    // 掩码评估
+    var bestMask=0, bestPen=1e9;
     for(var mask=0;mask<8;mask++){
       makeImpl(true,mask,codewords);
-      var penalty=0;
-      // 相同颜色连续 > 5 惩罚
-      for(var r=0;r<moduleCount;r++){
-        for(var c=0;c<moduleCount-4;c++){
-          if(modules[r][c]===true&&modules[r][c+1]===false&&modules[r][c+2]===true&&modules[r][c+3]===true&&modules[r][c+4]===true&&modules[r][c+5]===false&&modules[r][c+6]===true)penalty+=40;
-        }
-      }
-      // 黑白比例偏离50%惩罚
+      var pen=0;
+      for(var r=0;r<moduleCount;r++)
+        for(var c=0;c<moduleCount-4;c++)
+          if(modules[r][c]&&!modules[r][c+1]&&modules[r][c+2]&&modules[r][c+3]&&modules[r][c+4]&&!modules[r][c+5]&&modules[r][c+6])pen+=40;
       var dark=0;
       for(var r=0;r<moduleCount;r++)for(var c=0;c<moduleCount;c++)if(modules[r][c])dark++;
       var pct=dark/(moduleCount*moduleCount)*100;
-      penalty+=Math.abs(Math.floor(pct/5)-10)*10;
-      if(penalty<bestPenalty){bestPenalty=penalty;bestMask=mask;}
+      pen+=Math.abs(Math.floor(pct/5)-10)*10;
+      if(pen<bestPen){bestPen=pen;bestMask=mask}
     }
 
     makeImpl(true,bestMask,codewords);
-    return{modules:modules,moduleCount:moduleCount};
+    return {
+      modules: modules,
+      moduleCount: moduleCount,
+      version: version,
+      ecLevel: ecLevel,
+      dataBytes: bytes.length
+    };
   }
 };
 
 })();
 
-// ── UI ──
+// ═══════════════════════════════════════════════════════
+//  UI — Premium Experience
+// ═══════════════════════════════════════════════════════
 (function(){
-  var qt=document.getElementById("qrText"),
-      qc=document.getElementById("qrCanvas"),
-      qr=document.getElementById("qrResult"),
-      qs=document.getElementById("qrSize"),
-      sv=document.getElementById("sizeVal"),
-      ld=null;
+  var qt = document.getElementById('qrText'),
+      qc = document.getElementById('qrCanvas'),
+      qrRes = document.getElementById('qrResult'),
+      qrEmpty = document.getElementById('qrEmpty'),
+      qrWrap = document.getElementById('qrCanvasWrap'),
+      qs = document.getElementById('qrSize'),
+      sv = document.getElementById('sizeVal'),
+      fgEl = document.getElementById('fgColor'),
+      bgEl = document.getElementById('bgColor'),
+      charCount = document.getElementById('charCount'),
+      ecLevels = document.getElementById('ecLevels'),
+      qrData = null,
+      ecLevel = 0, // 0=L, 1=M, 2=Q, 3=H
+      drawTimer = null;
 
-  qs.addEventListener("input",function(){sv.textContent=qs.value+"px";if(ld)draw(ld);});
-
-  document.getElementById("genBtn").addEventListener("click",function(){
-    var t=qt.value.trim();
-    if(!t)return;
-    var b=encodeUTF8(t);
-    var v=1;
-    for(;v<=40;v++){if(b.length<=DATA_CAPACITY[v])break;}
-    if(v>40){alert("内容过长，无法生成二维码");return;}
-    ld=QR.createQRCode(v,0,t);
-    draw(ld);
+  // ── EC level selector ────────────────────────────
+  ecLevels.addEventListener('click', function(e){
+    var pill = e.target.closest('.ec-pill');
+    if(!pill)return;
+    ecLevel = parseInt(pill.dataset.ec);
+    ecLevels.querySelectorAll('.ec-pill').forEach(function(p){p.classList.remove('active')});
+    pill.classList.add('active');
+    regenerate();
   });
 
-  function encodeUTF8(text){
-    var data=[];
-    for(var i=0;i<text.length;i++){
-      var code=text.charCodeAt(i);
-      if(code<0x80){data.push(code);}
-      else if(code<0x800){data.push(0xc0|(code>>>6));data.push(0x80|(code&0x3f));}
-      else if(code<0x10000){data.push(0xe0|(code>>>12));data.push(0x80|((code>>>6)&0x3f));data.push(0x80|(code&0x3f));}
-      else{data.push(0xf0|(code>>>18));data.push(0x80|((code>>>12)&0x3f));data.push(0x80|((code>>>6)&0x3f));data.push(0x80|(code&0x3f));}
+  // ── Size slider ──────────────────────────────────
+  qs.addEventListener('input', function(){
+    sv.textContent = qs.value + 'px';
+    if(qrData) draw(qrData);
+  });
+
+  // ── Color changes ────────────────────────────────
+  fgEl.addEventListener('input', function(){ if(qrData) draw(qrData); });
+  bgEl.addEventListener('input', function(){ if(qrData) draw(qrData); });
+
+  // ── Color presets ────────────────────────────────
+  document.querySelectorAll('.qr-preset-dot').forEach(function(dot){
+    dot.addEventListener('click', function(){
+      var fg = this.dataset.fg;
+      var bg = this.dataset.bg;
+      if(fg){ fgEl.value = fg; }
+      if(bg){ bgEl.value = bg; }
+      if(qrData) draw(qrData);
+    });
+  });
+
+  // ── Text input — live preview with debounce ──────
+  qt.addEventListener('input', function(){
+    var len = qt.value.length;
+    charCount.textContent = len + ' 字符';
+
+    // Encode to get byte count
+    var bytes = 0;
+    for(var i=0;i<qt.value.length;i++){
+      var c = qt.value.charCodeAt(i);
+      if(c<0x80)bytes+=1;
+      else if(c<0x800)bytes+=2;
+      else if(c<0x10000)bytes+=3;
+      else bytes+=4;
     }
-    return data;
+    if(bytes>0) charCount.textContent = len + ' 字符 · ' + bytes + ' 字节';
+
+    clearTimeout(drawTimer);
+    if(!qt.value.trim()){
+      qrRes.style.display = 'none';
+      qrEmpty.style.display = '';
+      qrData = null;
+      return;
+    }
+    drawTimer = setTimeout(regenerate, 300);
+  });
+
+  // ── Ctrl+Enter ───────────────────────────────────
+  qt.addEventListener('keydown', function(e){
+    if(e.ctrlKey && e.key === 'Enter') regenerate();
+  });
+
+  // ── Generate ─────────────────────────────────────
+  function regenerate(){
+    var t = qt.value.trim();
+    if(!t){
+      qrRes.style.display = 'none';
+      qrEmpty.style.display = '';
+      qrData = null;
+      return;
+    }
+    var v = QR.getVersion(t, ecLevel);
+    if(v < 1){
+      qrRes.style.display = 'none';
+      qrEmpty.style.display = '';
+      qrEmpty.querySelector('p').textContent = '内容过长，请缩短后重试';
+      return;
+    }
+    qrEmpty.querySelector('p').textContent = '输入内容开始生成二维码';
+    qrData = QR.createQRCode(v, ecLevel, t);
+    draw(qrData);
+    updateMeta(qrData);
+    qrRes.style.display = '';
+    qrEmpty.style.display = 'none';
+
+    // Pop-in animation
+    qrWrap.classList.remove('anim-in');
+    void qrWrap.offsetWidth; // force reflow
+    qrWrap.classList.add('anim-in');
   }
 
+  // ── Draw ─────────────────────────────────────────
   function draw(d){
-    var s=parseInt(qs.value),
-        fg=document.getElementById("fgColor").value,
-        bg=document.getElementById("bgColor").value,
-        c=d.moduleCount,
-        sc=Math.floor(s/c),
-        as=sc*c;
-    qc.width=qc.height=as;
-    var ctx=qc.getContext("2d");
-    ctx.fillStyle=bg;ctx.fillRect(0,0,as,as);
-    ctx.fillStyle=fg;
+    var s = parseInt(qs.value),
+        fg = fgEl.value,
+        bg = bgEl.value,
+        c = d.moduleCount,
+        sc = Math.floor(s / c),
+        as = sc * c;
+
+    qc.width = qc.height = as;
+    var ctx = qc.getContext('2d');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, as, as);
+    ctx.fillStyle = fg;
     for(var r=0;r<c;r++)
       for(var cc=0;cc<c;cc++)
-        if(d.modules[r][cc])ctx.fillRect(cc*sc,r*sc,sc,sc);
-    qr.style.display="block";
+        if(d.modules[r][cc])
+          ctx.fillRect(cc*sc, r*sc, sc, sc);
   }
 
-  document.getElementById("dlPng").addEventListener("click",function(){
-    if(!ld)return;
-    var a=document.createElement("a");
-    a.href=qc.toDataURL("image/png");
-    a.download="qrcode.png";
+  // ── Meta info ────────────────────────────────────
+  function updateMeta(d){
+    document.getElementById('metaVersion').textContent = d.version;
+    document.getElementById('metaModules').textContent = d.moduleCount + '×' + d.moduleCount;
+    document.getElementById('metaData').textContent = d.dataBytes;
+    var ecNames = ['L(7%)','M(15%)','Q(25%)','H(30%)'];
+    document.getElementById('metaEC').textContent = ecNames[d.ecLevel];
+  }
+
+  // ── Downloads ────────────────────────────────────
+  document.getElementById('dlPng').addEventListener('click', function(){
+    if(!qrData)return;
+    var a = document.createElement('a');
+    a.href = qc.toDataURL('image/png');
+    a.download = 'qrcode.png';
     a.click();
   });
 
-  document.getElementById("dlSvg").addEventListener("click",function(){
-    if(!ld)return;
-    var c=ld.moduleCount,s=parseInt(qs.value),sc=Math.floor(s/c),
-        fg=document.getElementById("fgColor").value,bg=document.getElementById("bgColor").value,
-        svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+(sc*c)+'" height="'+(sc*c)+'" viewBox="0 0 '+c+" "+c+'"><rect width="'+c+'" height="'+c+'" fill="'+bg+'"/>';
+  document.getElementById('dlPng2x').addEventListener('click', function(){
+    if(!qrData)return;
+    var s = parseInt(qs.value) * 2,
+        fg = fgEl.value,
+        bg = bgEl.value,
+        c = qrData.moduleCount,
+        sc = Math.floor(s / c),
+        as = sc * c;
+    var c2 = document.createElement('canvas');
+    c2.width = c2.height = as;
+    var ctx = c2.getContext('2d');
+    ctx.fillStyle = bg; ctx.fillRect(0,0,as,as);
+    ctx.fillStyle = fg;
     for(var r=0;r<c;r++)
       for(var cc=0;cc<c;cc++)
-        if(ld.modules[r][cc])svg+='<rect x="'+cc+'" y="'+r+'" width="1" height="1" fill="'+fg+'"/>';
-    svg+="</svg>";
-    var b=new Blob([svg],{type:"image/svg+xml"}),u=URL.createObjectURL(b),a=document.createElement("a");
-    a.href=u;a.download="qrcode.svg";a.click();URL.revokeObjectURL(u);
+        if(qrData.modules[r][cc])
+          ctx.fillRect(cc*sc, r*sc, sc, sc);
+    var a = document.createElement('a');
+    a.href = c2.toDataURL('image/png');
+    a.download = 'qrcode@2x.png';
+    a.click();
   });
 
-  qt.addEventListener("keydown",function(e){if(e.ctrlKey&&e.key==="Enter")document.getElementById("genBtn").click();});
+  document.getElementById('dlSvg').addEventListener('click', function(){
+    if(!qrData)return;
+    var c = qrData.moduleCount,
+        fg = fgEl.value,
+        bg = bgEl.value,
+        svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+c+'" height="'+c+'" viewBox="0 0 '+c+' '+c+'"><rect width="'+c+'" height="'+c+'" fill="'+bg+'"/>';
+    for(var r=0;r<c;r++)
+      for(var cc=0;cc<c;cc++)
+        if(qrData.modules[r][cc])
+          svg += '<rect x="'+cc+'" y="'+r+'" width="1" height="1" fill="'+fg+'"/>';
+    svg += '</svg>';
+    var blob = new Blob([svg],{type:'image/svg+xml'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'qrcode.svg'; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // ── Copy image to clipboard ─────────────────────
+  document.getElementById('copyImg').addEventListener('click', function(){
+    if(!qrData)return;
+    try {
+      qc.toBlob(function(blob){
+        navigator.clipboard.write([
+          new ClipboardItem({'image/png': blob})
+        ]).then(function(){
+          var btn = document.getElementById('copyImg');
+          var orig = btn.textContent;
+          btn.textContent = '已复制!';
+          btn.style.background = 'var(--success)';
+          btn.style.color = '#fff';
+          btn.style.borderColor = 'var(--success)';
+          setTimeout(function(){
+            btn.textContent = orig;
+            btn.style.background = '';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+          }, 1500);
+        }).catch(function(){
+          alert('复制失败，请检查浏览器权限');
+        });
+      }, 'image/png');
+    } catch(e){
+      alert('您的浏览器不支持此功能，请使用截图或下载');
+    }
+  });
+
+  // ── Initial demo ─────────────────────────────────
+  qt.value = 'https://devtoolsbox-1rl.pages.dev';
+  charCount.textContent = qt.value.length + ' 字符 · ' + qt.value.length + ' 字节';
+  setTimeout(regenerate, 400);
+
 })();
 </script>
+
 </body>
 </html>
