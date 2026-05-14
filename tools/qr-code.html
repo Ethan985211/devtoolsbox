@@ -674,7 +674,8 @@ function spa(){
     }
 }
 function sTypeInfo(test,mask){
-  var d=(qrInfo.errorCorrectLevel<<3)|mask, v=getBCHTypeInfo(d);
+  var stdEC=[1,0,3,2][qrInfo.errorCorrectLevel]; // L→01,M→00,Q→11,H→10
+  var d=(stdEC<<3)|mask, v=getBCHTypeInfo(d);
   for(var i=0;i<15;i++){
     var m=((v>>i)&1)===1;
     if(i<6)modules[i][8]=m;
@@ -756,17 +757,52 @@ window.QR = {
 
     var codewords=encodeCodewords(version, ecLevel, bytes);
 
-    // 掩码评估
+    // 掩码评估 (完整4条ISO 18004惩罚规则)
     var bestMask=0, bestPen=1e9;
     for(var mask=0;mask<8;mask++){
       makeImpl(true,mask,codewords);
       var pen=0;
-      for(var r=0;r<moduleCount;r++)
-        for(var c=0;c<moduleCount-4;c++)
-          if(modules[r][c]&&!modules[r][c+1]&&modules[r][c+2]&&modules[r][c+3]&&modules[r][c+4]&&!modules[r][c+5]&&modules[r][c+6])pen+=40;
+      // 规则1: 行/列连续5+同色模块, 惩罚 N-2
+      for(var r=0;r<moduleCount;r++){
+        for(var c=0;c<moduleCount;c++){
+          if(c<=moduleCount-5){
+            var same=modules[r][c]===modules[r][c+1]&&modules[r][c]===modules[r][c+2]&&modules[r][c]===modules[r][c+3]&&modules[r][c]===modules[r][c+4];
+            if(same){var n=5;while(c+n<moduleCount&&modules[r][c]===modules[r][c+n])n++;pen+=n-2;c+=n-2;}
+          }
+        }
+      }
+      for(var c=0;c<moduleCount;c++){
+        for(var r=0;r<moduleCount;r++){
+          if(r<=moduleCount-5){
+            var same=modules[r][c]===modules[r+1][c]&&modules[r][c]===modules[r+2][c]&&modules[r][c]===modules[r+3][c]&&modules[r][c]===modules[r+4][c];
+            if(same){var n=5;while(r+n<moduleCount&&modules[r][c]===modules[r+n][c])n++;pen+=n-2;r+=n-2;}
+          }
+        }
+      }
+      // 规则2: 2x2同色块, 惩罚3
+      for(var r=0;r<moduleCount-1;r++)
+        for(var c=0;c<moduleCount-1;c++)
+          if(modules[r][c]===modules[r][c+1]&&modules[r][c]===modules[r+1][c]&&modules[r][c]===modules[r+1][c+1])
+            pen+=3;
+      // 规则3: 1:1:3:1:1模式 (1011101) 前后4白, 惩罚40
+      for(var r=0;r<moduleCount;r++){
+        for(var c=0;c<moduleCount-6;c++){
+          if(modules[r][c]&&!modules[r][c+1]&&modules[r][c+2]&&modules[r][c+3]&&modules[r][c+4]&&!modules[r][c+5]&&modules[r][c+6])
+            if(c<4||(!modules[r][c-4]&&!modules[r][c-3]&&!modules[r][c-2]&&!modules[r][c-1]))pen+=40;
+            else if(c+10<moduleCount&&(!modules[r][c+7]&&!modules[r][c+8]&&!modules[r][c+9]&&!modules[r][c+10]))pen+=40;
+        }
+      }
+      for(var c=0;c<moduleCount;c++){
+        for(var r=0;r<moduleCount-6;r++){
+          if(modules[r][c]&&!modules[r+1][c]&&modules[r+2][c]&&modules[r+3][c]&&modules[r+4][c]&&!modules[r+5][c]&&modules[r+6][c])
+            if(r<4||(!modules[r-4][c]&&!modules[r-3][c]&&!modules[r-2][c]&&!modules[r-1][c]))pen+=40;
+            else if(r+10<moduleCount&&(!modules[r+7][c]&&!modules[r+8][c]&&!modules[r+9][c]&&!modules[r+10][c]))pen+=40;
+        }
+      }
+      // 规则4: 暗模块比例偏离50%, 惩罚10*|k-10|
       var dark=0;
       for(var r=0;r<moduleCount;r++)for(var c=0;c<moduleCount;c++)if(modules[r][c])dark++;
-      var pct=dark/(moduleCount*moduleCount)*100;
+      var pct=Math.floor(dark/(moduleCount*moduleCount)*100);
       pen+=Math.abs(Math.floor(pct/5)-10)*10;
       if(pen<bestPen){bestPen=pen;bestMask=mask}
     }
