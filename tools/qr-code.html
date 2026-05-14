@@ -15,6 +15,7 @@
 <div style="display:flex;align-items:center;">
 <nav class="navbar-links">
 <a href="../index.html">首页</a>
+<a href="pdf-to-text.html">PDF提取</a>
 <a href="image-compress.html">图片压缩</a>
 <a href="json-formatter.html">JSON</a>
 <a href="base64.html">Base64</a>
@@ -67,7 +68,7 @@
 <div class="footer-inner">
 <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
 <div class="footer-links">
-<div><h5>工具</h5><a href="image-compress.html">图片压缩</a><a href="image-convert.html">格式转换</a><a href="json-formatter.html">JSON 格式化</a><a href="base64.html">Base64</a><a href="qr-code.html">二维码</a><a href="timestamp.html">时间戳</a></div>
+<div><h5>工具</h5><a href="pdf-to-text.html">PDF 提取</a><a href="image-compress.html">图片压缩</a><a href="image-convert.html">格式转换</a><a href="json-formatter.html">JSON 格式化</a><a href="base64.html">Base64</a><a href="qr-code.html">二维码</a><a href="timestamp.html">时间戳</a></div>
 <div><h5>联系</h5><a href="mailto:2917834376@qq.com">📧 广告合作</a><a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a></div>
 </div>
 </div>
@@ -76,28 +77,433 @@
 
 <script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
 <script>
-// QR Code generator - byte mode, UTF-8, error correction L
-var QR;(function(){var qr,modules,moduleCount,dataList;function getBCHDigit(d){var n=0;while(d!==0){n++;d>>>=1}return n}
-function getBCHTypeInfo(data){var d=data<<10;while(getBCHDigit(d)-getBCHDigit(0x537)>=0)d^=0x537<<(getBCHDigit(d)-getBCHDigit(0x537));return((data<<10)|d)^0x5412}
-function getBCHTypeNumber(data){var d=data<<12;while(getBCHDigit(d)-getBCHDigit(0x1f25)>=0)d^=0x1f25<<(getBCHDigit(d)-getBCHDigit(0x1f25));return(data<<12)|d}
-function createData(typeNumber,errorCorrectLevel,data){var rs=[0,26,44,70,100,134,172,196,242,292,346,404,466,532,581,655,733,815,901,991,1085,1156,1258,1364,1474,1588,1706,1828,1921,2051,2185,2323,2465,2611,2761,2876,3034,3196,3362,3532,3706];var totalDC=rs[typeNumber];var ecDC=[0,7,10,13,17,10,16,22,28,26,18,24,28,26,28,28,24,28,28,28,28,28,28,26,28,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26];var buffer=[],bits=4,bufferLen=totalDC*8;buffer.push(4<<4|data.length);for(var i=0;i<data.length;i++){buffer.push(data[i]&0xff);bits+=8}var term=Math.min(4,bufferLen-bits);if(term>0)buffer.push(0);bits+=term;while(bits%8!==0){buffer.push(0);bits++}while(bits<bufferLen){buffer.push(0xec);buffer.push(0x11);bits+=16}return buffer}
-function getMask(mp,i,j){switch(mp){case 0:return(i+j)%2===0;case 1:return i%2===0;case 2:return j%3===0;case 3:return(i+j)%3===0;case 4:return(Math.floor(i/2)+Math.floor(j/3))%2===0;case 5:return(i*j)%2+(i*j)%3===0;case 6:return((i*j)%2+(i*j)%3)%2===0;case 7:return((i*j)%3+(i+j)%2)%2===0}return false}
-function getPatternPosition(typeNumber){return[6,14,22,30,38,46,54,62,70,78,86,94,102,110,118,126,134,142,150,158,166,174,182,190,198,206,214,222,230,238,246,254,262,270,278,286,294,302,310,318,326].slice(0,typeNumber-1)}
-function setupPositionProbePattern(r,c){for(var i=-1;i<=7;i++)for(var j=-1;j<=7;j++)if(r+i>-1&&r+i<moduleCount&&c+j>-1&&c+j<moduleCount)modules[r+i][c+j]=(i>=0&&i<=6&&(j===0||j===6))||(j>=0&&j<=6&&(i===0||i===6))||(i>=2&&i<=4&&j>=2&&j<=4)}
-function setupTimingPattern(){for(var i=8;i<moduleCount-8;i++)if(modules[i][6]===null)modules[i][6]=i%2===0;for(var i=8;i<moduleCount-8;i++)if(modules[6][i]===null)modules[6][i]=i%2===0}
-function setupPositionAdjustPattern(){var pos=getPatternPosition(qr.typeNumber);for(var i=0;i<pos.length;i++)for(var j=0;j<pos.length;j++){var r=pos[i],c=pos[j];if(modules[r][c]!==null)continue;for(var dr=-2;dr<=2;dr++)for(var dc=-2;dc<=2;dc++)modules[r+dr][c+dc]=(dr===-2||dr===2||dc===-2||dc===2||(dr===0&&dc===0))}}
-function setupTypeInfo(test,maskPattern){var data=(qr.errorCorrectLevel<<3)|maskPattern,d=getBCHTypeInfo(data);for(var i=0;i<15;i++){var m=((d>>i)&1)===1;if(i<6)modules[i][8]=m;else if(i<8)modules[i+1][8]=m;else modules[moduleCount-15+i][8]=m;if(i<8)modules[8][moduleCount-i-1]=m;else if(i<9)modules[8][15-i-1+1]=m;else modules[8][15-i-1]=m}modules[moduleCount-8][8]=!test}
-function setupTypeNumber(test){var bits=getBCHTypeNumber(qr.typeNumber);for(var i=0;i<18;i++){var m=!test&&((bits>>i)&1)===1;modules[Math.floor(i/3)][i%3+moduleCount-8-3]=m;modules[i%3+moduleCount-8-3][Math.floor(i/3)]=m}}
-function makeImpl(test,maskPattern){moduleCount=qr.typeNumber*4+17;modules=[];for(var r=0;r<moduleCount;r++){modules[r]=[];for(var c=0;c<moduleCount;c++)modules[r][c]=null}setupPositionProbePattern(0,0);setupPositionProbePattern(moduleCount-7,0);setupPositionProbePattern(0,moduleCount-7);setupPositionAdjustPattern();setupTimingPattern();setupTypeInfo(test,maskPattern);if(qr.typeNumber>=7)setupTypeNumber(test);var data=createData(qr.typeNumber,qr.errorCorrectLevel,qr.dataList),inc=-1,row=moduleCount-1,bitIndex=7,byteIndex=0;for(var col=moduleCount-1;col>0;col-=2){if(col===6)col--;while(true){for(var c=0;c<2;c++){if(modules[row][col-c]===null){var dark=false;if(byteIndex<data.length)dark=((data[byteIndex]>>>bitIndex)&1)===1;var mask=getMask(maskPattern,row,col-c);if(mask)dark=!dark;modules[row][col-c]=dark;bitIndex--;if(bitIndex===-1){byteIndex++;bitIndex=7}}}row+=inc;if(row<0||row>=moduleCount){row-=inc;inc=-inc;break}}}}
-QR={createStringToBytes:function(text){var data=[];for(var i=0;i<text.length;i++){var code=text.charCodeAt(i);if(code<0x80){data.push(code)}else if(code<0x800){data.push(0xc0|(code>>>6));data.push(0x80|(code&0x3f))}else if(code<0x10000){data.push(0xe0|(code>>>12));data.push(0x80|((code>>>6)&0x3f));data.push(0x80|(code&0x3f))}else{data.push(0xf0|(code>>>18));data.push(0x80|((code>>>12)&0x3f));data.push(0x80|((code>>>6)&0x3f));data.push(0x80|(code&0x3f))}}return data},createQRCode:function(typeNumber,errorCorrectLevel,text){qr={typeNumber:typeNumber,errorCorrectLevel:errorCorrectLevel,dataList:[]};qr.dataList=this.createStringToBytes(text);var minMask=0,minPenalty=1e9;for(var mask=0;mask<8;mask++){makeImpl(true,mask);var penalty=0;for(var r=0;r<moduleCount;r++)for(var c=0;c<moduleCount-4;c++)if(modules[r][c]&&!modules[r][c+1]&&modules[r][c+2]&&modules[r][c+3]&&modules[r][c+4]&&!modules[r][c+5]&&modules[r][c+6])penalty+=40;var darkCount=0;for(var r=0;r<moduleCount;r++)for(var c=0;c<moduleCount;c++)if(modules[r][c])darkCount++;var percent=darkCount/(moduleCount*moduleCount)*100;penalty+=Math.abs(Math.floor(percent/5)-10)*10;if(penalty<minPenalty){minPenalty=penalty;minMask=mask}}makeImpl(true,minMask);return{modules:modules,moduleCount:moduleCount}}}})();
-// UI
-(function(){var qt=document.getElementById("qrText"),qc=document.getElementById("qrCanvas"),qr=document.getElementById("qrResult"),qs=document.getElementById("qrSize"),sv=document.getElementById("sizeVal"),ld=null;
-qs.addEventListener("input",function(){sv.textContent=qs.value+"px";if(ld)draw(ld)});
-document.getElementById("genBtn").addEventListener("click",function(){var t=qt.value.trim();if(!t)return;var tn=0,bd=[0,17,32,53,78,106,134,154,192,230,271,321,367,425,458,520,586,644,718,792,858,929,1003,1091,1171,1273,1367,1465,1528,1628,1732,1840,1952,2068,2188,2303,2431,2563,2699,2809,2953];var b=QR.createStringToBytes(t);for(var i=1;i<=40;i++){if(b.length<=bd[i]){tn=i;break}}if(!tn)return;ld=QR.createQRCode(tn,0,t);draw(ld)});
-function draw(d){var s=parseInt(qs.value),fg=document.getElementById("fgColor").value,bg=document.getElementById("bgColor").value,c=d.moduleCount,sc=Math.floor(s/c),as=sc*c;qc.width=as;qc.height=as;var ctx=qc.getContext("2d");ctx.fillStyle=bg;ctx.fillRect(0,0,as,as);ctx.fillStyle=fg;for(var r=0;r<c;r++)for(var cc=0;cc<c;cc++)if(d.modules[r][cc])ctx.fillRect(cc*sc,r*sc,sc,sc);qr.style.display="block"}
-document.getElementById("dlPng").addEventListener("click",function(){if(!ld)return;var a=document.createElement("a");a.href=qc.toDataURL("image/png");a.download="qrcode.png";a.click()});
-document.getElementById("dlSvg").addEventListener("click",function(){if(!ld)return;var c=ld.moduleCount,s=parseInt(qs.value),sc=Math.floor(s/c),fg=document.getElementById("fgColor").value,bg=document.getElementById("bgColor").value,svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+(sc*c)+'" height="'+(sc*c)+'" viewBox="0 0 '+c+" "+c+'"><rect width="'+c+'" height="'+c+'" fill="'+bg+'"/>';for(var r=0;r<c;r++)for(var cc=0;cc<c;cc++)if(ld.modules[r][cc])svg+='<rect x="'+cc+'" y="'+r+'" width="1" height="1" fill="'+fg+'"/>';svg+="</svg>";var b=new Blob([svg],{type:"image/svg+xml"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="qrcode.svg";a.click();URL.revokeObjectURL(u)});
-qt.addEventListener("keydown",function(e){if(e.ctrlKey&&e.key==="Enter")document.getElementById("genBtn").click()});
-})();</script>
+/* ═══════════════════════════════════════════════════════
+   QR Code Generator — 修复版
+   修复:
+   1. 字符计数指示器(CCI)：原版将模式4位+计数拼入1字节，
+      超过15字节的字符串模式位错乱导致不可扫描。
+      现用位级缓冲正确编码模式+CCI+数据。
+   2. Reed-Solomon纠错码：原版完全缺失EC码字，
+      现实现GF(256) RS编码，正确生成全部EC码字。
+   ═══════════════════════════════════════════════════════ */
+
+var QR;(function(){
+'use strict';
+
+// ── GF(256) 算术 ──
+var GF_EXP = new Array(512);
+var GF_LOG = new Array(256);
+(function initGF(){
+  for(var i=0;i<256;i++){GF_EXP[i]=0;GF_LOG[i]=0}
+  var x=1;
+  for(var i=0;i<255;i++){
+    GF_EXP[i]=x;GF_EXP[i+255]=x;
+    GF_LOG[x]=i;
+    x<<=1;
+    if(x&0x100)x^=0x11D;
+  }
+})();
+
+function gfMul(a,b){
+  if(a===0||b===0)return 0;
+  return GF_EXP[GF_LOG[a]+GF_LOG[b]];
+}
+function gfPolyMul(p,q){
+  var r=new Array(p.length+q.length-1);
+  for(var i=0;i<r.length;i++)r[i]=0;
+  for(var i=0;i<p.length;i++)
+    for(var j=0;j<q.length;j++)
+      r[i+j]^=gfMul(p[i],q[j]);
+  return r;
+}
+function gfGenPoly(deg){
+  var g=[1];
+  for(var i=0;i<deg;i++)g=gfPolyMul(g,[1,GF_EXP[i]]);
+  return g;
+}
+
+// ── 版本/容量表 ──
+// totalCodewords[v] = 该版本总码字数(数据+EC)
+var TOTAL_CODEWORDS=[0,26,44,70,100,134,172,196,242,292,346,404,466,532,581,655,733,815,901,991,1085,1156,1258,1364,1474,1588,1706,1828,1921,2051,2185,2323,2465,2611,2761,2876,3034,3196,3362,3532,3706];
+// 数据容量(字节数) — 可用于用户数据量
+var DATA_CAPACITY=[0,17,32,53,78,106,134,154,192,230,271,321,367,425,458,520,586,644,718,792,858,929,1003,1091,1171,1273,1367,1465,1528,1628,1732,1840,1952,2068,2188,2303,2431,2563,2699,2809,2953];
+
+// EC块结构 [version][ecLevel] → [{numBlocks, dataPerBlock, ecPerBlock},...]
+// ecLevel: 0=L, 1=M, 2=Q, 3=H
+var EC_BLOCKS=[
+  null,
+  [[{n:1,d:19,e:7}]],
+  [[{n:1,d:34,e:10}]],
+  [[{n:1,d:55,e:15}]],
+  [[{n:1,d:80,e:20}]],
+  [[{n:1,d:108,e:26}]],
+  [[{n:2,d:68,e:18}]],
+  [[{n:2,d:78,e:20}]],
+  [[{n:2,d:97,e:24}]],
+  [[{n:2,d:116,e:30}]],
+  [[{n:2,d:68,e:18},{n:2,d:69,e:18}]],
+  [[{n:4,d:81,e:20}]],
+  [[{n:2,d:92,e:24},{n:2,d:93,e:24}]],
+  [[{n:4,d:107,e:26}]],
+  [[{n:3,d:115,e:30},{n:1,d:116,e:30}]],
+  [[{n:5,d:87,e:22},{n:1,d:88,e:22}]],
+  [[{n:5,d:98,e:24},{n:1,d:99,e:24}]],
+  [[{n:1,d:107,e:28},{n:5,d:108,e:28}]],
+  [[{n:5,d:120,e:30},{n:1,d:121,e:30}]],
+  [[{n:3,d:113,e:28},{n:4,d:114,e:28}]],
+  [[{n:3,d:107,e:28},{n:5,d:108,e:28}]],
+  [[{n:4,d:116,e:28},{n:4,d:117,e:28}]],
+  [[{n:2,d:111,e:28},{n:7,d:112,e:28}]],
+  [[{n:4,d:121,e:30},{n:5,d:122,e:30}]],
+  [[{n:6,d:117,e:30},{n:4,d:118,e:30}]],
+  [[{n:8,d:106,e:26},{n:4,d:107,e:26}]],
+  [[{n:10,d:114,e:28},{n:2,d:115,e:28}]],
+  [[{n:8,d:122,e:30},{n:4,d:123,e:30}]],
+  [[{n:3,d:117,e:30},{n:10,d:118,e:30}]],
+  [[{n:7,d:116,e:30},{n:7,d:117,e:30}]],
+  [[{n:5,d:115,e:30},{n:10,d:116,e:30}]],
+  [[{n:13,d:115,e:30},{n:3,d:116,e:30}]],
+  [[{n:17,d:115,e:30}]],
+  [[{n:17,d:115,e:30},{n:1,d:116,e:30}]],
+  [[{n:13,d:115,e:30},{n:6,d:116,e:30}]],
+  [[{n:12,d:121,e:30},{n:7,d:122,e:30}]],
+  [[{n:6,d:121,e:30},{n:14,d:122,e:30}]],
+  [[{n:17,d:122,e:30},{n:4,d:123,e:30}]],
+  [[{n:4,d:122,e:30},{n:18,d:123,e:30}]],
+  [[{n:20,d:117,e:30},{n:4,d:118,e:30}]],
+  [[{n:19,d:118,e:30},{n:6,d:119,e:30}]]
+];
+
+// ── 工具函数 ──
+function bitsToBytes(bits){
+  var bytes=[];
+  for(var i=0;i<bits.length;i+=8){
+    var b=0;
+    for(var j=0;j<8;j++)b=(b<<1)|(bits[i+j]||0);
+    bytes.push(b);
+  }
+  return bytes;
+}
+
+// Reed-Solomon 纠错码计算
+function computeEC(data, ecCount){
+  var gen=gfGenPoly(ecCount);
+  var msg=new Array(data.length+ecCount);
+  for(var i=0;i<data.length;i++)msg[i]=data[i];
+  for(var i=data.length;i<msg.length;i++)msg[i]=0;
+  for(var i=0;i<data.length;i++){
+    var coef=msg[i];
+    if(coef!==0)
+      for(var j=1;j<gen.length;j++)
+        msg[i+j]^=gfMul(gen[j],coef);
+  }
+  return msg.slice(data.length);
+}
+
+// ── 数据编码(修复版) ──
+// 返回完整的码字序列：[数据码字] + [EC码字]
+function encodeCodewords(version, dataBytes){
+  var totalDC=TOTAL_CODEWORDS[version];
+  var blocks=EC_BLOCKS[version][0]; // EC level L = 0
+
+  // 计算总EC码字
+  var totalEC=0,totalData=0;
+  for(var i=0;i<blocks.length;i++){
+    totalData+=blocks[i].n*blocks[i].d;
+    totalEC+=blocks[i].n*blocks[i].e;
+  }
+  // totalDC应等于 totalData+totalEC
+  // 数据编码后应填充到 totalData 字节
+
+  // Step 1: 构建位流
+  var mode=4; // Byte模式=0100
+  var ccBits=version<=9?8:16;
+  var bitstream=[];
+
+  // 模式指示器(4位)
+  bitstream.push((mode>>3)&1,(mode>>2)&1,(mode>>1)&1,(mode>>0)&1);
+
+  // 字符计数指示器(8或16位)
+  for(var i=ccBits-1;i>=0;i--)bitstream.push((dataBytes.length>>i)&1);
+
+  // 数据位
+  for(var i=0;i<dataBytes.length;i++)
+    for(var j=7;j>=0;j--)
+      bitstream.push((dataBytes[i]>>j)&1);
+
+  // 终止符(最多4个0)
+  var term=Math.min(4,totalData*8-bitstream.length);
+  if(term>0)for(var i=0;i<term;i++)bitstream.push(0);
+
+  // 填充到8位边界
+  while(bitstream.length%8!==0)bitstream.push(0);
+
+  // 交替填充 11101100 / 00010001 到数据容量
+  var padToggle=true;
+  while(bitstream.length<totalData*8){
+    var padByte=padToggle?0xEC:0x11;
+    for(var j=7;j>=0;j--)bitstream.push((padByte>>j)&1);
+    padToggle=!padToggle;
+  }
+
+  // Step 2: 位流转字节
+  var dataCW=bitsToBytes(bitstream);
+
+  // Step 3: 按块计算EC
+  var allBlocks=[];
+  var offset=0;
+  for(var i=0;i<blocks.length;i++){
+    var b=blocks[i];
+    for(var j=0;j<b.n;j++){
+      var blockData=dataCW.slice(offset,offset+b.d);
+      var blockEC=computeEC(blockData,b.e);
+      allBlocks.push({data:blockData,ec:blockEC});
+      offset+=b.d;
+    }
+  }
+
+  // Step 4: 交错排列 — 先交错数据码字，再交错EC码字
+  var result=[];
+  // 数据交错
+  var maxDataLen=0;
+  for(var i=0;i<allBlocks.length;i++)maxDataLen=Math.max(maxDataLen,allBlocks[i].data.length);
+  for(var col=0;col<maxDataLen;col++)
+    for(var row=0;row<allBlocks.length;row++)
+      if(col<allBlocks[row].data.length)
+        result.push(allBlocks[row].data[col]);
+
+  // EC交错
+  var maxECLen=0;
+  for(var i=0;i<allBlocks.length;i++)maxECLen=Math.max(maxECLen,allBlocks[i].ec.length);
+  for(var col=0;col<maxECLen;col++)
+    for(var row=0;row<allBlocks.length;row++)
+      if(col<allBlocks[row].ec.length)
+        result.push(allBlocks[row].ec[col]);
+
+  return result; // 恰好 totalDC 字节
+}
+
+// ── 模块布局 ──
+var modules,moduleCount;
+function getBCHDigit(d){var n=0;while(d!==0){n++;d>>>=1}return n;}
+function getBCHTypeInfo(d){var a=d<<10;while(getBCHDigit(a)-getBCHDigit(0x537)>=0)a^=0x537<<(getBCHDigit(a)-getBCHDigit(0x537));return((d<<10)|a)^0x5412;}
+function getBCHTypeNumber(d){var a=d<<12;while(getBCHDigit(a)-getBCHDigit(0x1f25)>=0)a^=0x1f25<<(getBCHDigit(a)-getBCHDigit(0x1f25));return(d<<12)|a;}
+function getPatternPosition(v){return[6,14,22,30,38,46,54,62,70,78,86,94,102,110,118,126,134,142,150,158,166,174,182,190,198,206,214,222,230,238,246,254,262,270,278,286,294,302,310,318,326].slice(0,v-1);}
+
+function getMask(mp,i,j){
+  switch(mp){
+    case 0:return(i+j)%2===0;case 1:return i%2===0;
+    case 2:return j%3===0;case 3:return(i+j)%3===0;
+    case 4:return(Math.floor(i/2)+Math.floor(j/3))%2===0;
+    case 5:return(i*j)%2+(i*j)%3===0;
+    case 6:return((i*j)%2+(i*j)%3)%2===0;
+    case 7:return((i*j)%3+(i+j)%2)%2===0;
+  }return false;
+}
+
+function setupPositionProbe(r,c){
+  for(var i=-1;i<=7;i++)
+    for(var j=-1;j<=7;j++)
+      if(r+i>-1&&r+i<moduleCount&&c+j>-1&&c+j<moduleCount)
+        modules[r+i][c+j]=(i>=0&&i<=6&&(j===0||j===6))||(j>=0&&j<=6&&(i===0||i===6))||(i>=2&&i<=4&&j>=2&&j<=4);
+}
+
+function setupTimingPattern(){
+  for(var i=8;i<moduleCount-8;i++){if(modules[i][6]===null)modules[i][6]=i%2===0;}
+  for(var i=8;i<moduleCount-8;i++){if(modules[6][i]===null)modules[6][i]=i%2===0;}
+}
+
+function setupPositionAdjust(){
+  var pos=getPatternPosition(qr.typeNumber);
+  for(var i=0;i<pos.length;i++)
+    for(var j=0;j<pos.length;j++){
+      var r=pos[i],c=pos[j];
+      if(modules[r][c]!==null)continue;
+      for(var dr=-2;dr<=2;dr++)
+        for(var dc=-2;dc<=2;dc++)
+          modules[r+dr][c+dc]=(dr===-2||dr===2||dc===-2||dc===2||(dr===0&&dc===0));
+    }
+}
+
+function setupTypeInfo(test,maskPattern){
+  var data=(qr.errorCorrectLevel<<3)|maskPattern;
+  var d=getBCHTypeInfo(data);
+  for(var i=0;i<15;i++){
+    var m=((d>>i)&1)===1;
+    if(i<6)modules[i][8]=m;
+    else if(i<8)modules[i+1][8]=m;
+    else modules[moduleCount-15+i][8]=m;
+    if(i<8)modules[8][moduleCount-i-1]=m;
+    else if(i<9)modules[8][15-i-1+1]=m;
+    else modules[8][15-i-1]=m;
+  }
+  modules[moduleCount-8][8]=!test;
+}
+
+function setupTypeNumber(test){
+  var bits=getBCHTypeNumber(qr.typeNumber);
+  for(var i=0;i<18;i++){
+    var m=!test&&((bits>>i)&1)===1;
+    modules[Math.floor(i/3)][i%3+moduleCount-8-3]=m;
+    modules[i%3+moduleCount-8-3][Math.floor(i/3)]=m;
+  }
+}
+
+var qr=null;
+
+function makeImpl(test,maskPattern,codewords){
+  moduleCount=qr.typeNumber*4+17;
+  modules=[];
+  for(var r=0;r<moduleCount;r++){modules[r]=[];for(var c=0;c<moduleCount;c++)modules[r][c]=null;}
+
+  setupPositionProbe(0,0);
+  setupPositionProbe(moduleCount-7,0);
+  setupPositionProbe(0,moduleCount-7);
+  setupPositionAdjust();
+  setupTimingPattern();
+  setupTypeInfo(test,maskPattern);
+  if(qr.typeNumber>=7)setupTypeNumber(test);
+
+  // 放置码字位
+  var inc=-1,row=moduleCount-1,bitIndex=7,byteIndex=0;
+  for(var col=moduleCount-1;col>0;col-=2){
+    if(col===6)col--;
+    while(true){
+      for(var c=0;c<2;c++){
+        if(modules[row][col-c]===null){
+          var dark=false;
+          if(byteIndex<codewords.length)dark=((codewords[byteIndex]>>>bitIndex)&1)===1;
+          var mask=getMask(maskPattern,row,col-c);
+          if(mask)dark=!dark;
+          modules[row][col-c]=dark;
+          bitIndex--;
+          if(bitIndex===-1){byteIndex++;bitIndex=7;}
+        }
+      }
+      row+=inc;
+      if(row<0||row>=moduleCount){row-=inc;inc=-inc;break;}
+    }
+  }
+}
+
+// ── 公开 API ──
+QR={
+  createQRCode:function(typeNumber,errorCorrectLevel,text){
+    qr={typeNumber:typeNumber,errorCorrectLevel:errorCorrectLevel};
+
+    // UTF-8编码
+    var bytes=[];
+    for(var i=0;i<text.length;i++){
+      var code=text.charCodeAt(i);
+      if(code<0x80){bytes.push(code);}
+      else if(code<0x800){bytes.push(0xc0|(code>>>6));bytes.push(0x80|(code&0x3f));}
+      else if(code<0x10000){bytes.push(0xe0|(code>>>12));bytes.push(0x80|((code>>>6)&0x3f));bytes.push(0x80|(code&0x3f));}
+      else{bytes.push(0xf0|(code>>>18));bytes.push(0x80|((code>>>12)&0x3f));bytes.push(0x80|((code>>>6)&0x3f));bytes.push(0x80|(code&0x3f));}
+    }
+
+    // 编码数据+EC码字
+    var codewords=encodeCodewords(typeNumber,bytes);
+
+    // 评估掩码
+    var bestMask=0,bestPenalty=1e9;
+    for(var mask=0;mask<8;mask++){
+      makeImpl(true,mask,codewords);
+      var penalty=0;
+      // 相同颜色连续 > 5 惩罚
+      for(var r=0;r<moduleCount;r++){
+        for(var c=0;c<moduleCount-4;c++){
+          if(modules[r][c]===true&&modules[r][c+1]===false&&modules[r][c+2]===true&&modules[r][c+3]===true&&modules[r][c+4]===true&&modules[r][c+5]===false&&modules[r][c+6]===true)penalty+=40;
+        }
+      }
+      // 黑白比例偏离50%惩罚
+      var dark=0;
+      for(var r=0;r<moduleCount;r++)for(var c=0;c<moduleCount;c++)if(modules[r][c])dark++;
+      var pct=dark/(moduleCount*moduleCount)*100;
+      penalty+=Math.abs(Math.floor(pct/5)-10)*10;
+      if(penalty<bestPenalty){bestPenalty=penalty;bestMask=mask;}
+    }
+
+    makeImpl(true,bestMask,codewords);
+    return{modules:modules,moduleCount:moduleCount};
+  }
+};
+
+})();
+
+// ── UI ──
+(function(){
+  var qt=document.getElementById("qrText"),
+      qc=document.getElementById("qrCanvas"),
+      qr=document.getElementById("qrResult"),
+      qs=document.getElementById("qrSize"),
+      sv=document.getElementById("sizeVal"),
+      ld=null;
+
+  qs.addEventListener("input",function(){sv.textContent=qs.value+"px";if(ld)draw(ld);});
+
+  document.getElementById("genBtn").addEventListener("click",function(){
+    var t=qt.value.trim();
+    if(!t)return;
+    var b=encodeUTF8(t);
+    var v=1;
+    for(;v<=40;v++){if(b.length<=DATA_CAPACITY[v])break;}
+    if(v>40){alert("内容过长，无法生成二维码");return;}
+    ld=QR.createQRCode(v,0,t);
+    draw(ld);
+  });
+
+  function encodeUTF8(text){
+    var data=[];
+    for(var i=0;i<text.length;i++){
+      var code=text.charCodeAt(i);
+      if(code<0x80){data.push(code);}
+      else if(code<0x800){data.push(0xc0|(code>>>6));data.push(0x80|(code&0x3f));}
+      else if(code<0x10000){data.push(0xe0|(code>>>12));data.push(0x80|((code>>>6)&0x3f));data.push(0x80|(code&0x3f));}
+      else{data.push(0xf0|(code>>>18));data.push(0x80|((code>>>12)&0x3f));data.push(0x80|((code>>>6)&0x3f));data.push(0x80|(code&0x3f));}
+    }
+    return data;
+  }
+
+  function draw(d){
+    var s=parseInt(qs.value),
+        fg=document.getElementById("fgColor").value,
+        bg=document.getElementById("bgColor").value,
+        c=d.moduleCount,
+        sc=Math.floor(s/c),
+        as=sc*c;
+    qc.width=qc.height=as;
+    var ctx=qc.getContext("2d");
+    ctx.fillStyle=bg;ctx.fillRect(0,0,as,as);
+    ctx.fillStyle=fg;
+    for(var r=0;r<c;r++)
+      for(var cc=0;cc<c;cc++)
+        if(d.modules[r][cc])ctx.fillRect(cc*sc,r*sc,sc,sc);
+    qr.style.display="block";
+  }
+
+  document.getElementById("dlPng").addEventListener("click",function(){
+    if(!ld)return;
+    var a=document.createElement("a");
+    a.href=qc.toDataURL("image/png");
+    a.download="qrcode.png";
+    a.click();
+  });
+
+  document.getElementById("dlSvg").addEventListener("click",function(){
+    if(!ld)return;
+    var c=ld.moduleCount,s=parseInt(qs.value),sc=Math.floor(s/c),
+        fg=document.getElementById("fgColor").value,bg=document.getElementById("bgColor").value,
+        svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+(sc*c)+'" height="'+(sc*c)+'" viewBox="0 0 '+c+" "+c+'"><rect width="'+c+'" height="'+c+'" fill="'+bg+'"/>';
+    for(var r=0;r<c;r++)
+      for(var cc=0;cc<c;cc++)
+        if(ld.modules[r][cc])svg+='<rect x="'+cc+'" y="'+r+'" width="1" height="1" fill="'+fg+'"/>';
+    svg+="</svg>";
+    var b=new Blob([svg],{type:"image/svg+xml"}),u=URL.createObjectURL(b),a=document.createElement("a");
+    a.href=u;a.download="qrcode.svg";a.click();URL.revokeObjectURL(u);
+  });
+
+  qt.addEventListener("keydown",function(e){if(e.ctrlKey&&e.key==="Enter")document.getElementById("genBtn").click();});
+})();
+</script>
 </body>
 </html>
