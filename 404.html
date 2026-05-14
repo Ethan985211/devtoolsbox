@@ -1,37 +1,103 @@
-     1|<!DOCTYPE html>
-     2|<html lang="zh-CN">
-     3|<head>
-     4|  <meta charset="UTF-8">
-     5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     6|  <title>404 - 页面未找到 | DevToolsBox</title>
-     7|  <link rel="stylesheet" href="/css/style.css">
-     8|  <style>
-     9|    .error-404 { text-align:center; padding:80px 24px; }
-    10|    .error-404 h1 { font-size:80px; color:var(--primary); margin-bottom:8px; }
-    11|    .error-404 p { font-size:18px; color:var(--text-secondary); margin-bottom:24px; }
-    12|  </style>
-    13|</head>
-    14|<body>
-    15|  <main class="error-404">
-    16|    <h1>404</h1>
-    17|    <p>抱歉，你访问的页面不存在</p>
-    18|    <a href="/" class="btn btn-primary">返回首页</a>
-    19|
-    20|    <div class="sponsor-section" style="margin-top:40px">
-    21|      <h3>☕ 如果这些工具帮到了你</h3>
-    22|      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
-    23|      <div class="sponsor-qrcodes">
-    24|        <div class="sponsor-qr">
-    25|          <img src="支付宝收款码.jpeg" alt="支付宝收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
-    26|          <span>支付宝</span>
-    27|        </div>
-    28|        <div class="sponsor-qr">
-    29|          <img src="微信收款码.jpeg" alt="微信收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
-    30|          <span>微信支付</span>
-    31|        </div>
-    32|      </div>
-    33|    </div>
-    34|  </main>
-    35|</body>
-    36|</html>
-    37|
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - 页面未找到 | DevToolsBox</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <div class="brand-icon">🧰</div>
+        DevToolsBox
+      </a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/image-compress.html">图片压缩</a>
+          <a href="/tools/json-formatter.html">JSON</a>
+          <a href="/tools/qr-code.html">二维码</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式" title="切换深色/浅色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="error-page">
+    <div class="error-code">404</div>
+    <h2>页面未找到</h2>
+    <p>你访问的页面不存在，可能已被移动或删除</p>
+    <a href="/" class="btn btn-primary">← 返回首页</a>
+
+    <div class="sponsor-section" style="margin-top:48px">
+      <h3>☕ 如果这些工具帮到了你</h3>
+      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr">
+          <img src="支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy">
+          <span>支付宝</span>
+        </div>
+        <div class="sponsor-qr">
+          <img src="微信收款码.jpeg" alt="微信收款码" loading="lazy">
+          <span>微信支付</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>🧰 DevToolsBox</strong>
+        开发者的免费在线工具箱<br>
+        所有运算在浏览器本地完成
+      </div>
+      <div class="footer-links">
+        <div>
+          <h5>工具</h5>
+          <a href="/tools/image-compress.html">图片压缩</a>
+          <a href="/tools/image-convert.html">格式转换</a>
+          <a href="/tools/json-formatter.html">JSON 格式化</a>
+          <a href="/tools/base64.html">Base64</a>
+          <a href="/tools/qr-code.html">二维码</a>
+          <a href="/tools/timestamp.html">时间戳</a>
+        </div>
+        <div>
+          <h5>关于</h5>
+          <a href="/">首页</a>
+          <a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span>
+      <span>Cloudflare Pages ⚡ 全球加速</span>
+    </div>
+  </footer>
+
+<script>
+(function() {
+  const html = document.documentElement;
+  const toggle = document.querySelector(".theme-toggle");
+  const saved = localStorage.getItem("devtoolsbox-theme");
+  if (saved) { html.setAttribute("data-theme", saved); }
+  updateToggleIcon();
+
+  window.toggleTheme = function() {
+    const current = html.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+    html.setAttribute("data-theme", next);
+    localStorage.setItem("devtoolsbox-theme", next);
+    updateToggleIcon();
+  };
+
+  function updateToggleIcon() {
+    const isDark = html.getAttribute("data-theme") === "dark";
+    toggle.textContent = isDark ? "☀️" : "🌙";
+  }
+})();
+</script>
+</body>
+</html>

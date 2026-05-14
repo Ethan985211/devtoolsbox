@@ -1,108 +1,258 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DevToolsBox - 免费在线开发者工具</title>
-  <meta name="description" content="免费在线开发者工具集：图片压缩、格式转换、JSON格式化、Base64编解码、二维码生成、时间戳转换。纯本地处理，不传服务器。">
-  <meta property="og:title" content="DevToolsBox - 免费在线开发者工具">
-  <meta property="og:description" content="图片压缩、JSON格式化、二维码生成等6大实用工具，全部免费，数据不上传。">
+  <title>DevToolsBox — 免费在线开发者工具</title>
+  <meta name="description" content="6大免费在线开发者工具：图片压缩、格式转换、JSON格式化、Base64编解码、二维码生成、时间戳转换。纯浏览器本地处理，数据零上传。">
+  <meta property="og:title" content="DevToolsBox — 免费在线开发者工具">
+  <meta property="og:description" content="图片压缩 · JSON格式化 · 二维码生成 · Base64 · 时间戳 · 格式转换。全部免费，数据不上传。">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧰</text></svg>">
 </head>
 <body>
-  <header class="site-header">
-    <a href="/" class="logo">🧰 DevToolsBox</a>
-    <nav>
-      <a href="/">首页</a>
-      <a href="/tools/image-compress.html">图片压缩</a>
-      <a href="/tools/json-formatter.html">JSON</a>
-      <a href="/tools/qr-code.html">二维码</a>
-    </nav>
-  </header>
 
-  <main class="container">
-    <section class="hero">
-      <h1>免费在线开发者工具</h1>
-      <p>所有工具数据在浏览器本地处理，不上传任何服务器。安全、快速、免费。</p>
-    </section>
+<!-- ═══ Navigation ═══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="navbar-brand">
+      <div class="brand-icon">🧰</div>
+      DevToolsBox
+    </a>
+    <div style="display:flex;align-items:center;">
+      <nav class="navbar-links">
+        <a href="/" class="active">首页</a>
+        <a href="tools/image-compress.html">图片压缩</a>
+        <a href="tools/json-formatter.html">JSON</a>
+        <a href="tools/qr-code.html">二维码</a>
+      </nav>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式" title="切换深色/浅色模式">🌙</button>
+    </div>
+  </div>
+</header>
 
-    <div class="ad-slot">📢 广告位 — 上线后替换为 Google AdSense</div>
-
-    <section class="tool-grid">
-      <a href="tools/image-compress.html" class="tool-card">
-        <div class="icon">🖼️</div>
-        <h3>图片压缩</h3>
-        <p>在线压缩 PNG/JPG/WebP，调节质量，实时预览</p>
-      </a>
-      <a href="tools/image-convert.html" class="tool-card">
-        <div class="icon">🔄</div>
-        <h3>格式转换</h3>
-        <p>PNG/JPG/WebP/BMP 互转，拖放即转换</p>
-      </a>
-      <a href="tools/json-formatter.html" class="tool-card">
-        <div class="icon">📋</div>
-        <h3>JSON 格式化</h3>
-        <p>格式化、压缩、验证 JSON 数据</p>
-      </a>
-      <a href="tools/base64.html" class="tool-card">
-        <div class="icon">🔐</div>
-        <h3>Base64 编解码</h3>
-        <p>文本与 Base64 互转，支持中文</p>
-      </a>
-      <a href="tools/qr-code.html" class="tool-card">
-        <div class="icon">📱</div>
-        <h3>二维码生成</h3>
-        <p>文本/网址转二维码，自定义颜色大小</p>
-      </a>
-      <a href="tools/timestamp.html" class="tool-card">
-        <div class="icon">⏰</div>
-        <h3>时间戳转换</h3>
-        <p>Unix 时间戳与日期互转，实时时钟</p>
-      </a>
-    </section>
-
-    <div class="ad-slot">📢 广告位 — 上线后替换为 Google AdSense</div>
-
-    <section class="affiliate-section">
-      <h2>🛠️ 推荐资源</h2>
-      <div class="affiliate-grid">
-        <a href="https://www.aliyun.com/benefit?userCode=xqdanc4i" class="affiliate-card" target="_blank" rel="nofollow sponsored">
-          <div class="aff-icon">☁️</div>
-          <div>
-            <h4>阿里云服务器</h4>
-            <p>个人开发者首选，国内速度快，新用户低至 ¥68/年</p>
-            <span class="aff-tag">联盟推荐</span>
-          </div>
-        </a>
-        <a href="https://www.vmssr.net/#/register?code=fGN3KQqi" class="affiliate-card" target="_blank" rel="nofollow sponsored">
-          <div class="aff-icon">🚀</div>
-          <div>
-            <h4>VMSSR 高速网络</h4>
-            <p>稳定高速的科学上网服务，多节点全球覆盖，注册即用</p>
-            <span class="aff-tag">邀请返佣</span>
-          </div>
-        </a>
+<main>
+  <!-- ═══ Hero ═══ -->
+  <section class="hero">
+    <div class="hero-badge">
+      <div class="badge-dot">✨</div>
+      纯浏览器本地处理 · 数据零上传
+    </div>
+    <h1>
+      开发者的<br>
+      <span class="gradient-text">免费工具箱</span>
+    </h1>
+    <p class="hero-subtitle">
+      6 款精心打磨的在线工具，所有运算在浏览器内完成。<br>
+      你的数据从未离开你的设备 — 安全、极速、完全免费。
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="stat-number">6</div>
+        <div class="stat-label">实用工具</div>
       </div>
-    </section>
+      <div class="hero-stat">
+        <div class="stat-number">0</div>
+        <div class="stat-label">数据上传</div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-number">&lt;10ms</div>
+        <div class="stat-label">本地响应</div>
+      </div>
+    </div>
+  </section>
 
+  <!-- ═══ Trust Strip ═══ -->
+  <div class="trust-strip">
+    <div class="trust-item"><span class="trust-icon">🔒</span> 零数据收集</div>
+    <div class="trust-item"><span class="trust-icon">📱</span> 全平台适配</div>
+    <div class="trust-item"><span class="trust-icon">⚡</span> 本地即时处理</div>
+    <div class="trust-item"><span class="trust-icon">🌐</span> PWA 可安装</div>
+  </div>
+
+  <!-- ═══ Tool Grid ═══ -->
+  <div class="container">
+    <div class="section-header">
+      <h2>全部工具</h2>
+      <p>每个工具都是独立的 HTML 页面，无需网络即可使用</p>
+    </div>
+
+    <div class="ad-slot">📢 广告位 — Google AdSense 即将上线</div>
+
+    <div class="tool-grid">
+      <!-- 图片压缩 -->
+      <a href="tools/image-compress.html" class="tool-card">
+        <div class="card-badge">🔥 热门</div>
+        <div class="card-icon">🖼️</div>
+        <h3>图片压缩</h3>
+        <p>在线压缩 PNG / JPG / WebP，实时质量调节与预览对比。拖放即用，毫秒级处理。</p>
+        <span class="card-arrow">立即使用 →</span>
+      </a>
+      <!-- 格式转换 -->
+      <a href="tools/image-convert.html" class="tool-card">
+        <div class="card-badge">🌟 推荐</div>
+        <div class="card-icon">🔄</div>
+        <h3>格式转换</h3>
+        <p>PNG ↔ JPG ↔ WebP ↔ BMP 随心切换，保留透明通道，批量拖放转换。</p>
+        <span class="card-arrow">立即使用 →</span>
+      </a>
+      <!-- JSON 格式化 -->
+      <a href="tools/json-formatter.html" class="tool-card">
+        <div class="card-icon">📋</div>
+        <h3>JSON 格式化</h3>
+        <p>一键美化、压缩、验证 JSON。语法高亮 + 错误定位，开发调试必备。</p>
+        <span class="card-arrow">立即使用 →</span>
+      </a>
+      <!-- Base64 -->
+      <a href="tools/base64.html" class="tool-card">
+        <div class="card-icon">🔐</div>
+        <h3>Base64 编解码</h3>
+        <p>文本 ⇄ Base64 双向转换，完美支持中文与 Emoji，复制即走。</p>
+        <span class="card-arrow">立即使用 →</span>
+      </a>
+      <!-- 二维码 -->
+      <a href="tools/qr-code.html" class="tool-card">
+        <div class="card-badge">🔥 热门</div>
+        <div class="card-icon">📱</div>
+        <h3>二维码生成</h3>
+        <p>文本/网址秒变二维码，自定义颜色与尺寸。SVG 矢量输出，无损缩放。</p>
+        <span class="card-arrow">立即使用 →</span>
+      </a>
+      <!-- 时间戳 -->
+      <a href="tools/timestamp.html" class="tool-card">
+        <div class="card-icon">⏰</div>
+        <h3>时间戳转换</h3>
+        <p>Unix 时间戳与日期双向转换，内置实时时钟。支持秒/毫秒精度。</p>
+        <span class="card-arrow">立即使用 →</span>
+      </a>
+    </div>
+
+    <div class="ad-slot">📢 广告位 — Google AdSense 即将上线</div>
+
+    <!-- ═══ Feature Cards ═══ -->
+    <div class="section-header">
+      <h2>为什么选择 DevToolsBox</h2>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feat-icon">🔒</div>
+        <h4>隐私至上</h4>
+        <p>所有处理在浏览器本地完成。无服务器、无上传、无日志。你的文件从未离开你的设备。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">⚡</div>
+        <h4>极速响应</h4>
+        <p>直接调用浏览器原生 API（Canvas、Web Crypto、URL API），无需等待网络往返。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">💯</div>
+        <h4>永久免费</h4>
+        <p>无付费墙、无功能限制、无需注册。零成本运营，靠推荐和广告维持。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🎨</div>
+        <h4>简洁高效</h4>
+        <p>去掉一切干扰元素，只保留工具本身。暗色模式护眼，移动端完美适配。</p>
+      </div>
+    </div>
+
+    <!-- ═══ Affiliate ═══ -->
+    <div class="section-header">
+      <h2>🛠️ 推荐资源</h2>
+      <p>我们筛选的优质开发者服务 — 购买即支持本站</p>
+    </div>
+    <div class="affiliate-grid">
+      <a href="https://www.aliyun.com/benefit?userCode=xqdanc4i" class="affiliate-card" target="_blank" rel="nofollow sponsored">
+        <div class="aff-icon">☁️</div>
+        <div>
+          <h4>阿里云服务器</h4>
+          <p>个人开发者首选 · 国内三网高速 · 新用户低至 ¥68/年</p>
+          <span class="aff-tag">🔗 云大使推荐</span>
+        </div>
+      </a>
+      <a href="https://www.vmssr.net/#/register?code=fGN3KQqi" class="affiliate-card" target="_blank" rel="nofollow sponsored">
+        <div class="aff-icon">🚀</div>
+        <div>
+          <h4>VMSSR 高速网络</h4>
+          <p>多节点全球覆盖 · 稳定低延迟 · 注册即用无需配置</p>
+          <span class="aff-tag">🔗 邀请返佣</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- ═══ Sponsor ═══ -->
     <div class="sponsor-section">
-      <h3>☕ 如果这些工具帮到了你</h3>
-      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <h3>☕ 请我喝杯咖啡</h3>
+      <p>如果这些工具帮到了你，欢迎打赏支持。所有收入用于服务器和持续开发。</p>
       <div class="sponsor-qrcodes">
         <div class="sponsor-qr">
-          <img src="支付宝收款码.jpeg" alt="支付宝收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
+          <img src="支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy">
           <span>支付宝</span>
         </div>
         <div class="sponsor-qr">
-          <img src="微信收款码.jpeg" alt="微信收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
+          <img src="微信收款码.jpeg" alt="微信收款码" loading="lazy">
           <span>微信支付</span>
         </div>
       </div>
     </div>
-  </main>
+  </div>
+</main>
 
-  <footer class="site-footer">
-    <p>© 2025 DevToolsBox · 所有数据处理均在浏览器本地完成 · 我们不收集任何数据</p>
-  </footer>
+<!-- ═══ Footer ═══ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <strong>🧰 DevToolsBox</strong>
+      开发者的免费在线工具箱<br>
+      所有运算在浏览器本地完成
+    </div>
+    <div class="footer-links">
+      <div>
+        <h5>工具</h5>
+        <a href="tools/image-compress.html">图片压缩</a>
+        <a href="tools/image-convert.html">格式转换</a>
+        <a href="tools/json-formatter.html">JSON 格式化</a>
+        <a href="tools/base64.html">Base64</a>
+        <a href="tools/qr-code.html">二维码</a>
+        <a href="tools/timestamp.html">时间戳</a>
+      </div>
+      <div>
+        <h5>关于</h5>
+        <a href="/">首页</a>
+        <a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span>
+    <span>Cloudflare Pages ⚡ 全球加速</span>
+  </div>
+</footer>
+
+<script>
+// ── Theme Toggle ──────────────────────────────────
+(function() {
+  const html = document.documentElement;
+  const toggle = document.querySelector('.theme-toggle');
+  const saved = localStorage.getItem('devtoolsbox-theme');
+  if (saved) { html.setAttribute('data-theme', saved); }
+  updateToggleIcon();
+
+  window.toggleTheme = function() {
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('devtoolsbox-theme', next);
+    updateToggleIcon();
+  };
+
+  function updateToggleIcon() {
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    toggle.textContent = isDark ? '☀️' : '🌙';
+  }
+})();
+</script>
+
 </body>
 </html>

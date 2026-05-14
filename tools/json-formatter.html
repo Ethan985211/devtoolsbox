@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,14 +10,22 @@
   <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-  <header class="site-header">
-    <a href="../index.html" class="logo">🧰 DevToolsBox</a>
-    <nav>
-      <a href="../index.html">首页</a>
-      <a href="image-compress.html">图片压缩</a>
-      <a href="base64.html">Base64</a>
-      <a href="qr-code.html">二维码</a>
-    </nav>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-brand">
+        <div class="brand-icon">🧰</div>
+        DevToolsBox
+      </a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="../index.html">首页</a>
+          <a href="image-compress.html">图片压缩</a>
+          <a href="json-formatter.html">JSON</a>
+          <a href="qr-code.html">二维码</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式" title="切换深色/浅色模式">🌙</button>
+      </div>
+    </div>
   </header>
 
   <main class="tool-page">
@@ -54,11 +62,11 @@
       <p>请我喝杯咖啡，支持我开发更多免费工具</p>
       <div class="sponsor-qrcodes">
         <div class="sponsor-qr">
-          <img src="../支付宝收款码.jpeg" alt="支付宝收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
+          <img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy">
           <span>支付宝</span>
         </div>
         <div class="sponsor-qr">
-          <img src="../微信收款码.jpeg" alt="微信收款码" style="width:120px;height:120px;border-radius:8px;border:1px solid #d97706;">
+          <img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy">
           <span>微信支付</span>
         </div>
       </div>
@@ -66,7 +74,33 @@
   </main>
 
   <footer class="site-footer">
-    <p>© 2025 DevToolsBox · JSON 处理在浏览器本地完成，不上传</p>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>🧰 DevToolsBox</strong>
+        开发者的免费在线工具箱<br>
+        所有运算在浏览器本地完成
+      </div>
+      <div class="footer-links">
+        <div>
+          <h5>工具</h5>
+          <a href="image-compress.html">图片压缩</a>
+          <a href="image-convert.html">格式转换</a>
+          <a href="json-formatter.html">JSON 格式化</a>
+          <a href="base64.html">Base64</a>
+          <a href="qr-code.html">二维码</a>
+          <a href="timestamp.html">时间戳</a>
+        </div>
+        <div>
+          <h5>关于</h5>
+          <a href="../index.html">首页</a>
+          <a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span>
+      <span>Cloudflare Pages ⚡ 全球加速</span>
+    </div>
   </footer>
 
   <script>
@@ -144,5 +178,29 @@
       return count;
     }
   </script>
+
+<script>
+(function() {
+  const html = document.documentElement;
+  const toggle = document.querySelector(".theme-toggle");
+  const saved = localStorage.getItem("devtoolsbox-theme");
+  if (saved) { html.setAttribute("data-theme", saved); }
+  updateToggleIcon();
+
+  window.toggleTheme = function() {
+    const current = html.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+    html.setAttribute("data-theme", next);
+    localStorage.setItem("devtoolsbox-theme", next);
+    updateToggleIcon();
+  };
+
+  function updateToggleIcon() {
+    const isDark = html.getAttribute("data-theme") === "dark";
+    toggle.textContent = isDark ? "☀️" : "🌙";
+  }
+})();
+</script>
+
 </body>
 </html>
