@@ -1,208 +1,87 @@
-     1|<!DOCTYPE html>
-     2|<html lang="zh-CN" data-theme="light">
-     3|<head>
-     4|  <meta charset="UTF-8">
-     5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     6|  <title>时间戳转换 - DevToolsBox</title>
-     7|  <meta name="description" content="在线Unix时间戳转换工具，时间戳转日期、日期转时间戳，自动识别秒/毫秒，实时显示当前时间。">
-     8|  <meta property="og:title" content="时间戳转换工具 - DevToolsBox">
-     9|  <meta property="og:description" content="Unix时间戳与日期互转，实时时钟，免费在线使用。">
-    10|  <link rel="stylesheet" href="../css/style.css">
-    11|</head>
-    12|<body>
-    13|  <header class="navbar">
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>时间戳转换 - DevToolsBox</title>
+  <meta name="description" content="在线Unix时间戳转换工具，时间戳转日期、日期转时间戳，自动识别秒/毫秒，实时显示当前时间。">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="navbar">
     <div class="navbar-inner">
-      <a href="../index.html" class="navbar-brand">
-        <div class="brand-icon">🧰</div>
-        DevToolsBox
-      </a>
+      <a href="../index.html" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
       <div style="display:flex;align-items:center;">
         <nav class="navbar-links">
           <a href="../index.html">首页</a>
-          <a href="image-compress.html">图片压缩</a>
+          <a href="base64.html">Base64</a>
           <a href="json-formatter.html">JSON</a>
           <a href="qr-code.html">二维码</a>
         </nav>
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式" title="切换深色/浅色模式">🌙</button>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
       </div>
     </div>
   </header>
-    22|
-    23|  <main class="tool-page">
-    24|    <div class="tool-header">
-    25|      <h1>⏰ 时间戳转换</h1>
-    26|      <p>Unix 时间戳与日期时间互转，自动识别秒/毫秒</p>
-    27|    </div>
-    28|
-    29|    <div class="ad-slot">📢 广告位</div>
-    30|
-    31|    <!-- Live clock -->
-    32|    <div class="live-clock" id="liveClock">--</div>
-    33|
-    34|    <!-- Timestamp → Date -->
-    35|    <div class="tool-panel">
-    36|      <h3 style="margin-bottom:12px">🕐 时间戳 → 日期</h3>
-    37|      <label for="tsInput">输入 Unix 时间戳（自动识别秒/毫秒）</label>
-    38|      <div style="display:flex;gap:12px;margin-top:8px">
-    39|        <input type="text" id="tsInput" placeholder="例如: 1700000000 或 1700000000000" style="flex:1">
-    40|        <button class="btn btn-primary" onclick="tsToDate()">转换</button>
-    41|        <button class="btn btn-secondary" onclick="setNow()">当前时间</button>
-    42|      </div>
-    43|      <div class="code-output" id="tsResult" style="display:none;margin-top:12px"></div>
-    44|    </div>
-    45|
-    46|    <!-- Date → Timestamp -->
-    47|    <div class="tool-panel">
-    48|      <h3 style="margin-bottom:12px">📅 日期 → 时间戳</h3>
-    49|      <label for="dateInput">输入日期时间</label>
-    50|      <div style="display:flex;gap:12px;align-items:flex-end;margin-top:8px;flex-wrap:wrap">
-    51|        <input type="datetime-local" id="dateInput" style="flex:1">
-    52|        <button class="btn btn-primary" onclick="dateToTs()">转换</button>
-    53|        <button class="btn btn-secondary" onclick="setDateNow()">当前时间</button>
-    54|      </div>
-    55|      <div class="code-output" id="dateResult" style="display:none;margin-top:12px"></div>
-    56|    </div>
-    57|
-    58|    <div class="ad-slot">📢 广告位</div>
-    59|
-    60|    <div class="sponsor-section">
-    61|      <h3>☕ 如果这个工具帮到了你</h3>
-    62|      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
-    63|      <div class="sponsor-qrcodes">
-    64|        <div class="sponsor-qr">
-    65|          <img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy">
-    66|          <span>支付宝</span>
-    67|        </div>
-    68|        <div class="sponsor-qr">
-    69|          <img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy">
-    70|          <span>微信支付</span>
-    71|        </div>
-    72|      </div>
-    73|    </div>
-    74|  </main>
-    75|
-    76|  <footer class="site-footer">
+
+  <main class="tool-page">
+    <div class="tool-header"><h1>⏰ 时间戳转换</h1><p>Unix 时间戳与日期时间互转，自动识别秒/毫秒</p></div>
+    <div class="ad-slot">📢 <a href="mailto:2917834376@qq.com" style="color:inherit">广告位合作联系：2917834376@qq.com</a></div>
+
+    <div class="live-clock" id="liveClock">--</div>
+
+    <div class="tool-panel">
+      <h3 style="margin-bottom:12px">🕐 时间戳 → 日期</h3>
+      <label for="tsInput">输入 Unix 时间戳（自动识别秒/毫秒）</label>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input type="text" id="tsInput" placeholder="例如: 1700000000 或 1700000000000" style="flex:1">
+        <button class="btn btn-primary" id="tsBtn">转换</button>
+        <button class="btn btn-secondary" id="nowBtn">当前时间</button>
+      </div>
+      <pre class="code-output" id="tsResult" style="display:none;margin-top:12px"></pre>
+    </div>
+
+    <div class="tool-panel">
+      <h3 style="margin-bottom:12px">📅 日期 → 时间戳</h3>
+      <label for="dateInput">输入日期时间</label>
+      <div style="display:flex;gap:8px;align-items:flex-end;margin-top:8px;flex-wrap:wrap">
+        <input type="datetime-local" id="dateInput" style="flex:1">
+        <button class="btn btn-primary" id="dateBtn">转换</button>
+        <button class="btn btn-secondary" id="dateNowBtn">当前时间</button>
+      </div>
+      <pre class="code-output" id="dateResult" style="display:none;margin-top:12px"></pre>
+    </div>
+
+    <div class="sponsor-section">
+      <h3>☕ 如果这个工具帮到了你</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
     <div class="footer-inner">
-      <div class="footer-brand">
-        <strong>🧰 DevToolsBox</strong>
-        开发者的免费在线工具箱<br>
-        所有运算在浏览器本地完成
-      </div>
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
       <div class="footer-links">
-        <div>
-          <h5>工具</h5>
-          <a href="image-compress.html">图片压缩</a>
-          <a href="image-convert.html">格式转换</a>
-          <a href="json-formatter.html">JSON 格式化</a>
-          <a href="base64.html">Base64</a>
-          <a href="qr-code.html">二维码</a>
-          <a href="timestamp.html">时间戳</a>
-        </div>
-        <div>
-          <h5>关于</h5>
-          <a href="../index.html">首页</a>
-          <a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a>
-        </div>
+        <div><h5>工具</h5><a href="image-compress.html">图片压缩</a><a href="image-convert.html">格式转换</a><a href="json-formatter.html">JSON 格式化</a><a href="base64.html">Base64</a><a href="qr-code.html">二维码</a><a href="timestamp.html">时间戳</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">📧 广告合作</a><a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a></div>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span>
-      <span>Cloudflare Pages ⚡ 全球加速</span>
-    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span><span>Cloudflare Pages ⚡ 全球加速</span></div>
   </footer>
-    79|
-    80|  <script>
-    81|    // Live clock
-    82|    function updateClock() {
-    83|      var now = new Date();
-    84|      document.getElementById('liveClock').textContent = now.toLocaleString('zh-CN', {
-    85|        year: 'numeric', month: '2-digit', day: '2-digit',
-    86|        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-    87|      });
-    88|    }
-    89|    updateClock();
-    90|    setInterval(updateClock, 1000);
-    91|
-    92|    // Initialize date input to now
-    93|    function setDateNow() {
-    94|      var now = new Date();
-    95|      document.getElementById('dateInput').value = now.toISOString().slice(0, 16);
-    96|    }
-    97|    setDateNow();
-    98|
-    99|    function setNow() {
-   100|      var ts = Math.floor(Date.now() / 1000);
-   101|      document.getElementById('tsInput').value = ts;
-   102|      tsToDate();
-   103|    }
-   104|
-   105|    function tsToDate() {
-   106|      var ts = parseInt(document.getElementById('tsInput').value.trim());
-   107|      if (isNaN(ts)) { showTsError('请输入有效的时间戳数字'); return; }
-   108|      var isMs = ts > 1000000000000; // > year 5138 in ms
-   109|      var date = new Date(isMs ? ts : ts * 1000);
-   110|      if (isNaN(date.getTime())) { showTsError('时间戳超出范围'); return; }
-   111|      var result = document.getElementById('tsResult');
-   112|      result.style.display = 'block';
-   113|      result.innerHTML =
-   114|        '<div style="margin-bottom:6px;color:#10b981">✅ 时间戳' + (isMs ? '（毫秒）' : '（秒）') + '</div>' +
-   115|        '<div><b>本地时间:</b> ' + date.toLocaleString('zh-CN') + '</div>' +
-   116|        '<div><b>UTC 时间:</b> ' + date.toUTCString() + '</div>' +
-   117|        '<div><b>ISO 8601:</b> ' + date.toISOString() + '</div>' +
-   118|        '<div style="margin-top:6px"><b>秒级时间戳:</b> ' + Math.floor(date.getTime()/1000) + '</div>' +
-   119|        '<div><b>毫秒级时间戳:</b> ' + date.getTime() + '</div>';
-   120|    }
-   121|
-   122|    function dateToTs() {
-   123|      var val = document.getElementById('dateInput').value;
-   124|      if (!val) { showDateError('请选择日期时间'); return; }
-   125|      var date = new Date(val);
-   126|      var ts = Math.floor(date.getTime() / 1000);
-   127|      var result = document.getElementById('dateResult');
-   128|      result.style.display = 'block';
-   129|      result.innerHTML =
-   130|        '<div style="margin-bottom:6px;color:#10b981">✅ 转换结果</div>' +
-   131|        '<div><b>秒级时间戳:</b> ' + ts + '</div>' +
-   132|        '<div><b>毫秒级时间戳:</b> ' + date.getTime() + '</div>' +
-   133|        '<div style="margin-top:6px"><b>UTC:</b> ' + date.toUTCString() + '</div>';
-   134|    }
-   135|
-   136|    function showTsError(msg) {
-   137|      var r = document.getElementById('tsResult');
-   138|      r.style.display = 'block';
-   139|      r.innerHTML = '<span style="color:#ef4444">❌ ' + msg + '</span>';
-   140|    }
-   141|
-   142|    function showDateError(msg) {
-   143|      var r = document.getElementById('dateResult');
-   144|      r.style.display = 'block';
-   145|      r.innerHTML = '<span style="color:#ef4444">❌ ' + msg + '</span>';
-   146|    }
-   147|  </script>
-   148|
-<script>
-(function() {
-  const html = document.documentElement;
-  const toggle = document.querySelector(".theme-toggle");
-  const saved = localStorage.getItem("devtoolsbox-theme");
-  if (saved) { html.setAttribute("data-theme", saved); }
-  updateToggleIcon();
 
-  window.toggleTheme = function() {
-    const current = html.getAttribute("data-theme");
-    const next = current === "dark" ? "light" : "dark";
-    html.setAttribute("data-theme", next);
-    localStorage.setItem("devtoolsbox-theme", next);
-    updateToggleIcon();
-  };
-
-  function updateToggleIcon() {
-    const isDark = html.getAttribute("data-theme") === "dark";
-    toggle.textContent = isDark ? "☀️" : "🌙";
-  }
-})();
-</script>
-
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>(function(){var lc=document.getElementById("liveClock"),tsI=document.getElementById("tsInput"),tsR=document.getElementById("tsResult"),di=document.getElementById("dateInput"),dr=document.getElementById("dateResult");
+function uc(){var n=new Date;lc.textContent=n.toLocaleString("zh-CN",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false})}uc();setInterval(uc,1000);
+di.value=new Date().toISOString().slice(0,16);
+document.getElementById("nowBtn").addEventListener("click",function(){tsI.value=Math.floor(Date.now()/1000);tsToDate()});
+document.getElementById("tsBtn").addEventListener("click",tsToDate);
+document.getElementById("dateNowBtn").addEventListener("click",function(){di.value=new Date().toISOString().slice(0,16)});
+document.getElementById("dateBtn").addEventListener("click",dateToTs);
+function tsToDate(){var ts=parseInt(tsI.value.trim());if(isNaN(ts)){tsR.style.display="block";tsR.innerHTML='<span style="color:#ef4444">❌ 请输入有效的时间戳数字</span>';return}var isMs=ts>1e12,d=new Date(isMs?ts:ts*1000);if(isNaN(d.getTime())){tsR.style.display="block";tsR.innerHTML='<span style="color:#ef4444">❌ 时间戳超出范围</span>';return}tsR.style.display="block";tsR.innerHTML='<div style="margin-bottom:6px;color:#10b981">✅ 时间戳'+(isMs?"（毫秒）":"（秒）")+"</div><div><b>本地时间:</b> "+d.toLocaleString("zh-CN")+"</div><div><b>UTC 时间:</b> "+d.toUTCString()+"</div><div><b>ISO 8601:</b> "+d.toISOString()+"</div><div style=\"margin-top:6px\"><b>秒级时间戳:</b> "+Math.floor(d.getTime()/1000)+"</div><div><b>毫秒级时间戳:</b> "+d.getTime()+"</div>"}
+function dateToTs(){var v=di.value;if(!v){dr.style.display="block";dr.innerHTML='<span style="color:#ef4444">❌ 请选择日期时间</span>';return}var d=new Date(v),ts=Math.floor(d.getTime()/1000);dr.style.display="block";dr.innerHTML='<div style="margin-bottom:6px;color:#10b981">✅ 转换结果</div><div><b>秒级时间戳:</b> '+ts+"</div><div><b>毫秒级时间戳:</b> "+d.getTime()+"</div><div style=\"margin-top:6px\"><b>UTC:</b> "+d.toUTCString()+"</div>"}
+})();</script>
 </body>
-   149|</html>
-   150|
+</html>
