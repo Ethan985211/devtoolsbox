@@ -4,12 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DevToolsBox — 免费在线开发者工具</title>
-<meta name="description" content="6大免费在线开发者工具：图片压缩、格式转换、JSON格式化、Base64编解码、二维码生成、时间戳转换、PDF处理、颜色转换等。纯浏览器本地处理，数据零上传。">
+<meta name="description" content="12款免费在线开发者工具：图片压缩、格式转换、JSON格式化、Base64编解码、二维码生成、时间戳转换、PDF合并、PDF拆分、PDF文本提取、颜色转换、URL编解码、随机密码生成。纯浏览器本地处理，数据零上传。">
 <meta property="og:title" content="DevToolsBox — 免费在线开发者工具">
-<meta property="og:description" content="图片压缩 · JSON格式化 · 二维码生成 · Base64 · 时间戳 · 格式转换。全部免费，数据不上传。">
+<meta property="og:description" content="12款免费在线开发者工具：图片压缩、格式转换、JSON格式化、Base64编解码、二维码生成、时间戳转换、PDF合并、PDF拆分、PDF文本提取、颜色转换、URL编解码、随机密码生成。纯浏览器本地处理，数据零上传。">
+<meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="DevToolsBox">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DevToolsBox — 免费在线开发者工具">
+<meta name="twitter:description" content="12款免费在线开发者工具：图片压缩、格式转换、JSON格式化、Base64编解码、二维码生成、时间戳转换、PDF合并、PDF拆分、PDF文本提取、颜色转换、URL编解码、随机密码生成。纯浏览器本地处理，数据零上传。">
+<link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧰</text></svg>">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#6366f1">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "DevToolsBox",
+  "url": "https://devtoolsbox-1rl.pages.dev",
+  "description": "12款免费在线开发者工具：图片压缩、格式转换、JSON格式化、Base64编解码、二维码生成、时间戳转换、PDF处理、颜色转换、URL编解码、密码生成。纯浏览器本地处理，数据零上传。",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "All",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"},
+  "browserRequirements": "Requires JavaScript"
+}
+</script>
 </head>
 <body>
 
@@ -339,6 +360,12 @@ toggle.textContent = isDark ? '☀️' : '🌙';
 </script>
 
 
+
+<script>
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
 
 </body>
 </html>
