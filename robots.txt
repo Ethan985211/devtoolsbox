@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://devtoolsbox.pages.dev/sitemap.xml
+Sitemap: https://devtoolsbox-1rl.pages.dev/sitemap.xml

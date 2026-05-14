@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://devtoolsbox.pages.dev/</loc>
+    <loc>https://devtoolsbox-1rl.pages.dev/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://devtoolsbox.pages.dev/tools/image-compress.html</loc>
+    <loc>https://devtoolsbox-1rl.pages.dev/tools/image-compress.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://devtoolsbox.pages.dev/tools/image-convert.html</loc>
+    <loc>https://devtoolsbox-1rl.pages.dev/tools/image-convert.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://devtoolsbox.pages.dev/tools/json-formatter.html</loc>
+    <loc>https://devtoolsbox-1rl.pages.dev/tools/json-formatter.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://devtoolsbox.pages.dev/tools/base64.html</loc>
+    <loc>https://devtoolsbox-1rl.pages.dev/tools/base64.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://devtoolsbox.pages.dev/tools/qr-code.html</loc>
+    <loc>https://devtoolsbox-1rl.pages.dev/tools/qr-code.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://devtoolsbox.pages.dev/tools/timestamp.html</loc>
+    <loc>https://devtoolsbox-1rl.pages.dev/tools/timestamp.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
