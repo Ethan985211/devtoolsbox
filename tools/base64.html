@@ -1,80 +1,79 @@
-     1|     1|<!DOCTYPE html>
-     2|     2|<html lang="zh-CN" data-theme="light">
-     3|     3|<head>
-     4|     4|  <meta charset="UTF-8">
-     5|     5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     6|     6|  <title>Base64 编解码 - DevToolsBox</title>
-     7|     7|  <meta name="description" content="在线Base64编解码工具，支持中文UTF-8。文本转Base64，Base64转文本。免费在线使用。">
-     8|     8|  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
-     9|     9|  <link rel="stylesheet" href="../css/style.css">
-    10|    10|</head>
-    11|    11|<body>
-    12|    12|  <header class="navbar">
-    13|    13|    <div class="navbar-inner">
-    14|    14|      <a href="../index.html" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
-    15|    15|      <div style="display:flex;align-items:center;">
-    16|    16|        <nav class="navbar-links">
-    17|    17|          <a href="../index.html">首页</a>
-    18|    18|          <a href="json-formatter.html">JSON</a>
-    19|    19|          <a href="qr-code.html">二维码</a>
-    20|    20|          <a href="timestamp.html">时间戳</a>
-    21|    21|        </nav>
-    22|    22|        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
-    23|    23|      </div>
-    24|    24|    </div>
-    25|    25|  </header>
-    26|    26|
-    27|    27|  <main class="tool-page">
-    28|    28|    <div class="tool-header"><h1>🔐 Base64 编解码</h1><p>文本与 Base64 互转，完美支持中文（UTF-8编码）</p></div>
-    29|    29|    <a href="https://www.vmssr.net/#/register?code=fGN3KQqi" class="promo-banner" target="_blank" rel="nofollow sponsored">
-    30|  <div>
-    31|    <span class="promo-tag">推荐</span>
-    32|    <div class="promo-title">VMSSR 高速网络 — 全球多节点覆盖</div>
-    33|    <div class="promo-desc">稳定低延迟，注册即用无需配置。通过邀请链接注册支持本站持续运营</div>
-    34|  </div>
-    35|  <span class="promo-cta">立即使用</span>
-    36|</a>
-    37|    30|
-    38|    31|    <div class="tool-panel"><label for="inputText">输入内容</label><textarea id="inputText" placeholder="输入要编码/解码的文本..." rows="6"></textarea></div>
-    39|    32|
-    40|    33|    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-    41|    34|      <button class="btn btn-primary" id="encBtn">编码 (文本→Base64)</button>
-    42|    35|      <button class="btn btn-success" id="decBtn">解码 (Base64→文本)</button>
-    43|    36|      <button class="btn btn-secondary" id="swapBtn">交换</button>
-    44|    37|      <button class="btn btn-secondary" id="copyBtn">复制结果</button>
-    45|    38|      <button class="btn btn-secondary" id="clearBtn">清空</button>
-    46|    39|    </div>
-    47|    40|
-    48|    41|    <div class="tool-panel" id="outputPanel" style="display:none"><label id="outputLabel">结果</label><pre class="code-output" id="outputText"></pre></div>
-    49|    42|
-    50|    43|    <div class="sponsor-section">
-    51|    44|      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
-    52|    45|      <div class="sponsor-qrcodes">
-    53|    46|        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
-    54|    47|        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
-    55|    48|      </div>
-    56|    49|    </div>
-    57|    50|  </main>
-    58|    51|
-    59|    52|  <footer class="site-footer">
-    60|    53|    <div class="footer-inner">
-    61|    54|      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
-    62|    55|      <div class="footer-links">
-    63|    56|        <div><h5>工具</h5><a href="image-compress.html">图片压缩</a><a href="image-convert.html">格式转换</a><a href="json-formatter.html">JSON 格式化</a><a href="base64.html">Base64</a><a href="qr-code.html">二维码</a><a href="timestamp.html">时间戳</a></div>
-    64|    57|        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">📧 广告合作</a><a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a></div>
-    65|    58|      </div>
-    66|    59|    </div>
-    67|    60|    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span><span>Cloudflare Pages ⚡ 全球加速</span></div>
-    68|    61|  </footer>
-    69|    62|
-    70|    63|<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
-    71|    64|<script>(function(){var inp=document.getElementById("inputText"),out=document.getElementById("outputText"),op=document.getElementById("outputPanel"),ol=document.getElementById("outputLabel");
-    72|    65|document.getElementById("encBtn").addEventListener("click",function(){try{out.textContent=btoa(unescape(encodeURIComponent(inp.value)));ol.textContent="Base64 编码结果";op.style.display="block"}catch(e){out.textContent="编码失败: "+e.message;ol.textContent="错误";op.style.display="block"}});
-    73|    66|document.getElementById("decBtn").addEventListener("click",function(){try{out.textContent=decodeURIComponent(escape(atob(inp.value.trim())));ol.textContent="解码结果";op.style.display="block"}catch(e){out.textContent="解码失败: 请检查输入是否为有效的 Base64 字符串";ol.textContent="错误";op.style.display="block"}});
-    74|    67|document.getElementById("swapBtn").addEventListener("click",function(){if(out.textContent){inp.value=out.textContent;out.textContent="";op.style.display="none"}});
-    75|    68|document.getElementById("copyBtn").addEventListener("click",function(){if(!out.textContent){alert("没有可复制的内容");return}navigator.clipboard.writeText(out.textContent).then(function(){var b=document.getElementById("copyBtn");b.textContent="已复制 ✓";setTimeout(function(){b.textContent="复制结果"},1500)})});
-    76|    69|document.getElementById("clearBtn").addEventListener("click",function(){inp.value="";out.textContent="";op.style.display="none"});
-    77|    70|})();</script>
-    78|    71|</body>
-    79|    72|</html>
-    80|    73|
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base64 编解码 - DevToolsBox</title>
+  <meta name="description" content="在线Base64编解码工具，支持中文UTF-8。文本转Base64，Base64转文本。免费在线使用。">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="../index.html">首页</a>
+          <a href="json-formatter.html">JSON</a>
+          <a href="qr-code.html">二维码</a>
+          <a href="timestamp.html">时间戳</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header"><h1>🔐 Base64 编解码</h1><p>文本与 Base64 互转，完美支持中文（UTF-8编码）</p></div>
+    <a href="https://www.vmssr.net/#/register?code=fGN3KQqi" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<div>
+<span class="promo-tag">推荐</span>
+<div class="promo-title">VMSSR 高速网络 — 全球多节点覆盖</div>
+<div class="promo-desc">稳定低延迟，注册即用无需配置。通过邀请链接注册支持本站持续运营</div>
+</div>
+<span class="promo-cta">立即使用</span>
+</a>
+
+    <div class="tool-panel"><label for="inputText">输入内容</label><textarea id="inputText" placeholder="输入要编码/解码的文本..." rows="6"></textarea></div>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="encBtn">编码 (文本→Base64)</button>
+      <button class="btn btn-success" id="decBtn">解码 (Base64→文本)</button>
+      <button class="btn btn-secondary" id="swapBtn">交换</button>
+      <button class="btn btn-secondary" id="copyBtn">复制结果</button>
+      <button class="btn btn-secondary" id="clearBtn">清空</button>
+    </div>
+
+    <div class="tool-panel" id="outputPanel" style="display:none"><label id="outputLabel">结果</label><pre class="code-output" id="outputText"></pre></div>
+
+    <div class="sponsor-section">
+      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="image-compress.html">图片压缩</a><a href="image-convert.html">格式转换</a><a href="json-formatter.html">JSON 格式化</a><a href="base64.html">Base64</a><a href="qr-code.html">二维码</a><a href="timestamp.html">时间戳</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">📧 广告合作</a><a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span><span>Cloudflare Pages ⚡ 全球加速</span></div>
+  </footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>(function(){var inp=document.getElementById("inputText"),out=document.getElementById("outputText"),op=document.getElementById("outputPanel"),ol=document.getElementById("outputLabel");
+document.getElementById("encBtn").addEventListener("click",function(){try{out.textContent=btoa(unescape(encodeURIComponent(inp.value)));ol.textContent="Base64 编码结果";op.style.display="block"}catch(e){out.textContent="编码失败: "+e.message;ol.textContent="错误";op.style.display="block"}});
+document.getElementById("decBtn").addEventListener("click",function(){try{out.textContent=decodeURIComponent(escape(atob(inp.value.trim())));ol.textContent="解码结果";op.style.display="block"}catch(e){out.textContent="解码失败: 请检查输入是否为有效的 Base64 字符串";ol.textContent="错误";op.style.display="block"}});
+document.getElementById("swapBtn").addEventListener("click",function(){if(out.textContent){inp.value=out.textContent;out.textContent="";op.style.display="none"}});
+document.getElementById("copyBtn").addEventListener("click",function(){if(!out.textContent){alert("没有可复制的内容");return}navigator.clipboard.writeText(out.textContent).then(function(){var b=document.getElementById("copyBtn");b.textContent="已复制 ✓";setTimeout(function(){b.textContent="复制结果"},1500)})});
+document.getElementById("clearBtn").addEventListener("click",function(){inp.value="";out.textContent="";op.style.display="none"});
+})();</script>
+</body>
+</html>

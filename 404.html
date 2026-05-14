@@ -1,106 +1,105 @@
-     1|<!DOCTYPE html>
-     2|<html lang="zh-CN" data-theme="light">
-     3|<head>
-     4|  <meta charset="UTF-8">
-     5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     6|  <title>404 - 页面未找到 | DevToolsBox</title>
-     7|  <link rel="stylesheet" href="/css/style.css">
-     8|  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
-     9|</head>
-    10|<body>
-    11|  <header class="navbar">
-    12|    <div class="navbar-inner">
-    13|      <a href="/" class="navbar-brand">
-    14|        <div class="brand-icon">🧰</div>
-    15|        DevToolsBox
-    16|      </a>
-    17|      <div style="display:flex;align-items:center;">
-    18|        <nav class="navbar-links">
-    19|          <a href="/">首页</a>
-    20|          <a href="/tools/image-compress.html">图片压缩</a>
-    21|          <a href="/tools/json-formatter.html">JSON</a>
-    22|          <a href="/tools/qr-code.html">二维码</a>
-    23|        </nav>
-    24|        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式" title="切换深色/浅色模式">🌙</button>
-    25|      </div>
-    26|    </div>
-    27|  </header>
-    28|
-    29|  <main class="error-page">
-    30|    <div class="error-code">404</div>
-    31|    <h2>页面未找到</h2>
-    32|    <p>你访问的页面不存在，可能已被移动或删除</p>
-    33|    <a href="/" class="btn btn-primary">← 返回首页</a>
-    34|
-    35|    <div class="sponsor-section" style="margin-top:48px">
-    36|      <h3>☕ 如果这些工具帮到了你</h3>
-    37|      <p>请我喝杯咖啡，支持我开发更多免费工具</p>
-    38|      <div class="sponsor-qrcodes">
-    39|        <div class="sponsor-qr">
-    40|          <img src="支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy">
-    41|          <span>支付宝</span>
-    42|        </div>
-    43|        <div class="sponsor-qr">
-    44|          <img src="微信收款码.jpeg" alt="微信收款码" loading="lazy">
-    45|          <span>微信支付</span>
-    46|        </div>
-    47|      </div>
-    48|    </div>
-    49|  </main>
-    50|
-    51|  <footer class="site-footer">
-    52|    <div class="footer-inner">
-    53|      <div class="footer-brand">
-    54|        <strong>🧰 DevToolsBox</strong>
-    55|        开发者的免费在线工具箱<br>
-    56|        所有运算在浏览器本地完成
-    57|      </div>
-    58|      <div class="footer-links">
-    59|        <div>
-    60|          <h5>工具</h5>
-    61|          <a href="/tools/image-compress.html">图片压缩</a>
-    62|          <a href="/tools/image-convert.html">格式转换</a>
-    63|          <a href="/tools/json-formatter.html">JSON 格式化</a>
-    64|          <a href="/tools/base64.html">Base64</a>
-    65|          <a href="/tools/qr-code.html">二维码</a>
-    66|          <a href="/tools/timestamp.html">时间戳</a>
-    67|        </div>
-    68|        <div>
-    69|        <h5>联系</h5>
-    70|        <a href="mailto:2917834376@qq.com">📧 广告合作</a>
-    71|        <a href="/">首页</a>
-    72|          <a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a>
-    73|        </div>
-    74|      </div>
-    75|    </div>
-    76|    <div class="footer-bottom">
-    77|      <span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span>
-    78|      <span>Cloudflare Pages ⚡ 全球加速</span>
-    79|    </div>
-    80|  </footer>
-    81|
-    82|<script>
-    83|(function() {
-    84|  const html = document.documentElement;
-    85|  const toggle = document.querySelector(".theme-toggle");
-    86|  const saved = localStorage.getItem("devtoolsbox-theme");
-    87|  if (saved) { html.setAttribute("data-theme", saved); }
-    88|  updateToggleIcon();
-    89|
-    90|  window.toggleTheme = function() {
-    91|    const current = html.getAttribute("data-theme");
-    92|    const next = current === "dark" ? "light" : "dark";
-    93|    html.setAttribute("data-theme", next);
-    94|    localStorage.setItem("devtoolsbox-theme", next);
-    95|    updateToggleIcon();
-    96|  };
-    97|
-    98|  function updateToggleIcon() {
-    99|    const isDark = html.getAttribute("data-theme") === "dark";
-   100|    toggle.textContent = isDark ? "☀️" : "🌙";
-   101|  }
-   102|})();
-   103|</script>
-   104|</body>
-   105|</html>
-   106|
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 - 页面未找到 | DevToolsBox</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+</head>
+<body>
+<header class="navbar">
+<div class="navbar-inner">
+<a href="/" class="navbar-brand">
+<div class="brand-icon">🧰</div>
+DevToolsBox
+</a>
+<div style="display:flex;align-items:center;">
+<nav class="navbar-links">
+<a href="/">首页</a>
+<a href="/tools/image-compress.html">图片压缩</a>
+<a href="/tools/json-formatter.html">JSON</a>
+<a href="/tools/qr-code.html">二维码</a>
+</nav>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式" title="切换深色/浅色模式">🌙</button>
+</div>
+</div>
+</header>
+
+<main class="error-page">
+<div class="error-code">404</div>
+<h2>页面未找到</h2>
+<p>你访问的页面不存在，可能已被移动或删除</p>
+<a href="/" class="btn btn-primary">← 返回首页</a>
+
+<div class="sponsor-section" style="margin-top:48px">
+<h3>☕ 如果这些工具帮到了你</h3>
+<p>请我喝杯咖啡，支持我开发更多免费工具</p>
+<div class="sponsor-qrcodes">
+<div class="sponsor-qr">
+<img src="支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy">
+<span>支付宝</span>
+</div>
+<div class="sponsor-qr">
+<img src="微信收款码.jpeg" alt="微信收款码" loading="lazy">
+<span>微信支付</span>
+</div>
+</div>
+</div>
+</main>
+
+<footer class="site-footer">
+<div class="footer-inner">
+<div class="footer-brand">
+<strong>🧰 DevToolsBox</strong>
+开发者的免费在线工具箱<br>
+所有运算在浏览器本地完成
+</div>
+<div class="footer-links">
+<div>
+<h5>工具</h5>
+<a href="/tools/image-compress.html">图片压缩</a>
+<a href="/tools/image-convert.html">格式转换</a>
+<a href="/tools/json-formatter.html">JSON 格式化</a>
+<a href="/tools/base64.html">Base64</a>
+<a href="/tools/qr-code.html">二维码</a>
+<a href="/tools/timestamp.html">时间戳</a>
+</div>
+<div>
+<h5>联系</h5>
+<a href="mailto:2917834376@qq.com">📧 广告合作</a>
+<a href="/">首页</a>
+<a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span>
+<span>Cloudflare Pages ⚡ 全球加速</span>
+</div>
+</footer>
+
+<script>
+(function() {
+const html = document.documentElement;
+const toggle = document.querySelector(".theme-toggle");
+const saved = localStorage.getItem("devtoolsbox-theme");
+if (saved) { html.setAttribute("data-theme", saved); }
+updateToggleIcon();
+
+window.toggleTheme = function() {
+const current = html.getAttribute("data-theme");
+const next = current === "dark" ? "light" : "dark";
+html.setAttribute("data-theme", next);
+localStorage.setItem("devtoolsbox-theme", next);
+updateToggleIcon();
+};
+
+function updateToggleIcon() {
+const isDark = html.getAttribute("data-theme") === "dark";
+toggle.textContent = isDark ? "☀️" : "🌙";
+}
+})();
+</script>
+</body>
+</html>

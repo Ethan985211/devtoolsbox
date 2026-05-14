@@ -1,32 +1,32 @@
-     1|<!DOCTYPE html>
-     2|<html lang="zh-CN" data-theme="light">
-     3|<head>
-     4|  <meta charset="UTF-8">
-     5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     6|  <title>图片格式转换 - DevToolsBox</title>
-     7|  <meta name="description" content="在线图片格式转换，PNG/JPG/WebP/BMP 互转，免费在线转换，数据不上传。">
-     8|  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
-     9|  <link rel="stylesheet" href="../css/style.css">
-    10|</head>
-    11|<body>
-    12|  <header class="navbar">
-    13|    <div class="navbar-inner">
-    14|      <a href="../index.html" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
-    15|      <div style="display:flex;align-items:center;">
-    16|        <nav class="navbar-links">
-    17|          <a href="../index.html">首页</a>
-    18|          <a href="image-compress.html">图片压缩</a>
-    19|          <a href="json-formatter.html">JSON</a>
-    20|          <a href="qr-code.html">二维码</a>
-    21|        </nav>
-    22|        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
-    23|      </div>
-    24|    </div>
-    25|  </header>
-    26|
-    27|  <main class="tool-page">
-    28|    <div class="tool-header"><h1>🔄 图片格式转换</h1><p>上传图片，选择目标格式，一键下载转换结果。支持 PNG / JPG / WebP / BMP</p></div>
-    29|    <a href="https://www.vmssr.net/#/register?code=fGN3KQqi" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图片格式转换 - DevToolsBox</title>
+<meta name="description" content="在线图片格式转换，PNG/JPG/WebP/BMP 互转，免费在线转换，数据不上传。">
+<link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="navbar">
+<div class="navbar-inner">
+<a href="../index.html" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+<div style="display:flex;align-items:center;">
+<nav class="navbar-links">
+<a href="../index.html">首页</a>
+<a href="image-compress.html">图片压缩</a>
+<a href="json-formatter.html">JSON</a>
+<a href="qr-code.html">二维码</a>
+</nav>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+</div>
+</div>
+</header>
+
+<main class="tool-page">
+<div class="tool-header"><h1>🔄 图片格式转换</h1><p>上传图片，选择目标格式，一键下载转换结果。支持 PNG / JPG / WebP / BMP</p></div>
+<a href="https://www.vmssr.net/#/register?code=fGN3KQqi" class="promo-banner" target="_blank" rel="nofollow sponsored">
   <div>
     <span class="promo-tag">推荐</span>
     <div class="promo-title">VMSSR 高速网络 — 全球多节点覆盖</div>
@@ -34,50 +34,49 @@
   </div>
   <span class="promo-cta">立即使用</span>
 </a>
-    30|
-    31|    <div class="tool-panel">
-    32|      <div class="drop-zone" id="dropZone">
-    33|        <div class="dz-icon">📁</div><p>拖放图片到此处，或点击选择文件</p>
-    34|        <p style="font-size:12px;opacity:.6;margin-top:8px">支持 PNG / JPG / WebP / BMP</p>
-    35|        <input type="file" id="fileInput" accept="image/*" style="display:none">
-    36|      </div>
-    37|    </div>
-    38|
-    39|    <div class="tool-panel" id="convertPanel" style="display:none">
-    40|      <div class="controls-row">
-    41|        <div><label>原格式</label><input type="text" id="sourceFormat" readonly></div>
-    42|        <div><label>转换为</label><select id="targetFormat"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option><option value="image/bmp">BMP</option></select></div>
-    43|        <div style="display:flex;align-items:flex-end"><button class="btn btn-primary" id="convertBtn">转换并下载</button></div>
-    44|      </div>
-    45|      <div style="margin-top:16px"><label>预览</label><img id="preview" class="preview-img" style="display:none;max-height:300px;object-fit:contain" alt="预览"><p id="fileInfo" style="font-size:13px;opacity:.7;margin-top:8px"></p></div>
-    46|    </div>
-    47|
-    48|    <div class="sponsor-section">
-    49|      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
-    50|      <div class="sponsor-qrcodes">
-    51|        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
-    52|        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
-    53|      </div>
-    54|    </div>
-    55|  </main>
-    56|
-    57|  <footer class="site-footer">
-    58|    <div class="footer-inner">
-    59|      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
-    60|      <div class="footer-links">
-    61|        <div><h5>工具</h5><a href="image-compress.html">图片压缩</a><a href="image-convert.html">格式转换</a><a href="json-formatter.html">JSON 格式化</a><a href="base64.html">Base64</a><a href="qr-code.html">二维码</a><a href="timestamp.html">时间戳</a></div>
-    62|        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">📧 广告合作</a><a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a></div>
-    63|      </div>
-    64|    </div>
-    65|    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span><span>Cloudflare Pages ⚡ 全球加速</span></div>
-    66|  </footer>
-    67|
-    68|<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
-    69|<script>(function(){var si=new Image,sf=null,dz=document.getElementById("dropZone"),fi=document.getElementById("fileInput"),cp=document.getElementById("convertPanel"),pv=document.getElementById("preview"),fl=document.getElementById("fileInfo"),sfm=document.getElementById("sourceFormat");dz.addEventListener("click",function(){fi.click()});dz.addEventListener("dragover",function(e){e.preventDefault();dz.classList.add("dragover")},{passive:false});dz.addEventListener("dragleave",function(){dz.classList.remove("dragover")});dz.addEventListener("drop",function(e){e.preventDefault();dz.classList.remove("dragover");if(e.dataTransfer.files.length)hF(e.dataTransfer.files[0])});fi.addEventListener("change",function(e){if(e.target.files.length)hF(e.target.files[0])});document.getElementById("convertBtn").addEventListener("click",convert);
-    70|function hF(file){if(!file.type.match(/image\//)){alert("请选择图片文件");return}sf=file;sfm.value=file.type||"未知";var r=new FileReader();r.onload=function(e){si.onload=function(){pv.src=e.target.result;pv.style.display="block";cp.style.display="block"};si.src=e.target.result};r.readAsDataURL(file);fl.textContent="原始大小: "+fS(file.size)}
-    71|function convert(){if(!si.width)return;var c=document.createElement("canvas");c.width=si.width;c.height=si.height;c.getContext("2d").drawImage(si,0,0);var f=document.getElementById("targetFormat").value,e=f.split("/")[1].replace("jpeg","jpg");c.toBlob(function(b){var u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="converted."+e;a.click();URL.revokeObjectURL(u);fl.textContent="转换后大小: "+fS(b.size)},f)}
-    72|function fS(b){if(b<1024)return b+" B";if(b<1048576)return(b/1024).toFixed(1)+" KB";return(b/1048576).toFixed(2)+" MB"}
-    73|})();</script>
-    74|</body>
-    75|</html>
-    76|
+
+<div class="tool-panel">
+<div class="drop-zone" id="dropZone">
+<div class="dz-icon">📁</div><p>拖放图片到此处，或点击选择文件</p>
+<p style="font-size:12px;opacity:.6;margin-top:8px">支持 PNG / JPG / WebP / BMP</p>
+<input type="file" id="fileInput" accept="image/*" style="display:none">
+</div>
+</div>
+
+<div class="tool-panel" id="convertPanel" style="display:none">
+<div class="controls-row">
+<div><label>原格式</label><input type="text" id="sourceFormat" readonly></div>
+<div><label>转换为</label><select id="targetFormat"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option><option value="image/bmp">BMP</option></select></div>
+<div style="display:flex;align-items:flex-end"><button class="btn btn-primary" id="convertBtn">转换并下载</button></div>
+</div>
+<div style="margin-top:16px"><label>预览</label><img id="preview" class="preview-img" style="display:none;max-height:300px;object-fit:contain" alt="预览"><p id="fileInfo" style="font-size:13px;opacity:.7;margin-top:8px"></p></div>
+</div>
+
+<div class="sponsor-section">
+<h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+<div class="sponsor-qrcodes">
+<div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+<div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+</div>
+</div>
+</main>
+
+<footer class="site-footer">
+<div class="footer-inner">
+<div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+<div class="footer-links">
+<div><h5>工具</h5><a href="image-compress.html">图片压缩</a><a href="image-convert.html">格式转换</a><a href="json-formatter.html">JSON 格式化</a><a href="base64.html">Base64</a><a href="qr-code.html">二维码</a><a href="timestamp.html">时间戳</a></div>
+<div><h5>联系</h5><a href="mailto:2917834376@qq.com">📧 广告合作</a><a href="https://github.com/Ethan985211/devtoolsbox" target="_blank" rel="noopener">GitHub</a></div>
+</div>
+</div>
+<div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span><span>Cloudflare Pages ⚡ 全球加速</span></div>
+</footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>(function(){var si=new Image,sf=null,dz=document.getElementById("dropZone"),fi=document.getElementById("fileInput"),cp=document.getElementById("convertPanel"),pv=document.getElementById("preview"),fl=document.getElementById("fileInfo"),sfm=document.getElementById("sourceFormat");dz.addEventListener("click",function(){fi.click()});dz.addEventListener("dragover",function(e){e.preventDefault();dz.classList.add("dragover")},{passive:false});dz.addEventListener("dragleave",function(){dz.classList.remove("dragover")});dz.addEventListener("drop",function(e){e.preventDefault();dz.classList.remove("dragover");if(e.dataTransfer.files.length)hF(e.dataTransfer.files[0])});fi.addEventListener("change",function(e){if(e.target.files.length)hF(e.target.files[0])});document.getElementById("convertBtn").addEventListener("click",convert);
+function hF(file){if(!file.type.match(/image\//)){alert("请选择图片文件");return}sf=file;sfm.value=file.type||"未知";var r=new FileReader();r.onload=function(e){si.onload=function(){pv.src=e.target.result;pv.style.display="block";cp.style.display="block"};si.src=e.target.result};r.readAsDataURL(file);fl.textContent="原始大小: "+fS(file.size)}
+function convert(){if(!si.width)return;var c=document.createElement("canvas");c.width=si.width;c.height=si.height;c.getContext("2d").drawImage(si,0,0);var f=document.getElementById("targetFormat").value,e=f.split("/")[1].replace("jpeg","jpg");c.toBlob(function(b){var u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="converted."+e;a.click();URL.revokeObjectURL(u);fl.textContent="转换后大小: "+fS(b.size)},f)}
+function fS(b){if(b<1024)return b+" B";if(b<1048576)return(b/1024).toFixed(1)+" KB";return(b/1048576).toFixed(2)+" MB"}
+})();</script>
+</body>
+</html>
