@@ -444,26 +444,92 @@ transform: translateX(-6px);
 transition: all var(--transition);
 }
 
-/* ── Ad Slots ─────────────────────────────────── */
-.ad-slot {
-background: var(--bg-secondary);
-border: 1px solid var(--border);
-border-radius: var(--radius-lg);
-padding: 28px;
-text-align: center;
-color: var(--text-tertiary);
-font-size: 13px;
-min-height: 100px;
-display: flex;
-align-items: center;
-justify-content: center;
-margin: 32px 0;
-transition: all var(--transition);
-letter-spacing: 0.01em;
+/* ── Promo Banners ────────────────────────────── */
+.promo-banner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin: 32px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
 }
-.ad-slot:hover {
-border-color: var(--border-strong);
-box-shadow: var(--shadow-sm);
+.promo-banner::after {
+  content: '';
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.04;
+  pointer-events: none;
+}
+.promo-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent);
+}
+.promo-banner .promo-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 100px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+.promo-banner .promo-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.promo-banner .promo-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 420px;
+  line-height: 1.5;
+}
+.promo-banner .promo-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all var(--transition);
+  letter-spacing: -0.01em;
+}
+.promo-banner:hover .promo-cta {
+  box-shadow: 0 4px 16px var(--accent-glow);
+  transform: scale(1.04);
+}
+/* Horizontal promo row — two ads side by side */
+.promo-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+  margin: 32px 0;
+}
+.promo-row .promo-banner {
+  margin: 0;
 }
 
 /* ── Affiliate / Recommend ────────────────────── */
