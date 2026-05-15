@@ -1224,3 +1224,20 @@ line-height: 1.5;
 @media (max-width: 640px) {
   .quick-grid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ── Site Footer ─────────────────────────────── */
+.site-footer {
+  margin-top: 64px;
+  padding: 20px 24px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  color: var(--text-tertiary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.site-footer a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.site-footer a:hover { color: var(--accent); }
