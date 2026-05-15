@@ -1,10 +1,9 @@
 /**
- * DevToolsBox Reverse Proxy v3
+ * DevToolsBox Reverse Proxy v4
  * Cloudflare Pages Function — 边缘网络中转代理
  * 用法: /api/proxy?url=https://example.com
  *
- * v3 新特性：HTML URL 重写。代理返回的 HTML 中所有资源链接（CSS/JS/图片/跳转）
- * 自动改写为走代理，解决国内加载慢和链接跳转失败问题。
+ * v4 修复：URL 重写正则 JS 转义 bug + 移除 base 标签（query-string 代理不兼容）
  *
  * 已知硬限制：Cloudflare Workers 的 fetch() 在访问同样受 Cloudflare Bot
  * 防护的站点时会被 1010 浏览器签名检测拦截。Google 搜索、GitHub.com、
@@ -79,7 +78,6 @@ const DOMAIN_HEADERS = {
 };
 
 // ============== 已知被 Cloudflare Bot 拦截的域名 ==============
-// chatgpt.com 已移除：允许尝试，让用户看到实际错误而非预判拦截
 const KNOWN_BLOCKED = [
   'www.google.com',      // 建议用 news.google.com
   'google.com',          // 同上
@@ -105,61 +103,85 @@ function getDomainHeaders(hostname) {
 }
 
 // ============== HTML URL 重写 ==============
-// 把 HTML 里的绝对/协议相对/根相对 URL 全部改写为走代理，
-// 确保 CSS/JS/图片/跳转链接在国内都能加载
-const URL_ATTRS = ['src', 'href', 'action', 'poster', 'data-src', 'data-href'];
+// 把 HTML 里的所有资源/跳转链接改写为走代理，
+// 确保 CSS/JS/图片/链接/表单在国内都能加载。
+//
+// 注意：不用 <base> 标签！因为 query-string 代理的 base URL
+// 无法让浏览器正确解析根相对路径（/path 会被解析到站点根而非代理）。
+// 所有 URL（绝对、协议相对、根相对）都在正则阶段直接重写。
 
-function rewriteHtml(html, targetHost, proxyPath) {
+function rewriteHtml(html, targetHost, proxyPath, targetUrl) {
   const targetOrigin = 'https://' + targetHost;
   const proxyPrefix = proxyPath + '?url=';
 
-  // 1. 构建属性正则，匹配 attr="value" 或 attr='value'
-  const attrNames = URL_ATTRS.join('|');
-  const attrRegex = new RegExp(
-    '(' + attrNames + ')\\s*=\\s*(["\\\'])([^"\\\']*?)\\2',
-    'gi'
-  );
+  // ── 策略 1：正则重写 HTML 属性中的 URL ──
+  html = rewriteAttrUrls(html, targetOrigin, proxyPrefix, targetUrl);
 
-  html = html.replace(attrRegex, (match, attr, quote, value) => {
-    const rewritten = rewriteAttrValue(attr, value, targetOrigin, proxyPrefix, proxyPath);
-    return attr + '=' + quote + rewritten + quote;
-  });
+  // ── 策略 2：重写内联 CSS url() ──
+  html = rewriteCssUrls(html, targetOrigin, proxyPrefix, targetUrl);
 
-  // 2. 插入 <base> 标签，让相对路径（./style.css）自动走代理
-  const baseHref = proxyPrefix + encodeURIComponent(targetOrigin + '/');
-  if (/<base[\s>]/i.test(html)) {
-    html = html.replace(
-      /(<base\s[^>]*href\s*=\s*)(["'])[^"']*\2/gi,
-      '$1$2' + baseHref + '$2'
-    );
-  } else if (/<head[^>]*>/i.test(html)) {
-    html = html.replace(/(<head[^>]*>)/i, '$1\n<base href="' + baseHref + '">');
-  } else {
-    html = '<base href="' + baseHref + '">\n' + html;
-  }
+  // ── 策略 3：重写 meta refresh ──
+  html = rewriteMetaRefresh(html, targetOrigin, proxyPrefix, targetUrl);
 
   return html;
 }
 
-function rewriteAttrValue(attr, value, targetOrigin, proxyPrefix, proxyPath) {
-  const attrLower = attr.toLowerCase();
+// 所有可能包含 URL 的 HTML 属性
+// 注意：srcset 在循环内外都有单独处理
+const REWRITE_ATTRS = [
+  'src', 'href', 'action', 'poster', 'formaction',
+  'data-src', 'data-href', 'data-url', 'data-uri',
+  'cite', 'content',
+];
 
-  if (attrLower === 'srcset') {
-    return rewriteSrcset(value, proxyPrefix, proxyPath);
-  }
+function rewriteAttrUrls(html, targetOrigin, proxyPrefix, targetUrl) {
+  const attrNames = REWRITE_ATTRS.join('|');
 
-  // data-src 可能包含多个 URL（懒加载库），按逗号分割处理
-  if (attrLower === 'data-src') {
-    return value.split(',').map(v => rewriteSingleUrl(v.trim(), targetOrigin, proxyPrefix, proxyPath)).join(', ');
-  }
+  // 【关键修复 v4】使用模板字符串（反引号），防止 JS 字符串转义干扰正则！
+  // v3 中普通字符串 '\\s' 被 JS 吞成 's'，'\\2' 被吞成 STX，导致正则完全失效。
+  const attrRegex = new RegExp(
+    `(${attrNames})\\s*=\\s*(["'])([^"']*?)\\2`,
+    'gi'
+  );
 
-  return rewriteSingleUrl(value, targetOrigin, proxyPrefix, proxyPath);
+  return html.replace(attrRegex, (match, attr, quote, value) => {
+    const rewritten = rewriteAttrValue(attr, value, targetOrigin, proxyPrefix, targetUrl);
+    // 只有真的被改写了才替换，避免无意义操作
+    if (rewritten === value) return match;
+    return attr + '=' + quote + rewritten + quote;
+  });
 }
 
-function rewriteSingleUrl(url, targetOrigin, proxyPrefix, proxyPath) {
-  if (!url) return url;
+function rewriteAttrValue(attr, value, targetOrigin, proxyPrefix, targetUrl) {
+  const attrLower = attr.toLowerCase();
 
-  // 跳过非 HTTP 协议
+  // srcset 特殊格式：url descriptor, url descriptor
+  if (attrLower === 'srcset') {
+    return rewriteSrcset(value, proxyPrefix);
+  }
+
+  // meta content 可能包含 refresh URL
+  if (attrLower === 'content') {
+    return rewriteMetaContent(value, targetOrigin, proxyPrefix);
+  }
+
+  // data-src / data-href / data-url 可能包含多个逗号分隔的 URL
+  if (attrLower.startsWith('data-')) {
+    return value.split(',').map(v => rewriteSingleUrl(v.trim(), targetOrigin, proxyPrefix, targetUrl)).join(', ');
+  }
+
+  // 跳过 href="#..." 锚点
+  if (attrLower === 'href' && value.startsWith('#')) {
+    return value;
+  }
+
+  return rewriteSingleUrl(value, targetOrigin, proxyPrefix, targetUrl);
+}
+
+function rewriteSingleUrl(url, targetOrigin, proxyPrefix, targetUrl) {
+  if (!url || url.length < 2) return url;
+
+  // 跳过非 HTTP 协议和特殊值
   if (
     url.startsWith('#') ||
     url.startsWith('javascript:') ||
@@ -167,45 +189,90 @@ function rewriteSingleUrl(url, targetOrigin, proxyPrefix, proxyPath) {
     url.startsWith('tel:') ||
     url.startsWith('data:') ||
     url.startsWith('blob:') ||
-    url.startsWith('{{')       // 模板语法，不动
+    url.startsWith('{{') ||         // 模板语法
+    url.startsWith('{%') ||         // Jinja/模板
+    url.startsWith('${')            // JS 模板
   ) {
     return url;
   }
 
   // 已经是代理 URL，不重复包裹
-  if (url.includes(proxyPath + '?url=')) {
+  if (url.includes('/api/proxy?url=')) {
     return url;
   }
 
   let fullUrl;
+
   if (url.startsWith('http://') || url.startsWith('https://')) {
     fullUrl = url;
   } else if (url.startsWith('//')) {
     fullUrl = 'https:' + url;
   } else if (url.startsWith('/')) {
+    // 根相对路径 → 拼成完整 URL 再包裹代理前缀
     fullUrl = targetOrigin + url;
   } else {
-    // 相对路径，由 <base> 标签处理
-    return url;
+    // 纯相对路径（如 styles/main.css 或 ../images/logo.png）
+    // 用目标页面 URL 作为基准来解析
+    try {
+      fullUrl = new URL(url, targetUrl).toString();
+    } catch {
+      fullUrl = targetOrigin + '/' + url;
+    }
   }
 
   return proxyPrefix + encodeURIComponent(fullUrl);
 }
 
-function rewriteSrcset(value, proxyPrefix, proxyPath) {
+function rewriteSrcset(value, proxyPrefix) {
   return value.split(',').map(part => {
     const trimmed = part.trim();
-    // srcset 格式: "URL 1x" 或 "URL 640w" 或 纯 "URL"
     const m = trimmed.match(/^(\S+)(\s+.+)?$/);
     if (!m) return trimmed;
     let url = m[1];
     const desc = m[2] || '';
     if (url.startsWith('//')) url = 'https:' + url;
-    if ((url.startsWith('http://') || url.startsWith('https://')) && !url.includes(proxyPath)) {
+    if ((url.startsWith('http://') || url.startsWith('https://')) && !url.includes('/api/proxy')) {
       return proxyPrefix + encodeURIComponent(url) + desc;
     }
     return trimmed;
   }).join(', ');
+}
+
+// meta http-equiv="refresh" content="0;url=https://..."
+function rewriteMetaContent(value, targetOrigin, proxyPrefix, targetUrl) {
+  // 匹配 content="0;url=..." 这种格式
+  const m = value.match(/^(\d+;\s*url\s*=\s*)(.+)$/i);
+  if (m) {
+    const rewritten = rewriteSingleUrl(m[2].trim(), targetOrigin, proxyPrefix, targetUrl);
+    return m[1] + rewritten;
+  }
+  return value;
+}
+
+function rewriteMetaRefresh(html, targetOrigin, proxyPrefix, targetUrl) {
+  // 有些页面用 <meta content="0; url=..." http-equiv="refresh">
+  // 上面的 attr 正则已经通过 content 属性处理了，这里做兜底
+  return html.replace(
+    /(<meta\s[^>]*http-equiv\s*=\s*["']refresh["'][^>]*content\s*=\s*["'])(\d+;\s*url\s*=\s*)([^"']+)(["'][^>]*>)/gi,
+    (match, prefix, mid, url, suffix) => {
+      const rewritten = rewriteSingleUrl(url.trim(), targetOrigin, proxyPrefix, targetUrl);
+      return prefix + mid + rewritten + suffix;
+    }
+  );
+}
+
+// 重写内联 <style> 和 style="..." 属性中的 url()
+// 匹配 url("...") url('...') url(...)
+function rewriteCssUrls(html, targetOrigin, proxyPrefix, targetUrl) {
+  // 处理 <style> 块和 style="..." 属性中的 url()
+  return html.replace(
+    /url\(\s*(["']?)([^"')]+)\1\s*\)/gi,
+    (match, quote, url) => {
+      const rewritten = rewriteSingleUrl(url.trim(), targetOrigin, proxyPrefix, targetUrl);
+      if (rewritten === url.trim()) return match;
+      return 'url(' + (quote || '') + rewritten + (quote || '') + ')';
+    }
+  );
 }
 
 // ============== 主处理函数 ==============
@@ -234,7 +301,7 @@ export async function onRequest(context) {
       error: 'Missing url parameter',
       usage: '/api/proxy?url=https://example.com',
       status: 'ok',
-      service: 'DevToolsBox Reverse Proxy v3',
+      service: 'DevToolsBox Reverse Proxy v4',
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
@@ -363,9 +430,9 @@ export async function onRequest(context) {
         const contentType = responseHeaders.get('Content-Type') || '';
         if (contentType.includes('text/html')) {
           const html = await response.text();
-          const rewritten = rewriteHtml(html, target.hostname, '/api/proxy');
-          // Cloudflare Workers 自动处理 Content-Length，不需要手动设置
+          const rewritten = rewriteHtml(html, target.hostname, '/api/proxy', target.toString());
           responseHeaders.set('X-Proxy-Rewritten', 'true');
+          responseHeaders.set('X-Proxy-Version', 'v4');
           return new Response(rewritten, {
             status: response.status,
             statusText: response.statusText,
