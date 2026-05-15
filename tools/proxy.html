@@ -8,127 +8,160 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/tools/proxy">
   <style>
-    .proxy-container { max-width: 960px; margin: 40px auto; padding: 0 20px; }
-    .proxy-header { text-align: center; margin-bottom: 28px; }
-    .proxy-header h1 {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* ═══ Layout ═══ */
+    .proxy-page { max-width: 980px; margin: 40px auto; padding: 0 20px 60px; }
+    .proxy-page h1 {
+      font-size: 1.75rem; font-weight: 700; text-align: center; margin-bottom: 6px;
+      background: linear-gradient(135deg, #667eea 0%, #8b5cf6 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      font-size: 1.9rem; margin-bottom: 6px;
     }
-    .proxy-header p { color: var(--text-secondary); font-size: 0.9rem; }
+    .proxy-page .subtitle { text-align: center; color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 28px; }
 
-    /* URL 栏 */
-    .proxy-urlbar { display: flex; gap: 8px; margin-bottom: 16px; }
-    .proxy-urlbar input {
-      flex: 1; padding: 13px 16px; border: 2px solid var(--border); border-radius: 10px;
-      font-size: 14px; background: var(--surface); color: var(--text); outline: none;
-      transition: border 0.2s;
+    /* ═══ Control Panel — mode tabs ═══ */
+    .ctrl-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 18px; box-shadow: var(--shadow-sm); }
+    .ctrl-modes { display: flex; border-bottom: 1px solid var(--border); }
+    .ctrl-mode {
+      flex: 1; padding: 10px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 500;
+      color: var(--text-secondary); background: transparent; border: none; border-bottom: 2px solid transparent;
+      transition: all 0.2s; outline: none;
     }
-    .proxy-urlbar input:focus { border-color: #667eea; }
-    .proxy-urlbar button {
-      padding: 13px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+    .ctrl-mode:hover { color: var(--text); background: var(--bg-secondary); }
+    .ctrl-mode.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+    .ctrl-body { padding: 12px 16px; }
+    .ctrl-row { display: flex; gap: 8px; }
+    .ctrl-row input, .ctrl-row select {
+      padding: 11px 14px; border: 2px solid var(--border); border-radius: 8px;
+      font-size: 13.5px; background: var(--bg); color: var(--text); outline: none; transition: border 0.2s;
     }
-    .proxy-urlbar button:hover { opacity: 0.9; transform: translateY(-1px); }
-    .proxy-urlbar button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .ctrl-row input:focus, .ctrl-row select:focus { border-color: var(--accent); }
+    .ctrl-row input { flex: 1; font-family: var(--font-mono); }
+    .ctrl-row select { width: 140px; cursor: pointer; }
+    .ctrl-go {
+      padding: 11px 22px; background: var(--accent); color: #fff; border: none; border-radius: 8px;
+      font-size: 13.5px; font-weight: 600; cursor: pointer; white-space: nowrap;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .ctrl-go:hover { opacity: 0.88; transform: translateY(-1px); }
+    .ctrl-go:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
-    /* 快捷按钮分组 */
-    .proxy-shortcuts { margin-bottom: 20px; }
-    .proxy-shortcuts .group { margin-bottom: 10px; }
-    .proxy-shortcuts .group-label { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-    .proxy-shortcuts .group-btns { display: flex; flex-wrap: wrap; gap: 6px; }
-    .proxy-shortcuts button {
-      padding: 6px 14px; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 6px; font-size: 12px; color: var(--text-secondary); cursor: pointer;
-      transition: all 0.2s; white-space: nowrap;
-    }
-    .proxy-shortcuts button:hover { border-color: #667eea; color: #667eea; background: rgba(102,126,234,0.05); }
-    .proxy-shortcuts button:active { transform: scale(0.97); }
+    /* URL history dropdown */
+    .hist-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 0 0 8px 8px; box-shadow: var(--shadow-md); z-index: 10; display: none; max-height: 200px; overflow-y: auto; }
+    .hist-dropdown.show { display: block; }
+    .hist-dropdown .hist-item { padding: 9px 16px; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text-secondary); font-family: var(--font-mono); transition: background 0.15s; display: flex; justify-content: space-between; align-items: center; }
+    .hist-dropdown .hist-item:hover { background: var(--bg-secondary); color: var(--text); }
+    .hist-dropdown .hist-item .hist-time { font-size: 10px; color: var(--text-tertiary); flex-shrink: 0; margin-left: 12px; }
+    .hist-dropdown .hist-clear { padding: 7px 16px; font-size: 11px; text-align: center; color: var(--danger); cursor: pointer; border-top: 1px solid var(--border); }
+    .hist-dropdown .hist-clear:hover { background: rgba(239,68,68,0.06); }
 
-    /* 状态栏 */
-    .proxy-status {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
-      padding: 9px 14px; background: var(--surface); border-radius: 8px;
-      font-size: 12px; color: var(--text-secondary);
+    /* ═══ Quick Buttons ═══ */
+    .quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 6px; margin-bottom: 18px; }
+    .quick-btn {
+      display: flex; align-items: center; gap: 6px; padding: 8px 11px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      font-size: 12px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s;
+      white-space: nowrap;
     }
-    .proxy-status .dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
-    .proxy-status .dot.loading { background: #f59e0b; animation: pulse 1s infinite; }
-    .proxy-status .dot.success { background: #10b981; }
-    .proxy-status .dot.error { background: #ef4444; }
-    .proxy-status .time { margin-left: auto; font-variant-numeric: tabular-nums; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .quick-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .quick-btn:active { transform: scale(0.97); }
+    .quick-btn .qb-icon { font-size: 15px; line-height: 1; flex-shrink: 0; }
 
-    /* 骨架屏 */
-    .skeleton { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
-    .skeleton.active { display: block; }
-    .skeleton-line { height: 12px; background: var(--border); border-radius: 6px; margin-bottom: 10px; animation: shimmer 1.5s infinite; }
-    .skeleton-line:nth-child(1) { width: 60%; }
-    .skeleton-line:nth-child(2) { width: 80%; }
-    .skeleton-line:nth-child(3) { width: 40%; }
-    .skeleton-line:nth-child(4) { width: 70%; }
-    @keyframes shimmer { 0%{opacity:.3} 50%{opacity:.6} 100%{opacity:.3} }
+    /* ═══ Status Bar ═══ */
+    .status-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 9px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--text-secondary); }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
+    .status-dot.loading { background: #f59e0b; animation: dotPulse 0.8s infinite; }
+    .status-dot.success { background: #10b981; }
+    .status-dot.error   { background: #ef4444; }
+    .status-meta { margin-left: auto; display: flex; gap: 12px; font-size: 11px; opacity: 0.7; }
+    @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
 
-    /* 结果面板 */
-    .proxy-result { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: none; }
-    .proxy-result-header {
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
-      padding: 10px 14px; border-bottom: 1px solid var(--border);
-      font-size: 12px; color: var(--text-secondary); background: var(--bg); gap: 8px;
-    }
-    .proxy-result-header .tabs { display: flex; gap: 4px; flex-shrink: 0; }
-    .proxy-result-header .tab {
-      padding: 4px 10px; border-radius: 5px; cursor: pointer; font-size: 11px;
-      border: 1px solid transparent; background: transparent; color: var(--text-secondary);
-    }
-    .proxy-result-header .tab.active { background: #667eea; color: #fff; border-color: #667eea; }
-    .open-newtab {
-      padding: 5px 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 600;
-      cursor: pointer; transition: opacity 0.2s; margin-left: auto;
-      white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
-    }
-    .open-newtab:hover { opacity: 0.85; }
-    .open-newtab svg { width: 14px; height: 14px; }
-    .proxy-result-body { padding: 14px; max-height: 600px; overflow: auto; font-size: 13px; line-height: 1.6; }
-    .proxy-result-body pre { margin: 0; white-space: pre-wrap; word-break: break-all; font-family: 'SF Mono','Fira Code',monospace; font-size: 12px; }
-    .proxy-result-body iframe { width: 100%; height: 520px; border: none; border-radius: 6px; background: #fff; }
+    /* ═══ Skeleton ═══ */
+    .skel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 14px; }
+    .skel.on { display: block; }
+    .skel-line { height: 12px; background: var(--border); border-radius: 6px; margin-bottom: 12px; animation: shimmer 1.4s infinite; }
+    .skel-line:nth-child(1) { width: 55%; } .skel-line:nth-child(2) { width: 78%; }
+    .skel-line:nth-child(3) { width: 38%; } .skel-line:nth-child(4) { width: 65%; }
+    @keyframes shimmer { 0%{opacity:.25} 50%{opacity:.55} 100%{opacity:.25} }
 
-    /* 错误面板 */
-    .proxy-error {
-      display: none; padding: 16px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2);
-      border-radius: 10px; margin-bottom: 14px;
-    }
-    .proxy-error .err-title { font-weight: 600; font-size: 14px; color: #ef4444; margin-bottom: 6px; }
-    .proxy-error .err-body { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-    .proxy-error .retry-btn {
-      display: inline-block; margin-top: 10px; padding: 7px 18px;
-      background: #ef4444; color: #fff; border: none; border-radius: 6px;
-      cursor: pointer; font-size: 12px;
-    }
-    .proxy-error .retry-btn:hover { background: #dc2626; }
+    /* ═══ Error Panel ═══ */
+    .err-panel { display: none; padding: 16px 18px; border: 1px solid rgba(239,68,68,0.25); border-radius: var(--radius-lg); margin-bottom: 14px; background: rgba(239,68,68,0.04); }
+    .err-panel .err-h { font-weight: 600; font-size: 14px; color: #ef4444; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .err-panel .err-body { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+    .err-panel .retry-btn { display: inline-block; margin-top: 10px; padding: 7px 18px; background: #ef4444; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; }
+    .err-panel .retry-btn:hover { background: #dc2626; }
 
-    /* 说明 */
-    .proxy-note {
-      margin-top: 22px; padding: 14px 16px; background: var(--surface);
-      border: 1px solid var(--border); border-radius: 8px; font-size: 12px;
-      color: var(--text-secondary); line-height: 1.7;
+    /* ═══ Info Panel (401, warnings) ═══ */
+    .info-panel { display: none; padding: 16px 18px; border: 1px solid rgba(245,166,35,0.3); border-radius: var(--radius-lg); margin-bottom: 14px; background: rgba(245,166,35,0.04); }
+    .info-panel .info-h { font-weight: 600; font-size: 14px; color: #f59e0b; margin-bottom: 6px; }
+    .info-panel .info-body { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+    /* ═══ Result Panel ═══ */
+    .result-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; display: none; box-shadow: var(--shadow-sm); }
+    .result-top {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+      padding: 10px 16px; border-bottom: 1px solid var(--border);
+      font-size: 11px; color: var(--text-secondary); background: var(--bg-secondary);
     }
-    .proxy-note details { margin-top: 6px; }
-    .proxy-note summary { cursor: pointer; color: #667eea; font-weight: 500; }
-    .proxy-note .domain-tag {
-      display: inline-block; padding: 1px 6px; background: rgba(102,126,234,0.1);
-      border-radius: 3px; font-family: monospace; font-size: 11px; margin: 2px;
+    .result-top .rt-status { font-weight: 600; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
+    .rt-status.s200 { background: rgba(16,185,129,0.12); color: #10b981; }
+    .rt-status.s3xx { background: rgba(245,166,35,0.12); color: #f59e0b; }
+    .rt-status.s4xx { background: rgba(239,68,68,0.1); color: #ef4444; }
+    .result-tabs { display: flex; gap: 2px; margin-left: auto; flex-shrink: 0; }
+    .result-tab {
+      padding: 4px 11px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: 500;
+      border: 1px solid transparent; background: transparent; color: var(--text-secondary); transition: all 0.15s;
+    }
+    .result-tab:hover { background: var(--surface); }
+    .result-tab.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .result-newtab {
+      padding: 5px 13px; background: var(--accent); color: #fff; border: none; border-radius: 6px;
+      font-size: 11px; font-weight: 600; cursor: pointer; text-decoration: none; display: none; align-items: center; gap: 4px;
+      white-space: nowrap; margin-left: 6px;
+    }
+    .result-newtab:hover { opacity: 0.85; }
+    .result-newtab svg { width: 13px; height: 13px; }
+    .result-content { max-height: 580px; overflow: auto; }
+    .result-content pre { margin: 0; padding: 18px; font: 12px/1.55 var(--font-mono); white-space: pre-wrap; word-break: break-all; }
+    .result-content pre.line-nums { padding-left: 60px; position: relative; counter-reset: line; }
+    .result-content pre.line-nums > span { display: block; }
+    .result-content pre.line-nums > span::before {
+      counter-increment: line; content: counter(line);
+      position: absolute; left: 12px; width: 36px; text-align: right; color: var(--text-tertiary); font-size: 10px;
+    }
+    .result-content iframe { width: 100%; height: 540px; border: none; display: block; background: #fff; }
+    .iframe-fallback { display: none; text-align: center; padding: 48px 20px; color: var(--text-secondary); }
+    .iframe-fallback p { margin-bottom: 14px; }
+
+    /* ═══ Collapsible Headers Table ═══ */
+    .headers-toggle { cursor: pointer; user-select: none; font-size: 12px; color: var(--accent); font-weight: 500; }
+    .headers-table { display: none; margin-top: 8px; font-size: 11px; }
+    .headers-table.open { display: block; }
+    .headers-table .ht-row { display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid rgba(128,128,128,0.08); }
+    .headers-table .ht-key { font-weight: 600; color: #10b981; min-width: 160px; flex-shrink: 0; font-family: var(--font-mono); }
+    .headers-table .ht-val { word-break: break-all; font-family: var(--font-mono); color: var(--text-secondary); }
+
+    /* ═══ Bottom Notes ═══ */
+    .proxy-notes { margin-top: 28px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+    .proxy-notes summary { cursor: pointer; color: var(--accent); font-weight: 500; outline: none; }
+    .proxy-notes details[open] summary { margin-bottom: 8px; }
+    .domain-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .domain-chip { padding: 2px 8px; background: rgba(102,126,234,0.08); border-radius: 4px; font-family: var(--font-mono); font-size: 10.5px; }
+
+    /* ═══ Mobile ═══ */
+    @media (max-width: 640px) {
+      .proxy-page { padding: 0 12px 40px; margin-top: 24px; }
+      .quick-grid { grid-template-columns: repeat(3, 1fr); }
+      .ctrl-row { flex-wrap: wrap; }
+      .ctrl-row select { width: 100%; }
+      .result-tabs { width: 100%; order: 1; justify-content: center; margin-left: 0; }
+      .result-top { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
 <body>
+  <!-- Navbar -->
   <header class="navbar">
     <div class="navbar-inner">
-      <a href="/" class="navbar-brand">
-        <div class="brand-icon">🧰</div>
-        DevToolsBox
-      </a>
+      <a href="/" class="navbar-brand"><div class="brand-icon">🧰</div>DevToolsBox</a>
       <div style="display:flex;align-items:center;">
         <nav class="navbar-links">
           <a href="/">首页</a>
@@ -137,133 +170,115 @@
           <a href="/tools/base64">Base64</a>
           <a href="/tools/qr-code">二维码</a>
         </nav>
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式" title="切换深色/浅色模式">🌙</button>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
       </div>
     </div>
   </header>
 
-  <main class="proxy-container">
-    <div class="proxy-header">
-      <h1>代理浏览器</h1>
-      <p>通过 Cloudflare 全球边缘网络中转，访问受限资源</p>
-    </div>
+  <main class="proxy-page">
+    <h1>代理浏览器</h1>
+    <p class="subtitle">Cloudflare 边缘网络中转 · 突破网络限制</p>
 
-    <!-- URL 输入 -->
-    <div class="proxy-urlbar">
-      <input type="text" id="proxyUrl" placeholder="输入完整 URL，如 https://api.openai.com/v1/models" autofocus>
-      <button id="proxyGo" onclick="doProxy()">前往</button>
-    </div>
-
-    <!-- 搜索栏 -->
-    <div class="proxy-searchbar" style="display:flex;gap:8px;margin-bottom:14px;">
-      <input type="text" id="searchKeyword" placeholder="搜索关键词..." style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:13px;background:var(--surface);color:var(--text);outline:none;" onkeydown="if(event.key==='Enter')doSearch()">
-      <select id="searchEngine" style="padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;background:var(--surface);color:var(--text);cursor:pointer;outline:none;">
-        <option value="duckduckgo">DuckDuckGo</option>
-        <option value="bing">Bing</option>
-        <option value="wikipedia">Wikipedia</option>
-        <option value="stackoverflow">StackOverflow</option>
-      </select>
-      <button onclick="doSearch()" style="padding:10px 20px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">搜索</button>
-    </div>
-
-    <!-- 快捷按钮 -->
-    <div class="proxy-shortcuts">
-      <div class="group">
-        <div class="group-label">搜索 &amp; 资讯</div>
-        <div class="group-btns">
-          <button onclick="quickProxy('https://duckduckgo.com')">DuckDuckGo</button>
-          <button onclick="quickProxy('https://www.bing.com')">Bing</button>
-          <button onclick="quickProxy('https://news.google.com')">Google News</button>
-          <button onclick="quickProxy('https://en.wikipedia.org/wiki/Main_Page')">Wikipedia</button>
-          <button onclick="quickProxy('https://medium.com')">Medium</button>
+    <!-- ═══ Control Panel ═══ -->
+    <div class="ctrl-panel">
+      <div class="ctrl-modes">
+        <button class="ctrl-mode active" onclick="switchMode('browse')" id="modeBrowse">浏览网址</button>
+        <button class="ctrl-mode" onclick="switchMode('search')" id="modeSearch">搜索</button>
+      </div>
+      <!-- Browse mode -->
+      <div class="ctrl-body" id="panelBrowse">
+        <div class="ctrl-row" style="position:relative;">
+          <input type="text" id="proxyUrl" placeholder="https://..." autofocus autocomplete="off">
+          <button class="ctrl-go" id="proxyGo" onclick="doProxy()">前往</button>
+          <div class="hist-dropdown" id="histDropdown"></div>
         </div>
       </div>
-      <div class="group">
-        <div class="group-label">开发 &amp; 资源</div>
-        <div class="group-btns">
-          <button onclick="quickProxy('https://stackoverflow.com')">StackOverflow</button>
-          <button onclick="quickProxy('https://raw.githubusercontent.com/Ethan985211/devtoolsbox/main/index.html')">GitHub Raw</button>
-          <button onclick="quickProxy('https://registry.npmjs.org/react/latest')">npm Registry</button>
-          <button onclick="quickProxy('https://pypi.org/pypi/requests/json')">PyPI</button>
-          <button onclick="quickProxy('https://arxiv.org/abs/2301.00001')">arXiv</button>
-        </div>
-      </div>
-      <div class="group">
-        <div class="group-label">AI &amp; API</div>
-        <div class="group-btns">
-          <button onclick="quickProxy('https://api.openai.com/v1/models')">OpenAI API</button>
-          <button onclick="quickProxy('https://api.anthropic.com')">Anthropic API</button>
-          <button onclick="quickProxy('https://huggingface.co/api/models?limit=3')">HuggingFace</button>
-        </div>
-      </div>
-      <div class="group">
-        <div class="group-label">工具检测</div>
-        <div class="group-btns">
-          <button onclick="quickProxy('https://ip.sb')">IP 检测</button>
-          <button onclick="quickProxy('https://httpbin.org/ip')">HTTPBin</button>
+      <!-- Search mode -->
+      <div class="ctrl-body" id="panelSearch" style="display:none;">
+        <div class="ctrl-row">
+          <input type="text" id="searchKeyword" placeholder="关键词..." onkeydown="if(event.key==='Enter')doSearch()">
+          <select id="searchEngine">
+            <option value="duckduckgo">DuckDuckGo</option>
+            <option value="bing">Bing</option>
+            <option value="wikipedia">Wikipedia</option>
+            <option value="stackoverflow">StackOverflow</option>
+          </select>
+          <button class="ctrl-go" onclick="doSearch()">搜索</button>
         </div>
       </div>
     </div>
 
-    <!-- 状态栏 -->
-    <div class="proxy-status" id="proxyStatus">
-      <span class="dot" id="statusDot"></span>
-      <span id="statusText">输入网址后点击「前往」或使用快捷按钮</span>
-      <span class="time" id="statusTime"></span>
+    <!-- ═══ Quick Buttons ═══ -->
+    <div class="quick-grid" id="quickGrid">
+      <button class="quick-btn" onclick="quickProxy('https://duckduckgo.com')">DuckDuckGo</button>
+      <button class="quick-btn" onclick="quickProxy('https://www.bing.com')">Bing</button>
+      <button class="quick-btn" onclick="quickProxy('https://en.wikipedia.org')">Wikipedia</button>
+      <button class="quick-btn" onclick="quickProxy('https://stackoverflow.com')">StackOverflow</button>
+      <button class="quick-btn" onclick="quickProxy('https://medium.com')">Medium</button>
+      <button class="quick-btn" onclick="quickProxy('https://news.google.com')">Google News</button>
+      <button class="quick-btn" onclick="quickProxy('https://raw.githubusercontent.com')">GitHub Raw</button>
+      <button class="quick-btn" onclick="quickProxy('https://registry.npmjs.org')">npm</button>
+      <button class="quick-btn" onclick="quickProxy('https://pypi.org')">PyPI</button>
+      <button class="quick-btn" onclick="quickProxy('https://arxiv.org')">arXiv</button>
+      <button class="quick-btn" onclick="quickProxy('https://huggingface.co')">HuggingFace</button>
+      <button class="quick-btn" onclick="quickProxy('https://api.openai.com/v1/models')">OpenAI API</button>
+      <button class="quick-btn" onclick="quickProxy('https://docs.anthropic.com')">Anthropic Docs</button>
+      <button class="quick-btn" onclick="quickProxy('https://api.anthropic.com')">Anthropic API</button>
+      <button class="quick-btn" onclick="quickProxy('https://ip.sb')">IP 检测</button>
+      <button class="quick-btn" onclick="quickProxy('https://httpbin.org/ip')">HTTPBin</button>
     </div>
 
-    <!-- 骨架屏 -->
-    <div class="skeleton" id="skeleton">
-      <div class="skeleton-line"></div>
-      <div class="skeleton-line"></div>
-      <div class="skeleton-line"></div>
-      <div class="skeleton-line"></div>
+    <!-- ═══ Status ═══ -->
+    <div class="status-bar" id="statusBar">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">输入网址或点击快捷按钮开始</span>
+      <span class="status-meta">
+        <span id="statusTime"></span>
+        <span id="statusVer"></span>
+      </span>
     </div>
 
-    <!-- 错误面板 -->
-    <div class="proxy-error" id="proxyError">
-      <div class="err-title" id="errTitle"></div>
-      <div class="err-body" id="errBody"></div>
-    </div>
+    <!-- ═══ Skeleton ═══ -->
+    <div class="skel" id="skeleton"><div class="skel-line"></div><div class="skel-line"></div><div class="skel-line"></div><div class="skel-line"></div></div>
 
-    <!-- 结果面板 -->
-    <div class="proxy-result" id="proxyResult">
-      <div class="proxy-result-header">
+    <!-- ═══ Error ═══ -->
+    <div class="err-panel" id="errPanel"><div class="err-h" id="errTitle"></div><div class="err-body" id="errBody"></div></div>
+
+    <!-- ═══ Info (401, redirects) ═══ -->
+    <div class="info-panel" id="infoPanel"><div class="info-h" id="infoTitle"></div><div class="info-body" id="infoBody"></div></div>
+
+    <!-- ═══ Result ═══ -->
+    <div class="result-box" id="resultBox">
+      <div class="result-top">
+        <span id="resultStatus" class="rt-status"></span>
         <span id="resultUrl">-</span>
-        <div class="tabs">
-          <button class="tab active" onclick="switchTab('body')" id="tabBody">格式化</button>
-          <button class="tab" onclick="switchTab('raw')" id="tabRaw">源码</button>
-          <button class="tab" onclick="switchTab('headers')" id="tabHeaders">响应头</button>
-          <button class="tab" onclick="switchTab('iframe')" id="tabIframe">页面</button>
+        <div class="result-tabs">
+          <button class="result-tab sel" onclick="switchResultTab('body')" id="tabBody">格式化</button>
+          <button class="result-tab" onclick="switchResultTab('raw')" id="tabRaw">源码</button>
+          <button class="result-tab" onclick="switchResultTab('headers')" id="tabHeaders">响应头</button>
+          <button class="result-tab" onclick="switchResultTab('iframe')" id="tabIframe">页面</button>
         </div>
-        <a class="open-newtab" id="openNewtab" href="#" target="_blank" rel="noopener" style="display:none">
+        <a class="result-newtab" id="openNewtab" href="#" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          新窗口打开
+          新窗口
         </a>
       </div>
-      <div class="proxy-result-body" id="resultBody"></div>
+      <div class="result-content" id="resultContent"></div>
     </div>
 
-    <!-- 说明 -->
-    <div class="proxy-note">
-      <strong>当前支持域名：</strong>
-      <span class="domain-tag">Bing</span>
-      <span class="domain-tag">DuckDuckGo</span>
-      <span class="domain-tag">Google News</span>
-      <span class="domain-tag">Wikipedia</span>
-      <span class="domain-tag">StackOverflow</span>
-      <span class="domain-tag">Medium</span>
-      <span class="domain-tag">GitHub Raw</span>
-      <span class="domain-tag">npm</span>
-      <span class="domain-tag">PyPI</span>
-      <span class="domain-tag">arXiv</span>
-      <span class="domain-tag">OpenAI API</span>
-      <span class="domain-tag">Anthropic API</span>
-      <span class="domain-tag">HuggingFace</span>
-      <span class="domain-tag">IP检测</span>
+    <!-- ═══ Notes ═══ -->
+    <div class="proxy-notes">
       <details>
-        <summary>技术说明 &amp; 限制</summary>
-        <p>代理通过 Cloudflare Pages Functions 实现，请求经边缘节点转发到目标服务器再返回。部分站点（Google 搜索、GitHub.com、Reddit、ChatGPT 网页版）使用 Cloudflare 严格 Bot 防护，Workers 的出站请求会被拦截（Error 1010），请使用替代端点。搜索推荐直接用上方搜索栏，支持 DuckDuckGo、Bing、Wikipedia、StackOverflow。</p>
+        <summary>支持域名 (17+) 与技术说明</summary>
+        <div class="domain-list">
+          <span class="domain-chip">DuckDuckGo</span><span class="domain-chip">Bing</span><span class="domain-chip">Google News</span>
+          <span class="domain-chip">Wikipedia</span><span class="domain-chip">StackOverflow</span><span class="domain-chip">Medium</span>
+          <span class="domain-chip">GitHub Raw</span><span class="domain-chip">npm Registry</span><span class="domain-chip">PyPI</span>
+          <span class="domain-chip">arXiv</span><span class="domain-chip">OpenAI API</span><span class="domain-chip">Anthropic API</span>
+          <span class="domain-chip">Anthropic Docs</span><span class="domain-chip">HuggingFace</span><span class="domain-chip">IP检测</span>
+          <span class="domain-chip">HTTPBin</span><span class="domain-chip">cdn.jsdelivr.net</span>
+        </div>
+        <p style="margin-top:10px;">代理通过 Cloudflare Pages Functions 实现，请求经边缘节点转发。部分站点（Google 搜索、GitHub.com、Reddit、ChatGPT 网页版）受 Cloudflare Bot 防护无法代理（Error 1010），已提供替代端点。搜索推荐使用上方搜索模式，支持 DuckDuckGo / Bing / Wikipedia / StackOverflow。</p>
       </details>
     </div>
   </main>
@@ -273,13 +288,12 @@
   </footer>
 
   <script>
-    // ============ 主题 ============
+    // ═══════════ Theme ═══════════
     (function() {
       const t = localStorage.getItem('devtoolsbox-theme');
       if (t) document.documentElement.setAttribute('data-theme', t);
-      else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      else if (window.matchMedia('(prefers-color-scheme: dark)').matches)
         document.documentElement.setAttribute('data-theme', 'dark');
-      }
     })();
     function toggleTheme() {
       const el = document.documentElement;
@@ -289,58 +303,120 @@
       document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
     }
 
-    // ============ 状态机 ============
-    let currentTab = 'body';
-    let lastResponse = null;      // { status, headers, url, bodyText, contentType }
+    // ═══════════ State ═══════════
+    let currentMode = 'browse';
+    let currentResultTab = 'body';
+    let lastResponse = null;
     let retryCount = 0;
     const MAX_RETRIES = 2;
+    const HISTORY_KEY = 'dtb_proxy_hist';
+    const MAX_HISTORY = 8;
 
+    // ═══════════ Mode switching ═══════════
+    function switchMode(mode) {
+      currentMode = mode;
+      document.getElementById('modeBrowse').classList.toggle('active', mode === 'browse');
+      document.getElementById('modeSearch').classList.toggle('active', mode === 'search');
+      document.getElementById('panelBrowse').style.display = mode === 'browse' ? '' : 'none';
+      document.getElementById('panelSearch').style.display = mode === 'search' ? '' : 'none';
+      if (mode === 'browse') document.getElementById('proxyUrl').focus();
+      else document.getElementById('searchKeyword').focus();
+      hideHistory();
+    }
+
+    // ═══════════ History (localStorage) ═══════════
+    function loadHistory() {
+      try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+      catch { return []; }
+    }
+    function saveHistory(url, title) {
+      let hist = loadHistory();
+      hist = hist.filter(h => h.url !== url);
+      hist.unshift({ url, title: title || url, time: Date.now() });
+      if (hist.length > MAX_HISTORY) hist = hist.slice(0, MAX_HISTORY);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
+      renderHistoryDropdown();
+    }
+    function clearHistory() {
+      localStorage.removeItem(HISTORY_KEY);
+      hideHistory();
+    }
+    function renderHistoryDropdown() {
+      const dd = document.getElementById('histDropdown');
+      const hist = loadHistory();
+      if (hist.length === 0) { dd.innerHTML = ''; return; }
+      let html = '';
+      hist.forEach(h => {
+        const timeStr = new Date(h.time).toLocaleString('zh-CN', { month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit' });
+        html += '<div class="hist-item" onclick="pickHistory(\'' + escapeAttr(h.url) + '\')"><span>' + escapeHtml(h.title.substring(0, 80)) + '</span><span class="hist-time">' + timeStr + '</span></div>';
+      });
+      html += '<div class="hist-clear" onclick="clearHistory()">清空历史</div>';
+      dd.innerHTML = html;
+    }
+    function showHistory() { if (currentMode === 'browse') { renderHistoryDropdown(); document.getElementById('histDropdown').classList.add('show'); } }
+    function hideHistory() { setTimeout(() => document.getElementById('histDropdown').classList.remove('show'), 150); }
+    function pickHistory(url) { document.getElementById('proxyUrl').value = url; hideHistory(); doProxy(); }
+
+    // Input event listeners
+    document.getElementById('proxyUrl').addEventListener('focus', showHistory);
+    document.getElementById('proxyUrl').addEventListener('blur', hideHistory);
     document.getElementById('proxyUrl').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') { retryCount = 0; doProxy(); }
+      if (e.key === 'Enter') { hideHistory(); retryCount = 0; doProxy(); }
     });
 
+    // ═══════════ Quick Proxy ═══════════
     function quickProxy(url) {
       document.getElementById('proxyUrl').value = url;
+      switchMode('browse');
       retryCount = 0;
       doProxy();
     }
 
+    // ═══════════ Status ═══════════
     function setStatus(state, text) {
       const dot = document.getElementById('statusDot');
-      dot.className = 'dot';
+      dot.className = 'status-dot';
       if (state === 'loading') dot.classList.add('loading');
       else if (state === 'success') dot.classList.add('success');
       else if (state === 'error') dot.classList.add('error');
       document.getElementById('statusText').textContent = text;
+      document.getElementById('statusVer').textContent = '';
+    }
+    function setStatusMeta(time, version) {
+      document.getElementById('statusTime').textContent = time ? time + 's' : '';
+      document.getElementById('statusVer').textContent = version || '';
     }
 
-    function showSkeleton(visible) {
-      document.getElementById('skeleton').classList.toggle('active', visible);
-    }
+    function showSkeleton(v) { document.getElementById('skeleton').classList.toggle('on', v); }
 
     function showError(title, body, retryable) {
-      const errEl = document.getElementById('proxyError');
+      const el = document.getElementById('errPanel');
       document.getElementById('errTitle').textContent = title;
-      document.getElementById('errBody').innerHTML = body +
-        (retryable ? '<div style="margin-top:10px"><button class="retry-btn" onclick="retryProxy()">重新请求 (' +
-          (MAX_RETRIES - retryCount) + ' 次剩余)</button></div>' : '');
-      errEl.style.display = 'block';
-      document.getElementById('proxyResult').style.display = 'none';
+      let bodyHtml = body;
+      if (retryable && retryCount < MAX_RETRIES) {
+        bodyHtml += '<div style="margin-top:10px"><button class="retry-btn" onclick="retryProxy()">重新请求 (' + (MAX_RETRIES - retryCount) + ' 次剩余)</button></div>';
+      }
+      document.getElementById('errBody').innerHTML = bodyHtml;
+      el.style.display = 'block';
+      document.getElementById('infoPanel').style.display = 'none';
     }
-
-    function hideError() {
-      document.getElementById('proxyError').style.display = 'none';
+    function showInfo(title, body) {
+      document.getElementById('infoTitle').textContent = title;
+      document.getElementById('infoBody').innerHTML = body;
+      document.getElementById('infoPanel').style.display = 'block';
+    }
+    function hideAllPanels() {
+      document.getElementById('errPanel').style.display = 'none';
+      document.getElementById('infoPanel').style.display = 'none';
+      document.getElementById('resultBox').style.display = 'none';
     }
 
     function retryProxy() {
-      if (retryCount >= MAX_RETRIES) {
-        showError('已达最大重试次数', '请等待几秒后手动重新发起请求。', false);
-        return;
-      }
-      retryCount++;
-      doProxy();
+      if (retryCount >= MAX_RETRIES) { showError('已达最大重试次数', '请等待几秒后手动重新发起请求。', false); return; }
+      retryCount++; doProxy();
     }
 
+    // ═══════════ Search ═══════════
     function doSearch() {
       const kw = document.getElementById('searchKeyword').value.trim();
       if (!kw) return;
@@ -356,21 +432,18 @@
       doProxy();
     }
 
+    // ═══════════ CF Challenge Detection ═══════════
     function isCFChallenge(text) {
-      // 检测 Cloudflare Bot 拦截 / JS Challenge / Turnstile 页面
-      // 模式来自实际 CF 拦截页面 (2026-05)
       return text.includes('error code: 1010')
-        || text.includes('cf-browser-verification')
-        || text.includes('cf-challenge')
-        || text.includes('cf-wrapper')
-        || text.includes('challenge-platform')
-        || text.includes('turnstile')
-        || text.includes('Checking your browser')
+        || text.includes('cf-browser-verification') || text.includes('cf-challenge')
+        || text.includes('cf-wrapper') || text.includes('challenge-platform')
+        || text.includes('turnstile') || text.includes('Checking your browser')
         || text.includes('Just a moment')
         || (text.length < 3000 && text.includes('Cloudflare') && text.includes('attention'))
         || (text.length < 2000 && text.includes('cf-browser'));
     }
 
+    // ═══════════ Main: doProxy ═══════════
     async function doProxy() {
       const url = document.getElementById('proxyUrl').value.trim();
       if (!url) return;
@@ -378,9 +451,8 @@
       const startTime = Date.now();
       document.getElementById('proxyGo').disabled = true;
       setStatus('loading', retryCount > 0 ? '正在重试 (' + retryCount + '/' + MAX_RETRIES + ')...' : '正在请求...');
-      document.getElementById('statusTime').textContent = '';
-      hideError();
-      document.getElementById('proxyResult').style.display = 'none';
+      setStatusMeta('', '');
+      hideAllPanels();
       showSkeleton(true);
 
       try {
@@ -391,198 +463,180 @@
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
         showSkeleton(false);
 
-        // 收集响应头
         const headers = {};
         resp.headers.forEach((v, k) => { headers[k] = v; });
-
         const contentType = resp.headers.get('Content-Type') || '';
+        const proxyVer = resp.headers.get('X-Proxy-Version') || '';
         const text = await resp.text();
-        lastResponse = { status: resp.status, headers, url, bodyText: text, contentType };
 
-        document.getElementById('resultUrl').textContent =
-          resp.status + ' ' + url + ' (' + elapsed + 's)' +
-          (resp.headers.get('X-Retry') ? ' [重试后成功]' : '');
-        document.getElementById('statusTime').textContent = elapsed + 's';
+        lastResponse = { status: resp.status, headers, url, bodyText: text, contentType, proxyVer, elapsed };
 
-        if (resp.status === 200 || resp.status === 201 || resp.status === 304) {
-          // 显示新窗口打开按钮
-          const newtabBtn = document.getElementById('openNewtab');
-          newtabBtn.href = '/api/proxy?url=' + encodeURIComponent(url);
-          newtabBtn.style.display = 'inline-flex';
-          renderBody(text, contentType);
-          document.getElementById('proxyResult').style.display = 'block';
-          setStatus('success', '请求成功 · ' + (text.length / 1024).toFixed(1) + ' KB');
+        // Status meta
+        setStatusMeta(elapsed, proxyVer);
+        const retryNote = resp.headers.get('X-Retry') ? ' [重试后成功]' : '';
+
+        // History
+        if (resp.status >= 200 && resp.status < 400) {
+          saveHistory(url, extractTitle(text, contentType));
+        }
+
+        // Update result bar
+        const statusEl = document.getElementById('resultStatus');
+        statusEl.textContent = 'HTTP ' + resp.status;
+        statusEl.className = 'rt-status s' + (resp.status < 300 ? '200' : resp.status < 400 ? '3xx' : '4xx');
+        document.getElementById('resultUrl').textContent = url + ' (' + elapsed + 's)' + retryNote;
+        document.getElementById('openNewtab').href = '/api/proxy?url=' + encodeURIComponent(url);
+
+        if (resp.status >= 200 && resp.status < 300) {
+          // Success
+          document.getElementById('openNewtab').style.display = 'inline-flex';
+          renderResultTab('body');
+          document.getElementById('resultBox').style.display = 'block';
+          const sizeKB = (text.length / 1024).toFixed(1);
+          const typeLabel = contentType.split(';')[0];
+          setStatus('success', '请求成功 · ' + sizeKB + ' KB · ' + typeLabel);
         } else if (resp.status === 401) {
-          // 401 通常是 API 需要认证密钥，代理本身已通
-          const newtabBtn = document.getElementById('openNewtab');
-          newtabBtn.href = '/api/proxy?url=' + encodeURIComponent(url);
-          newtabBtn.style.display = 'inline-flex';
+          // Auth required — proxy works
+          document.getElementById('openNewtab').style.display = 'inline-flex';
           let detail = '';
-          try { const j = JSON.parse(text); detail = JSON.stringify(j, null, 2); } catch { detail = text.substring(0, 500); }
-          showError('HTTP 401 · 需要认证',
+          try { detail = JSON.stringify(JSON.parse(text), null, 2); } catch { detail = text.substring(0, 500); }
+          showInfo('HTTP 401 · 需要认证',
             '<div style="margin-bottom:8px">代理连接成功，但此 API 需要认证密钥。</div>' +
-            '<div style="font-size:12px;color:var(--text-secondary)">如果你有 API Key，可以通过 curl 或代码中设置 Authorization 头直接调用。' +
-            '代理浏览器仅用于测试连通性。</div>' +
-            '<pre style="font-size:11px;margin:8px 0 0;padding:8px;background:var(--bg);border-radius:6px;max-height:200px;overflow:auto">' + escapeHtml(detail) + '</pre>', false);
-          renderBody(text, contentType);
-          document.getElementById('proxyResult').style.display = 'block';
+            '<div style="font-size:12px">如果你有 API Key，可以通过 curl 或代码设置 Authorization 头直接调用。</div>' +
+            '<pre style="font-size:11px;margin:8px 0 0;padding:10px;background:var(--bg);border-radius:6px;max-height:180px;overflow:auto">' + escapeHtml(detail) + '</pre>');
+          renderResultTab('body');
+          document.getElementById('resultBox').style.display = 'block';
           setStatus('error', 'HTTP 401 · 需要认证密钥');
         } else if (resp.status === 403) {
-          // 解析 JSON 错误：可能是 bot 拦截或权限不足
           try {
             const j = JSON.parse(text);
             if (j.blocked) {
               showError('站点拒绝代理访问',
-                '<div><strong>' + escapeHtml(j.error) + '</strong></div><div style="margin-top:6px">' +
-                escapeHtml(j.hint || '该站点使用了严格的 Bot 防护，无法通过代理访问。') + '</div>', false);
+                '<div style="margin-bottom:6px">' + escapeHtml(j.hint || '该站点使用了严格的 Bot 防护，无法通过代理访问。') + '</div>' +
+                '<div style="font-size:11px;opacity:0.7">' + escapeHtml(j.error || '') + '</div>', false);
             } else {
               showError('HTTP 403 · 访问被拒',
-                '<pre style="font-size:12px;margin:6px 0 0">' + escapeHtml(JSON.stringify(j, null, 2)) + '</pre>', false);
+                '<pre style="font-size:11px;margin:6px 0 0;padding:8px;background:var(--bg);border-radius:4px;max-height:180px;overflow:auto">' + escapeHtml(JSON.stringify(j, null, 2)) + '</pre>', false);
             }
           } catch {
-            // 检查是否是 Cloudflare Bot 拦截
             if (isCFChallenge(text)) {
               showError('站点安全验证拦截',
-                '<div style="margin-bottom:8px">目标站点使用了 Cloudflare Bot 防护（Turnstile / JS Challenge），Cloudflare Workers 的请求无法通过此类验证。</div>' +
-                '<div style="font-size:12px;color:var(--text-secondary)">这是 Cloudflare-to-Cloudflare 的已知限制，暂无法绕过。建议尝试 API 端点或其他替代站点。</div>', false);
+                '<div style="margin-bottom:8px">目标站点使用了 Cloudflare Bot 防护，Workers 请求无法通过验证。</div>' +
+                '<div style="font-size:12px;opacity:0.7">这是 Cloudflare-to-Cloudflare 的已知限制。建议尝试 API 端点或其他替代站点。</div>', false);
             } else {
               showError('HTTP 403 · 访问被拒',
-                '<div style="margin-top:6px">' + escapeHtml(text.substring(0, 500)) + '</div>', false);
+                '<div style="margin-top:6px;font-size:12px;opacity:0.8">' + escapeHtml(text.substring(0, 400)) + '</div>', false);
             }
           }
           setStatus('error', 'HTTP 403');
         } else if (resp.status === 429) {
           showError('速率限制 (HTTP 429)',
-            '目标服务器暂时限制了请求频率，代理后端已自动重试 3 次（换IP+Referer+4~8秒退避）。' +
-            (retryCount < MAX_RETRIES ? '点击下方按钮可手动再次尝试。' : '建议等待 30 秒后重新输入网址或换用替代站点。'),
+            '目标服务器限制了请求频率，代理后端已自动重试 3 次（换IP + Referer + 4~8秒退避）。' +
+            (retryCount < MAX_RETRIES ? '<br>点击下方按钮可手动再次尝试。' : '<br>建议等待 30 秒后重新输入网址或换用替代站点。'),
             retryCount < MAX_RETRIES);
           setStatus('error', 'HTTP 429');
         } else if (resp.status >= 500) {
           let detailMsg = '目标服务器或代理链路返回了内部错误。';
           try {
             const j = JSON.parse(text);
-            if (j.lastStatus) {
-              detailMsg = '代理后端已尝试 3 次请求，目标服务器持续返回 HTTP ' + j.lastStatus + '。';
-            }
+            if (j.lastStatus) detailMsg = '代理后端已尝试 3 次请求，目标服务器持续返回 HTTP ' + j.lastStatus + '。';
             if (j.detail) detailMsg += '<br><small>详情：' + escapeHtml(j.detail) + '</small>';
           } catch {}
-          showError('上游服务器错误 (HTTP ' + resp.status + ')',
-            detailMsg +
-            (retryCount < MAX_RETRIES ? '<br>点击重试按钮再次尝试。' : ''),
-            retryCount < MAX_RETRIES);
+          showError('上游错误 (HTTP ' + resp.status + ')', detailMsg + (retryCount < MAX_RETRIES ? '<br>点击重试按钮再次尝试。' : ''), retryCount < MAX_RETRIES);
           setStatus('error', 'HTTP ' + resp.status);
         } else {
-          renderBody(text, contentType);
-          document.getElementById('proxyResult').style.display = 'block';
+          renderResultTab('body');
+          document.getElementById('resultBox').style.display = 'block';
           setStatus('error', 'HTTP ' + resp.status);
         }
       } catch (e) {
         showSkeleton(false);
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
-        document.getElementById('statusTime').textContent = elapsed + 's';
-        showError('网络错误',
-          '请求未能完成：' + escapeHtml(e.message) +
-          (retryCount < MAX_RETRIES ? '<br>点击重试按钮尝试。' : ''),
-          retryCount < MAX_RETRIES);
+        setStatusMeta(elapsed, '');
+        showError('网络错误', '请求未能完成：' + escapeHtml(e.message) + (retryCount < MAX_RETRIES ? '<br>点击重试按钮尝试。' : ''), retryCount < MAX_RETRIES);
         setStatus('error', '连接失败');
       } finally {
         document.getElementById('proxyGo').disabled = false;
       }
     }
 
-    // ============ 渲染 ============
-    function renderBody(text, contentType) {
-      currentTab = 'body';
-      setTabActive('body');
-
-      const body = document.getElementById('resultBody');
-      if (contentType.includes('application/json') || contentType.includes('+json')) {
-        try {
-          const obj = JSON.parse(text);
-          body.innerHTML = '<pre>' + escapeHtml(JSON.stringify(obj, null, 2)) + '</pre>';
-        } catch {
-          body.innerHTML = '<pre>' + escapeHtml(text) + '</pre>';
-        }
-      } else if (contentType.includes('text/html')) {
-        body.innerHTML = '<pre>' + escapeHtml(text) + '</pre>';
-      } else if (contentType.includes('text/xml') || contentType.includes('application/xml')) {
-        body.innerHTML = '<pre>' + escapeHtml(text) + '</pre>';
-      } else {
-        body.innerHTML = '<pre>' + escapeHtml(text) + '</pre>';
-      }
+    function extractTitle(html, ct) {
+      if (!ct || !ct.includes('text/html')) return '';
+      const m = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+      return m ? m[1].trim() : '';
     }
 
-    function renderRaw() {
-      if (!lastResponse) return;
-      document.getElementById('resultBody').innerHTML =
-        '<pre>' + escapeHtml(lastResponse.bodyText) + '</pre>';
-    }
-
-    function renderHeaders() {
-      if (!lastResponse) return;
-      const h = lastResponse.headers;
-      let html = '<div style="margin-bottom:8px;color:var(--accent);font-weight:600">' +
-        'HTTP ' + lastResponse.status + '</div>';
-      for (const [k, v] of Object.entries(h)) {
-        html += '<div style="margin-bottom:3px;font-size:12px">' +
-          '<strong style="color:#10b981">' + escapeHtml(k) + '</strong>: ' +
-          escapeHtml(v) + '</div>';
-      }
-      document.getElementById('resultBody').innerHTML = html;
-    }
-
-    function renderIframe() {
-      if (!lastResponse) return;
-      const ct = lastResponse.contentType || '';
-      if (ct.includes('text/html')) {
-        const proxyIframeUrl = '/api/proxy?url=' + encodeURIComponent(lastResponse.url);
-        document.getElementById('resultBody').innerHTML =
-          '<iframe src="' + escapeAttr(proxyIframeUrl) + '" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"' +
-          ' onerror="document.getElementById(\'iframeFallback\').style.display=\'block\'"' +
-          ' onload="this.style.visibility=\'visible\'"' +
-          ' style="width:100%;height:520px;border:none;border-radius:6px;background:#fff;visibility:hidden"></iframe>' +
-          '<div id="iframeFallback" style="display:none;text-align:center;padding:40px 20px;color:var(--text-secondary)">' +
-          '<p style="margin-bottom:12px">此站点禁止被嵌入（X-Frame-Options），但代理本身已成功连接。</p>' +
-          '<a class="open-newtab" href="' + escapeAttr(proxyIframeUrl) + '" target="_blank" rel="noopener" ' +
-          'style="display:inline-flex;margin:0 auto">新窗口打开完整页面</a></div>' +
-          '<div style="text-align:center;padding:8px;font-size:11px;color:var(--text-secondary)">' +
-          '若页面空白，请使用右上角「新窗口打开」在新标签页中查看完整页面</div>';
-      } else {
-        document.getElementById('resultBody').innerHTML =
-          '<div style="padding:20px;color:var(--text-secondary);text-align:center">' +
-          '此内容类型 (' + escapeHtml(ct) + ') 不支持 iframe 渲染。<br>请查看「格式化」或「源码」标签。</div>';
-      }
-    }
-
-    function setTabActive(tab) {
+    // ═══════════ Result Tabs ═══════════
+    function switchResultTab(tab) {
+      currentResultTab = tab;
       ['body','raw','headers','iframe'].forEach(t => {
-        document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1))
-          .classList.toggle('active', t === tab);
+        document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('sel', t === tab);
       });
+      document.getElementById('resultBox').style.display = 'block';
+      renderResultTab(tab);
     }
 
-    function switchTab(tab) {
-      currentTab = tab;
-      setTabActive(tab);
-      document.getElementById('proxyResult').style.display = 'block';
-      switch(tab) {
-        case 'body': renderBody(lastResponse.bodyText, lastResponse.contentType); break;
-        case 'raw': renderRaw(); break;
-        case 'headers': renderHeaders(); break;
-        case 'iframe': renderIframe(); break;
+    function renderResultTab(tab) {
+      if (tab === undefined) tab = currentResultTab;
+      if (!lastResponse) return;
+      const resp = lastResponse;
+      const ct = resp.contentType || '';
+      const container = document.getElementById('resultContent');
+
+      switch (tab) {
+        case 'body':
+          if (ct.includes('application/json') || ct.includes('+json')) {
+            try {
+              const obj = JSON.parse(resp.bodyText);
+              container.innerHTML = '<pre>' + escapeHtml(JSON.stringify(obj, null, 2)) + '</pre>';
+            } catch {
+              container.innerHTML = '<pre>' + escapeHtml(resp.bodyText) + '</pre>';
+            }
+          } else if (ct.includes('text/html')) {
+            container.innerHTML = '<pre class="line-nums">' +
+              resp.bodyText.split('\n').map(l => '<span>' + escapeHtml(l) + '</span>').join('') +
+              '</pre>';
+          } else if (ct.includes('xml')) {
+            container.innerHTML = '<pre class="line-nums">' +
+              resp.bodyText.split('\n').map(l => '<span>' + escapeHtml(l) + '</span>').join('') +
+              '</pre>';
+          } else {
+            container.innerHTML = '<pre>' + escapeHtml(resp.bodyText) + '</pre>';
+          }
+          break;
+        case 'raw':
+          container.innerHTML = '<pre>' + escapeHtml(resp.bodyText) + '</pre>';
+          break;
+        case 'headers':
+          let hh = '<div style="padding:16px;font-size:12px;">';
+          hh += '<div style="margin-bottom:12px;font-weight:600;color:var(--accent)">HTTP ' + resp.status + '</div>';
+          for (const [k, v] of Object.entries(resp.headers)) {
+            hh += '<div class="ht-row"><span class="ht-key">' + escapeHtml(k) + '</span><span class="ht-val">' + escapeHtml(v) + '</span></div>';
+          }
+          hh += '</div>';
+          container.innerHTML = hh;
+          break;
+        case 'iframe':
+          if (ct.includes('text/html')) {
+            const iframeUrl = '/api/proxy?url=' + encodeURIComponent(resp.url);
+            container.innerHTML =
+              '<iframe src="' + escapeAttr(iframeUrl) + '" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"' +
+              ' onload="this.style.visibility=\'visible\'" style="visibility:hidden"' +
+              ' onerror="document.getElementById(\'iframeFallback\').style.display=\'block\'"></iframe>' +
+              '<div class="iframe-fallback" id="iframeFallback">' +
+              '<p>此站点禁止被嵌入（X-Frame-Options），但代理本身已成功连接。</p>' +
+              '<a class="result-newtab" href="' + escapeAttr(iframeUrl) + '" target="_blank" rel="noopener" style="display:inline-flex;margin:0 auto">新窗口打开完整页面</a>' +
+              '</div>';
+          } else {
+            container.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-secondary)">此内容类型 (' + escapeHtml(ct.split(';')[0]) + ') 不支持页面预览。<br>请查看「格式化」或「源码」标签。</div>';
+          }
+          break;
       }
     }
 
-    // ============ 工具函数 ============
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    function escapeAttr(text) {
-      return text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
+    // ═══════════ Utilities ═══════════
+    function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
+    function escapeAttr(text) { return text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
   </script>
 </body>
 </html>
