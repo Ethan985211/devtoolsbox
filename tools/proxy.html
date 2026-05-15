@@ -72,7 +72,7 @@
     /* 结果面板 */
     .proxy-result { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: none; }
     .proxy-result-header {
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
       padding: 10px 14px; border-bottom: 1px solid var(--border);
       font-size: 12px; color: var(--text-secondary); background: var(--bg); gap: 8px;
     }
@@ -82,6 +82,14 @@
       border: 1px solid transparent; background: transparent; color: var(--text-secondary);
     }
     .proxy-result-header .tab.active { background: #667eea; color: #fff; border-color: #667eea; }
+    .open-newtab {
+      padding: 5px 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: opacity 0.2s; margin-left: auto;
+      white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .open-newtab:hover { opacity: 0.85; }
+    .open-newtab svg { width: 14px; height: 14px; }
     .proxy-result-body { padding: 14px; max-height: 600px; overflow: auto; font-size: 13px; line-height: 1.6; }
     .proxy-result-body pre { margin: 0; white-space: pre-wrap; word-break: break-all; font-family: 'SF Mono','Fira Code',monospace; font-size: 12px; }
     .proxy-result-body iframe { width: 100%; height: 520px; border: none; border-radius: 6px; background: #fff; }
@@ -116,15 +124,22 @@
 </head>
 <body>
   <header class="navbar">
-    <a href="/" class="brand">🧰 DevToolsBox</a>
-    <nav>
-      <a href="/">首页</a>
-      <a href="/tools/proxy" class="active">代理</a>
-      <a href="/tools/json-formatter">JSON</a>
-      <a href="/tools/base64">Base64</a>
-      <a href="/tools/qr-code">二维码</a>
-    </nav>
-    <button class="nav-theme" onclick="toggleTheme()" aria-label="切换主题">🌙</button>
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <div class="brand-icon">🧰</div>
+        DevToolsBox
+      </a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/proxy" class="active">代理</a>
+          <a href="/tools/json-formatter">JSON</a>
+          <a href="/tools/base64">Base64</a>
+          <a href="/tools/qr-code">二维码</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式" title="切换深色/浅色模式">🌙</button>
+      </div>
+    </div>
   </header>
 
   <main class="proxy-container">
@@ -208,6 +223,10 @@
           <button class="tab" onclick="switchTab('headers')" id="tabHeaders">响应头</button>
           <button class="tab" onclick="switchTab('iframe')" id="tabIframe">页面</button>
         </div>
+        <a class="open-newtab" id="openNewtab" href="#" target="_blank" rel="noopener" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          新窗口打开
+        </a>
       </div>
       <div class="proxy-result-body" id="resultBody"></div>
     </div>
@@ -253,7 +272,7 @@
       const next = el.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       el.setAttribute('data-theme', next);
       localStorage.setItem('devtoolsbox-theme', next);
-      document.querySelector('.nav-theme').textContent = next === 'dark' ? '☀️' : '🌙';
+      document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
     }
 
     // ============ 状态机 ============
@@ -342,12 +361,30 @@
         document.getElementById('statusTime').textContent = elapsed + 's';
 
         if (resp.status === 200 || resp.status === 201 || resp.status === 304) {
+          // 显示新窗口打开按钮
+          const newtabBtn = document.getElementById('openNewtab');
+          newtabBtn.href = '/api/proxy?url=' + encodeURIComponent(url);
+          newtabBtn.style.display = 'inline-flex';
           renderBody(text, contentType);
           document.getElementById('proxyResult').style.display = 'block';
           setStatus('success', '请求成功 · ' + (text.length / 1024).toFixed(1) + ' KB');
-        } else if (resp.status === 401 || resp.status === 403) {
-          // 尝试解析 JSON 错误
-          let errMsg = '';
+        } else if (resp.status === 401) {
+          // 401 通常是 API 需要认证密钥，代理本身已通
+          const newtabBtn = document.getElementById('openNewtab');
+          newtabBtn.href = '/api/proxy?url=' + encodeURIComponent(url);
+          newtabBtn.style.display = 'inline-flex';
+          let detail = '';
+          try { const j = JSON.parse(text); detail = JSON.stringify(j, null, 2); } catch { detail = text.substring(0, 500); }
+          showError('HTTP 401 · 需要认证',
+            '<div style="margin-bottom:8px">代理连接成功，但此 API 需要认证密钥。</div>' +
+            '<div style="font-size:12px;color:var(--text-secondary)">如果你有 API Key，可以通过 curl 或代码中设置 Authorization 头直接调用。' +
+            '代理浏览器仅用于测试连通性。</div>' +
+            '<pre style="font-size:11px;margin:8px 0 0;padding:8px;background:var(--bg);border-radius:6px;max-height:200px;overflow:auto">' + escapeHtml(detail) + '</pre>', false);
+          renderBody(text, contentType);
+          document.getElementById('proxyResult').style.display = 'block';
+          setStatus('error', 'HTTP 401 · 需要认证密钥');
+        } else if (resp.status === 403) {
+          // 解析 JSON 错误：可能是 bot 拦截或权限不足
           try {
             const j = JSON.parse(text);
             if (j.blocked) {
@@ -355,14 +392,14 @@
                 '<div><strong>' + j.error + '</strong></div><div style="margin-top:6px">' +
                 escapeHtml(j.hint || '该站点使用了严格的 Bot 防护，无法通过代理访问。') + '</div>', false);
             } else {
-              showError('HTTP ' + resp.status,
+              showError('HTTP 403 · 访问被拒',
                 '<pre style="font-size:12px;margin:6px 0 0">' + escapeHtml(JSON.stringify(j, null, 2)) + '</pre>', false);
             }
           } catch {
-            showError('HTTP ' + resp.status + (resp.status === 401 ? ' (需要认证)' : ' (访问被拒)'),
+            showError('HTTP 403 · 访问被拒',
               '<div style="margin-top:6px">' + escapeHtml(text.substring(0, 500)) + '</div>', false);
           }
-          setStatus('error', 'HTTP ' + resp.status);
+          setStatus('error', 'HTTP 403');
         } else if (resp.status === 429) {
           showError('速率限制 (HTTP 429)', '目标服务器暂时拒绝了请求。' +
             (retryCount < MAX_RETRIES ? '点击下方按钮自动重试。' : '请等待 10 秒后手动重试。'),
@@ -438,8 +475,11 @@
       if (!lastResponse) return;
       const ct = lastResponse.contentType || '';
       if (ct.includes('text/html')) {
+        const proxyIframeUrl = '/api/proxy?url=' + encodeURIComponent(lastResponse.url);
         document.getElementById('resultBody').innerHTML =
-          '<iframe srcdoc="' + escapeAttr(lastResponse.bodyText) + '" sandbox="allow-scripts allow-same-origin"></iframe>';
+          '<iframe src="' + escapeAttr(proxyIframeUrl) + '" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>' +
+          '<div style="text-align:center;padding:8px;font-size:11px;color:var(--text-secondary)">' +
+          '部分站点禁止 iframe 嵌套（X-Frame-Options），请使用右上角「新窗口打开」获得完整体验</div>';
       } else {
         document.getElementById('resultBody').innerHTML =
           '<div style="padding:20px;color:var(--text-secondary);text-align:center">' +
