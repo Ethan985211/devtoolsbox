@@ -162,7 +162,7 @@ function injectNavInterceptor(html, targetOrigin, proxyPrefix) {
     } catch(ignore) {}
   }, true);
 })();
-'<' + '/script>'`;
+${'<'+'/script>'}`;
 
   // 注入到 <head> 末尾或 <body> 开头，确保尽早执行
   if (html.includes('</head>')) {
