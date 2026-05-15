@@ -73,6 +73,43 @@
 </div>
 </div>
 
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>点击上传区域或直接拖放图片到虚线框中，支持 PNG、JPG、WebP 格式</span></div>
+        <div class="step"><span class="step-num">2</span><span>拖动"压缩质量"滑块调整压缩强度（数值越低文件越小，但画质越低）</span></div>
+        <div class="step"><span class="step-num">3</span><span>选择输出格式（JPG / PNG / WebP），右侧预览区会实时显示预估压缩后的大小</span></div>
+        <div class="step"><span class="step-num">4</span><span>点击"压缩并下载"，处理完成后浏览器会自动下载压缩后的图片</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>对于照片类图片推荐使用 JPG 格式（质量 70-85%），能在保持视觉效果的同时大幅减小文件体积。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>带透明背景的图片请使用 PNG 或 WebP 格式，JPG 不支持透明通道。图标和 Logo 建议使用 PNG 以获得清晰边缘。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>WebP 格式在同等画质下通常比 JPG 小 25-35%，比 PNG 小 30-50%，是现代网页最佳的图片格式选择。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">压缩会降低图片分辨率吗？</div>
+          <div class="faq-a">不会。本工具只调整压缩质量（有损压缩），不会改变图片的像素尺寸。如果需要缩小图片尺寸，请使用图片编辑软件。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">图片会不会上传到服务器？</div>
+          <div class="faq-a">不会。所有压缩处理都在你的浏览器中通过 Canvas API 完成，图片文件始终保留在本地，不会上传到任何服务器。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">为什么 PNG 转 JPG 后文件反而变大了？</div>
+          <div class="faq-a">PNG 是无损格式，适合图标和简单图形；JPG 是有损格式，适合照片。如果 PNG 是照片类内容，转 JPG 通常会变小。纯色图形转 JPG 可能反而变大，建议保持原格式。</div>
+        </div>
+      </div>
+    </div>
+
 <div class="sponsor-section">
 <h3>如果这些工具对你有帮助</h3>
 <p>请我喝杯咖啡，支持我开发更多免费工具</p>

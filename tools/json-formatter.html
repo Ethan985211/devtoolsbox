@@ -59,6 +59,43 @@
     <div class="tool-panel" id="outputPanel" style="display:none"><label id="outputLabel">结果</label><pre class="code-output" id="jsonOutput"></pre></div>
     <div id="validationMsg" style="display:none"></div>
 
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>在输入框中粘贴需要处理的 JSON 数据（支持压缩的一行 JSON 或杂乱的格式）</span></div>
+        <div class="step"><span class="step-num">2</span><span>点击"格式化"美化 JSON 使其缩进清晰可读，或点击"压缩"将 JSON 精简为一行</span></div>
+        <div class="step"><span class="step-num">3</span><span>点击"验证"检查 JSON 是否有效，会显示键值对数量和行数统计</span></div>
+        <div class="step"><span class="step-num">4</span><span>格式化完成后点击"复制"将结果复制到剪贴板，方便粘贴到代码编辑器中使用</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>格式化支持嵌套对象的完整缩进，每个嵌套层级缩进 2 个空格，方便阅读深层嵌套的 API 响应数据。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>如果 JSON 数据来自浏览器开发者工具的 Network 面板，直接复制 Response 内容粘贴即可，工具会自动处理各种编码。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>压缩功能生成的单行 JSON 没有多余空格和换行，适合嵌入到代码中作为配置或测试数据使用。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">JSON 验证失败可能是什么原因？</div>
+          <div class="faq-a">常见原因有：缺少引号、使用单引号而非双引号、末尾多余的逗号、或包含 JavaScript 注释（JSON 标准不支持注释）。错误提示会指出具体位置附近的问题。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">格式化后会改变 JSON 的数据吗？</div>
+          <div class="faq-a">不会。格式化和压缩只改变空白字符（空格、换行、缩进），不会修改任何键名或值。数据的语义完全保持不变。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">能处理多大的 JSON 文件？</div>
+          <div class="faq-a">取决于你的浏览器和设备内存，通常数十 MB 的 JSON 都能正常处理。但如果 JSON 非常大（如超过 100MB），建议使用命令行工具如 jq 进行本地处理。</div>
+        </div>
+      </div>
+    </div>
+
     <div class="sponsor-section">
       <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
       <div class="sponsor-qrcodes">

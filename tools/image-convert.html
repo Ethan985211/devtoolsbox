@@ -63,6 +63,43 @@
 <div style="margin-top:16px"><label>预览</label><img id="preview" class="preview-img" style="display:none;max-height:300px;object-fit:contain" alt="预览"><p id="fileInfo" style="font-size:13px;opacity:.7;margin-top:8px"></p></div>
 </div>
 
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>点击上传区域或拖放图片到虚线框中，支持 PNG、JPG、WebP、BMP 等常见格式</span></div>
+        <div class="step"><span class="step-num">2</span><span>在"转换为"下拉菜单中选择目标格式（PNG / JPG / WebP / BMP）</span></div>
+        <div class="step"><span class="step-num">3</span><span>预览确认无误后，点击"转换并下载"按钮</span></div>
+        <div class="step"><span class="step-num">4</span><span>浏览器会自动下载转换后的图片文件，文件名会带对应格式的扩展名</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>PNG 转 JPG 时透明背景会变为白色。如果需要保留透明效果，请转换为 PNG 或 WebP 格式。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>原始图片会在浏览器中被绘制到 Canvas 再导出，因此转换过程会保留图片的视觉外观，不会丢失画面内容。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>如需批量转换多张图片，可以重复上传操作，每次处理一张。所有处理均在本地完成，处理速度取决于你的设备性能。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">转换后的图片质量会下降吗？</div>
+          <div class="faq-a">转换为无损格式（PNG、BMP）不会降低质量。转换为有损格式（JPG、WebP）时会使用默认质量设置，画质会略有损失。如果需要精确控制压缩质量，请使用本站的图片压缩工具。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">支持 HEIC 或 AVIF 格式吗？</div>
+          <div class="faq-a">目前浏览器对 HEIC 和 AVIF 的解码支持有限，本工具主要支持 PNG、JPG、WebP、BMP 四种格式。随着浏览器支持的完善，未来会添加更多格式。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">图片数据会泄露吗？</div>
+          <div class="faq-a">完全不会。转换过程使用浏览器原生的 Canvas API，所有操作都在你的设备上完成，不会向任何服务器发送数据。你甚至可以断开网络后正常使用。</div>
+        </div>
+      </div>
+    </div>
+
 <div class="sponsor-section">
 <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
 <div class="sponsor-qrcodes">

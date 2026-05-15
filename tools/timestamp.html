@@ -70,6 +70,43 @@
 <pre class="code-output" id="dateResult" style="display:none;margin-top:12px"></pre>
 </div>
 
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>在"时间戳 → 日期"区域输入 Unix 时间戳（如 1700000000），点击"转换"查看对应的日期时间</span></div>
+        <div class="step"><span class="step-num">2</span><span>在"日期 → 时间戳"区域选择日期时间，点击"转换"获取对应的秒级和毫秒级时间戳</span></div>
+        <div class="step"><span class="step-num">3</span><span>点击"当前时间"按钮可快速填入此刻的时间戳或日期，无需手动输入</span></div>
+        <div class="step"><span class="step-num">4</span><span>转换结果会同时显示本地时间、UTC 时间和 ISO 8601 格式，方便在不同场景下使用</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>工具会自动识别秒级和毫秒级时间戳。10 位数字为秒级，13 位数字为毫秒级，无需手动切换。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>页面顶部的实时时钟每秒更新一次，可作为时间对照参考，也方便确认当前精确时间。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>复制时间戳到其他编程环境时，注意 Python 的 datetime 默认使用秒级，JavaScript 的 Date 构造函数使用毫秒级。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">什么是 Unix 时间戳？</div>
+          <div class="faq-a">Unix 时间戳是从 1970 年 1 月 1 日 00:00:00 UTC（Unix 纪元）到指定时间的总秒数（或毫秒数）。它不包含时区信息，全球统一，是编程中常用的时间表示方式。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">为什么转换结果中的本地时间和 UTC 时间不一样？</div>
+          <div class="faq-a">时间戳本身是与时区无关的，同一时间戳在全球代表同一时刻。本工具会显示你在本地时区看到的时间以及 UTC 时间。例如，北京时间比 UTC 早 8 小时。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">能处理 2038 年以后的时间戳吗？</div>
+          <div class="faq-a">可以。本工具使用 JavaScript 的 Date 对象进行转换，支持的范围是 ±1 亿天（约公元前 27 万年到公元后 27 万年），远超 2038 年限制。2038 年问题主要影响 32 位系统，现代浏览器不受影响。</div>
+        </div>
+      </div>
+    </div>
+
 <div class="sponsor-section">
 <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
 <div class="sponsor-qrcodes">

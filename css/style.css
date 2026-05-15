@@ -1037,3 +1037,202 @@ line-height: 1.5;
 .hero-stats { flex-direction: column; gap: 12px; }
 .footer-inner { flex-direction: column; }
 }
+
+/* ── Shared Utility Classes ─────────────────── */
+/* Use across tool pages to reduce inline style duplication */
+
+/* Gradient title (tool page h1) */
+.gradient-title {
+  background: linear-gradient(135deg, #667eea 0%, #8b5cf6 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; font-weight: 700;
+}
+
+/* Skeleton loading */
+.skel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 14px; }
+.skel.active { display: block; }
+.skel-line { height: 12px; background: var(--border); border-radius: 6px; margin-bottom: 12px; animation: shimmer 1.4s infinite; }
+.skel-line:nth-child(1) { width: 60%; }
+.skel-line:nth-child(2) { width: 80%; }
+.skel-line:nth-child(3) { width: 40%; }
+.skel-line:nth-child(4) { width: 70%; }
+@keyframes shimmer { 0%{opacity:.3} 50%{opacity:.6} 100%{opacity:.3} }
+
+/* Status dot (green/amber/red) */
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
+.status-dot.success { background: var(--success); }
+.status-dot.warning { background: var(--warning); }
+.status-dot.error { background: var(--danger); }
+.status-dot.loading { background: var(--warning); animation: pulse-dot 1s infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* Status bar (result indicator row) */
+.status-bar { display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--text-secondary); }
+.status-bar .status-time { margin-left: auto; font-variant-numeric: tabular-nums; }
+
+/* Result box (container for output) */
+.result-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; display: none; box-shadow: var(--shadow-sm); }
+
+/* Result tabs */
+.result-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
+.result-tab { padding: 9px 18px; font-size: 12.5px; font-weight: 500; color: var(--text-secondary); cursor: pointer; border: none; border-bottom: 2px solid transparent; background: transparent; transition: all 0.2s; outline: none; }
+.result-tab:hover { color: var(--text); }
+.result-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Result content area */
+.result-content { padding: 16px; display: none; max-height: 480px; overflow: auto; }
+.result-content.active { display: block; }
+.result-content pre { margin: 0; font-size: 12.5px; font-family: var(--font-mono); line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+
+/* Result status badge */
+.result-status { font-weight: 600; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
+.result-status.s200 { background: rgba(16,185,129,0.1); color: var(--success); }
+.result-status.s300 { background: rgba(245,166,35,0.1); color: var(--warning); }
+.result-status.s400 { background: rgba(245,166,35,0.1); color: var(--warning); }
+.result-status.s500 { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+/* Quick grid (shortcut buttons) */
+.quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 6px; margin-bottom: 18px; }
+.quick-btn {
+  display: flex; align-items: center; gap: 6px; padding: 8px 11px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  font-size: 12px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+}
+.quick-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+/* Info panel (amber/green info boxes — not errors) */
+.info-panel {
+  padding: 14px 16px; border-radius: var(--radius); font-size: 13px; line-height: 1.55;
+  margin-bottom: 14px; display: none;
+}
+.info-panel.amber { background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.25); color: var(--text-secondary); }
+.info-panel.amber .info-title { font-weight: 600; color: var(--warning); margin-bottom: 4px; }
+.info-panel.green { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); color: var(--text-secondary); }
+.info-panel.green .info-title { font-weight: 600; color: var(--success); margin-bottom: 4px; }
+
+/* Domain chip list */
+.domain-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.domain-chip { padding: 3px 10px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 99px; font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); }
+
+/* Collapsible details */
+.collapse-section { margin-bottom: 18px; }
+.collapse-section summary { font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-secondary); padding: 8px 0; }
+.collapse-section summary:hover { color: var(--text); }
+.collapse-section .collapse-body { padding: 12px 0; }
+
+/* Line numbers (CSS counter) */
+.line-nums { counter-reset: line; }
+.line-nums .ln { counter-increment: line; display: block; }
+.line-nums .ln::before { content: counter(line); display: inline-block; width: 40px; text-align: right; margin-right: 16px; color: var(--text-tertiary); font-size: 11px; user-select: none; }
+
+/* ── Tool Section: Usage / Tips / FAQ ──────────── */
+.tool-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin: 24px 0;
+}
+
+.tool-section h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+/* Numbered steps */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.step .step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Tips */
+.tips {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tip-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+}
+
+.tip-item .tip-icon {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+/* FAQ */
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.faq-q {
+  font-weight: 650;
+  font-size: 15px;
+  padding: 14px 16px;
+  background: var(--bg-secondary);
+  color: var(--text);
+  cursor: default;
+}
+
+.faq-a {
+  font-size: 14px;
+  line-height: 1.65;
+  padding: 12px 16px 16px;
+  color: var(--text-secondary);
+}
+
+/* History dropdown */
+.hist-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 0 0 8px 8px; box-shadow: var(--shadow-md); z-index: 10; display: none; max-height: 200px; overflow-y: auto; }
+.hist-dropdown.show { display: block; }
+.hist-dropdown .hist-item { padding: 9px 16px; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text-secondary); font-family: var(--font-mono); transition: background 0.15s; display: flex; justify-content: space-between; align-items: center; }
+.hist-dropdown .hist-item:hover { background: var(--bg-secondary); color: var(--text); }
+.hist-dropdown .hist-item .hist-time { font-size: 10px; color: var(--text-tertiary); flex-shrink: 0; margin-left: 12px; }
+.hist-dropdown .hist-clear { padding: 7px 16px; font-size: 11px; text-align: center; color: var(--danger); cursor: pointer; border-top: 1px solid var(--border); }
+.hist-dropdown .hist-clear:hover { background: rgba(239,68,68,0.06); }
+
+@media (max-width: 640px) {
+  .quick-grid { grid-template-columns: repeat(3, 1fr); }
+}
