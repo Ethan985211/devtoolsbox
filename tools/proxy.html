@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>代理浏览器 - DevToolsBox</title>
+  <meta name="description" content="通过 Cloudflare 边缘网络中转访问外网资源">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .proxy-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .proxy-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .proxy-header h1 {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 2rem;
+    }
+    .proxy-urlbar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .proxy-urlbar input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .proxy-urlbar input:focus {
+      border-color: #667eea;
+    }
+    .proxy-urlbar button {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .proxy-urlbar button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    .proxy-urlbar button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .proxy-quick {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .proxy-quick button {
+      padding: 8px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .proxy-quick button:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+    .proxy-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 10px 16px;
+      background: var(--surface);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .proxy-status .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ccc;
+    }
+    .proxy-status .dot.loading { background: #f59e0b; animation: pulse-dot 1s infinite; }
+    .proxy-status .dot.success { background: #10b981; }
+    .proxy-status .dot.error { background: #ef4444; }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .proxy-result {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .proxy-result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-secondary);
+      background: var(--bg);
+    }
+    .proxy-result-header .tabs {
+      display: flex;
+      gap: 8px;
+    }
+    .proxy-result-header .tab {
+      padding: 4px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+    }
+    .proxy-result-header .tab.active {
+      background: #667eea;
+      color: #fff;
+      border-color: #667eea;
+    }
+    .proxy-result-body {
+      padding: 16px;
+      max-height: 600px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .proxy-result-body pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+    }
+    .proxy-result-body iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+    }
+    .proxy-error {
+      padding: 16px;
+      color: #ef4444;
+      font-size: 13px;
+    }
+    .proxy-note {
+      margin-top: 24px;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a href="/" class="brand">🧰 DevToolsBox</a>
+    <nav>
+      <a href="/">首页</a>
+      <a href="/tools/proxy" class="active">代理</a>
+      <a href="/tools/qr-code">二维码</a>
+      <a href="/tools/json-formatter">JSON</a>
+      <a href="/tools/base64">Base64</a>
+    </nav>
+    <button class="nav-theme" onclick="toggleTheme()" aria-label="切换主题">🌙</button>
+  </header>
+
+  <main class="proxy-container">
+    <div class="proxy-header">
+      <h1>代理浏览器</h1>
+      <p style="color: var(--text-secondary); margin-top: 8px;">通过 Cloudflare 边缘网络中转，访问受限资源</p>
+    </div>
+
+    <div class="proxy-urlbar">
+      <input type="text" id="proxyUrl" placeholder="输入网址，如 https://api.github.com" autofocus>
+      <button id="proxyGo" onclick="doProxy()">前往</button>
+    </div>
+
+    <div class="proxy-quick">
+      <button onclick="quickProxy('https://www.google.com')">Google</button>
+      <button onclick="quickProxy('https://api.github.com')">GitHub API</button>
+      <button onclick="quickProxy('https://ip.sb')">IP 检测</button>
+      <button onclick="quickProxy('https://httpbin.org/ip')">HTTPBin</button>
+      <button onclick="quickProxy('https://api.openai.com/v1/models')">OpenAI Models</button>
+    </div>
+
+    <div class="proxy-status" id="proxyStatus">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">输入网址后点击前往</span>
+      <span id="statusTime" style="margin-left: auto;"></span>
+    </div>
+
+    <div class="proxy-result" id="proxyResult" style="display:none;">
+      <div class="proxy-result-header">
+        <span id="resultUrl"></span>
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('body')" id="tabBody">响应体</button>
+          <button class="tab" onclick="switchTab('headers')" id="tabHeaders">响应头</button>
+        </div>
+      </div>
+      <div class="proxy-result-body" id="resultBody"></div>
+    </div>
+
+    <div class="proxy-error" id="proxyError" style="display:none;"></div>
+
+    <div class="proxy-note">
+      <strong>说明：</strong>此代理通过 Cloudflare 边缘节点中转请求，可访问 GitHub、Google、OpenAI 等外网资源。<br>
+      目前仅支持白名单内的域名。如需添加其他域名请联系站长。<br>
+      部分网站设置了 iframe 限制，建议使用「响应体」模式查看内容。
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 DevToolsBox · 数据本地处理 · 零收集</p>
+  </footer>
+
+  <script>
+    // Theme
+    (function() {
+      const t = localStorage.getItem('devtoolsbox-theme');
+      if (t) document.documentElement.setAttribute('data-theme', t);
+      else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+    function toggleTheme() {
+      const el = document.documentElement;
+      const next = el.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      el.setAttribute('data-theme', next);
+      localStorage.setItem('devtoolsbox-theme', next);
+      document.querySelector('.nav-theme').textContent = next === 'dark' ? '☀️' : '🌙';
+    }
+
+    let currentTab = 'body';
+    let lastResponse = null;
+
+    document.getElementById('proxyUrl').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') doProxy();
+    });
+
+    function quickProxy(url) {
+      document.getElementById('proxyUrl').value = url;
+      doProxy();
+    }
+
+    function setStatus(state, text) {
+      const dot = document.getElementById('statusDot');
+      dot.className = 'dot';
+      if (state === 'loading') dot.classList.add('loading');
+      else if (state === 'success') dot.classList.add('success');
+      else if (state === 'error') dot.classList.add('error');
+      document.getElementById('statusText').textContent = text;
+    }
+
+    async function doProxy() {
+      const url = document.getElementById('proxyUrl').value.trim();
+      if (!url) return;
+
+      const startTime = Date.now();
+      document.getElementById('proxyGo').disabled = true;
+      setStatus('loading', '正在请求...');
+      document.getElementById('statusTime').textContent = '';
+      document.getElementById('proxyResult').style.display = 'none';
+      document.getElementById('proxyError').style.display = 'none';
+
+      try {
+        const proxyUrl = '/api/proxy?url=' + encodeURIComponent(url);
+        const resp = await fetch(proxyUrl);
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+
+        // Headers
+        const headers = {};
+        resp.headers.forEach((v, k) => { headers[k] = v; });
+        lastResponse = { status: resp.status, headers, url };
+
+        const contentType = resp.headers.get('Content-Type') || '';
+        document.getElementById('resultUrl').textContent = 
+          resp.status + ' ' + url + ' (' + elapsed + 's)';
+        document.getElementById('statusTime').textContent = elapsed + 's';
+
+        if (!resp.ok) {
+          const text = await resp.text();
+          showResult(text, contentType);
+          setStatus('error', 'HTTP ' + resp.status);
+        } else {
+          const text = await resp.text();
+          showResult(text, contentType);
+          setStatus('success', '请求成功');
+        }
+      } catch (e) {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+        document.getElementById('statusTime').textContent = elapsed + 's';
+        document.getElementById('proxyError').style.display = 'block';
+        document.getElementById('proxyError').textContent = '请求失败: ' + e.message;
+        setStatus('error', '网络错误');
+      } finally {
+        document.getElementById('proxyGo').disabled = false;
+      }
+    }
+
+    function showResult(text, contentType) {
+      currentTab = 'body';
+      document.getElementById('tabBody').classList.add('active');
+      document.getElementById('tabHeaders').classList.remove('active');
+      document.getElementById('proxyResult').style.display = 'block';
+
+      const body = document.getElementById('resultBody');
+      if (contentType.includes('application/json')) {
+        try {
+          const obj = JSON.parse(text);
+          body.innerHTML = '<pre>' + escapeHtml(JSON.stringify(obj, null, 2)) + '</pre>';
+        } catch {
+          body.innerHTML = '<pre>' + escapeHtml(text) + '</pre>';
+        }
+      } else if (contentType.includes('text/html')) {
+        body.innerHTML = '<pre>' + escapeHtml(text) + '</pre>';
+      } else {
+        body.innerHTML = '<pre>' + escapeHtml(text) + '</pre>';
+      }
+    }
+
+    function showHeaders() {
+      if (!lastResponse) return;
+      const headers = lastResponse.headers;
+      let html = '<div style="margin-bottom:8px;color:var(--accent);">' +
+        'HTTP ' + lastResponse.status + '</div>';
+      for (const [k, v] of Object.entries(headers)) {
+        html += '<div style="margin-bottom:4px;">' +
+          '<strong>' + escapeHtml(k) + ':</strong> ' + escapeHtml(v) + '</div>';
+      }
+      document.getElementById('resultBody').innerHTML = html;
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tabBody').classList.toggle('active', tab === 'body');
+      document.getElementById('tabHeaders').classList.toggle('active', tab === 'headers');
+      if (tab === 'headers') showHeaders();
+      else if (lastResponse) {
+        // Re-render body from cached data
+        document.getElementById('proxyResult').style.display = 'block';
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
