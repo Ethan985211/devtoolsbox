@@ -110,6 +110,71 @@ function getDomainHeaders(hostname) {
 // 无法让浏览器正确解析根相对路径（/path 会被解析到站点根而非代理）。
 // 所有 URL（绝对、协议相对、根相对）都在正则阶段直接重写。
 
+// 注入导航拦截脚本：拦截表单提交和链接点击
+function injectNavInterceptor(html, targetOrigin, proxyPrefix) {
+  const script = `
+<script data-proxy-intercept>
+(function() {
+  if (window.__proxyInterceptInstalled) return;
+  window.__proxyInterceptInstalled = true;
+  var PROXY = '${proxyPrefix}';
+  var TARGET = '${targetOrigin}';
+  function proxyUrl(u) {
+    try {
+      var abs = new URL(u, location.href);
+      // 同源的不代理（已经在本站内）
+      if (abs.origin === location.origin) return u;
+      return PROXY + encodeURIComponent(abs.href);
+    } catch(e) { return u; }
+  }
+  // 策略 A：拦截所有 form submit（捕获阶段，比页面自身 JS 更早触发）
+  document.addEventListener('submit', function(e) {
+    var f = e.target;
+    if (!f || !f.tagName) return;
+    var action = f.getAttribute('action') || '';
+    if (action.startsWith('javascript:') || action.startsWith('mailto:') || action.startsWith('tel:')) return;
+    var abs;
+    try { abs = new URL(action || '', location.href); } catch(ex) { return; }
+    if (abs.origin === location.origin) return;
+    // 表单指向外部 → 拦截
+    e.preventDefault();
+    e.stopPropagation();
+    var fd = new FormData(f);
+    var sp = new URLSearchParams(fd).toString();
+    var target = abs.origin + abs.pathname;
+    if (sp) target += '?' + sp;
+    if (abs.hash) target += abs.hash;
+    location.href = PROXY + encodeURIComponent(target);
+  }, true);
+  // 策略 B：拦截所有链接点击（兜底动态添加的链接）
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest('a');
+    if (!a || !a.href) return;
+    var href = a.getAttribute('href');
+    if (!href || href === '#' || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+    if (href.includes('/api/proxy')) return; // 已经被重写过
+    try {
+      var abs = new URL(href, location.href);
+      if (abs.origin !== location.origin) {
+        a.href = PROXY + encodeURIComponent(abs.href);
+        a.target = '_self';
+      }
+    } catch(ignore) {}
+  }, true);
+})();
+<\\/script>`;
+
+  // 注入到 <head> 末尾或 <body> 开头，确保尽早执行
+  if (html.includes('</head>')) {
+    html = html.replace('</head>', script + '</head>');
+  } else if (html.includes('<body')) {
+    html = html.replace(/(<body[^>]*>)/i, '$1' + script);
+  } else {
+    html = script + html;
+  }
+  return html;
+}
+
 function rewriteHtml(html, targetHost, proxyPath, targetUrl) {
   const targetOrigin = 'https://' + targetHost;
   const proxyPrefix = proxyPath + '?url=';
@@ -122,6 +187,11 @@ function rewriteHtml(html, targetHost, proxyPath, targetUrl) {
 
   // ── 策略 3：重写 meta refresh ──
   html = rewriteMetaRefresh(html, targetOrigin, proxyPrefix, targetUrl);
+
+  // ── 策略 4：注入导航拦截脚本 ──
+  // GET 表单提交时浏览器会丢弃代理 URL 的 ?url=... 参数，
+  // 必须用 JS 拦截表单提交和链接点击，确保导航始终走代理。
+  html = injectNavInterceptor(html, targetOrigin, proxyPrefix);
 
   return html;
 }
@@ -179,7 +249,8 @@ function rewriteAttrValue(attr, value, targetOrigin, proxyPrefix, targetUrl) {
 }
 
 function rewriteSingleUrl(url, targetOrigin, proxyPrefix, targetUrl) {
-  if (!url || url.length < 2) return url;
+  // 只跳过空字符串；"/" 等单字符合法路径必须重写（否则表单 action="/" 不会被代理）
+  if (!url) return url;
 
   // 跳过非 HTTP 协议和特殊值
   if (
