@@ -1,5 +1,5 @@
 /**
- * DevToolsBox Reverse Proxy v4
+ * DevToolsBox Reverse Proxy v5
  * Cloudflare Pages Function — 边缘网络中转代理
  * 用法: /api/proxy?url=https://example.com
  *
@@ -372,7 +372,7 @@ export async function onRequest(context) {
       error: 'Missing url parameter',
       usage: '/api/proxy?url=https://example.com',
       status: 'ok',
-      service: 'DevToolsBox Reverse Proxy v4',
+      service: 'DevToolsBox Reverse Proxy v5',
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
@@ -479,6 +479,7 @@ export async function onRequest(context) {
         const responseHeaders = new Headers(response.headers);
         responseHeaders.set('Access-Control-Allow-Origin', '*');
         responseHeaders.set('X-Proxy-By', 'DevToolsBox');
+        responseHeaders.set('X-Proxy-Version', 'v5');
         responseHeaders.set('X-Proxy-Attempt', String(attempt + 1));
         if (attempt > 0) responseHeaders.set('X-Retry', 'true');
         // 移除可能破坏嵌入的安全头
@@ -503,7 +504,6 @@ export async function onRequest(context) {
           const html = await response.text();
           const rewritten = rewriteHtml(html, target.hostname, '/api/proxy', target.toString());
           responseHeaders.set('X-Proxy-Rewritten', 'true');
-          responseHeaders.set('X-Proxy-Version', 'v5');
           return new Response(rewritten, {
             status: response.status,
             statusText: response.statusText,
