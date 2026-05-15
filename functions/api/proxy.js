@@ -84,6 +84,9 @@ const KNOWN_BLOCKED = [
   'github.com',          // 建议用 raw.githubusercontent.com
   'www.reddit.com',      // Reddit 有 Cloudflare 严格防护
   'reddit.com',
+  'chat.openai.com',     // ChatGPT 网页有 CF Bot + Turnstile，无法代理
+  'chatgpt.com',         // 同上
+  'www.chatgpt.com',     // 同上
 ];
 
 function isAllowed(hostname) {
@@ -425,6 +428,9 @@ export async function onRequest(context) {
       'github.com': 'Try raw.githubusercontent.com for file access',
       'www.reddit.com': 'Reddit blocks proxy access. Try old.reddit.com',
       'reddit.com': 'Reddit blocks proxy access. Try old.reddit.com',
+      'chat.openai.com': 'ChatGPT web is protected by Cloudflare Bot + Turnstile. Use api.openai.com for API access (requires API key)',
+      'chatgpt.com': 'ChatGPT web is protected by Cloudflare Bot + Turnstile. Use api.openai.com for API access (requires API key)',
+      'www.chatgpt.com': 'ChatGPT web is protected by Cloudflare Bot + Turnstile. Use api.openai.com for API access (requires API key)',
     };
     return new Response(JSON.stringify({
       error: 'This site blocks proxy access (Cloudflare Bot Protection)',
@@ -494,8 +500,12 @@ export async function onRequest(context) {
 
       const response = await fetch(target.toString(), fetchInit);
 
-      // 成功或可接受的错误码 → 透传
-      if (response.status < 500 || attempt === 2) {
+      // 成功 → 透传；5xx/429 → 重试（换 UA + 退避）；其他 4xx → 一次性返回
+      const shouldReturn = response.status < 400
+        || (response.status !== 429 && response.status < 500)
+        || attempt === 2;
+
+      if (shouldReturn) {
         const responseHeaders = new Headers(response.headers);
         responseHeaders.set('Access-Control-Allow-Origin', '*');
         responseHeaders.set('X-Proxy-By', 'DevToolsBox');

@@ -154,13 +154,26 @@
       <button id="proxyGo" onclick="doProxy()">前往</button>
     </div>
 
+    <!-- 搜索栏 -->
+    <div class="proxy-searchbar" style="display:flex;gap:8px;margin-bottom:14px;">
+      <input type="text" id="searchKeyword" placeholder="搜索关键词..." style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:13px;background:var(--surface);color:var(--text);outline:none;" onkeydown="if(event.key==='Enter')doSearch()">
+      <select id="searchEngine" style="padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;background:var(--surface);color:var(--text);cursor:pointer;outline:none;">
+        <option value="duckduckgo">DuckDuckGo</option>
+        <option value="bing">Bing</option>
+        <option value="wikipedia">Wikipedia</option>
+        <option value="stackoverflow">StackOverflow</option>
+      </select>
+      <button onclick="doSearch()" style="padding:10px 20px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">搜索</button>
+    </div>
+
     <!-- 快捷按钮 -->
     <div class="proxy-shortcuts">
       <div class="group">
         <div class="group-label">搜索 &amp; 资讯</div>
         <div class="group-btns">
-          <button onclick="quickProxy('https://news.google.com')">Google News</button>
           <button onclick="quickProxy('https://duckduckgo.com')">DuckDuckGo</button>
+          <button onclick="quickProxy('https://www.bing.com')">Bing</button>
+          <button onclick="quickProxy('https://news.google.com')">Google News</button>
           <button onclick="quickProxy('https://en.wikipedia.org/wiki/Main_Page')">Wikipedia</button>
           <button onclick="quickProxy('https://medium.com')">Medium</button>
         </div>
@@ -234,8 +247,9 @@
     <!-- 说明 -->
     <div class="proxy-note">
       <strong>当前支持域名：</strong>
-      <span class="domain-tag">Google News</span>
+      <span class="domain-tag">Bing</span>
       <span class="domain-tag">DuckDuckGo</span>
+      <span class="domain-tag">Google News</span>
       <span class="domain-tag">Wikipedia</span>
       <span class="domain-tag">StackOverflow</span>
       <span class="domain-tag">Medium</span>
@@ -249,7 +263,7 @@
       <span class="domain-tag">IP检测</span>
       <details>
         <summary>技术说明 &amp; 限制</summary>
-        <p>代理通过 Cloudflare Pages Functions 实现，请求经边缘节点转发到目标服务器再返回。部分站点（Google 搜索、GitHub.com、Reddit）使用 Cloudflare 严格 Bot 防护，Workers 的出站请求会被拦截（Error 1010），请使用替代端点。如需添加新域名请联系站长。</p>
+        <p>代理通过 Cloudflare Pages Functions 实现，请求经边缘节点转发到目标服务器再返回。部分站点（Google 搜索、GitHub.com、Reddit、ChatGPT 网页版）使用 Cloudflare 严格 Bot 防护，Workers 的出站请求会被拦截（Error 1010），请使用替代端点。搜索推荐直接用上方搜索栏，支持 DuckDuckGo、Bing、Wikipedia、StackOverflow。</p>
       </details>
     </div>
   </main>
@@ -327,6 +341,30 @@
       doProxy();
     }
 
+    function doSearch() {
+      const kw = document.getElementById('searchKeyword').value.trim();
+      if (!kw) return;
+      const engine = document.getElementById('searchEngine').value;
+      const urls = {
+        duckduckgo: 'https://duckduckgo.com/?q=' + encodeURIComponent(kw),
+        bing: 'https://www.bing.com/search?q=' + encodeURIComponent(kw),
+        wikipedia: 'https://en.wikipedia.org/wiki/Special:Search?search=' + encodeURIComponent(kw),
+        stackoverflow: 'https://stackoverflow.com/search?q=' + encodeURIComponent(kw),
+      };
+      document.getElementById('proxyUrl').value = urls[engine];
+      retryCount = 0;
+      doProxy();
+    }
+
+    function isCFChallenge(text) {
+      // 检测 Cloudflare Bot 拦截 / JS Challenge / Turnstile 页面
+      return text.includes('error code: 1010')
+        || text.includes('cf-browser-verification')
+        || text.includes('enlarge-appear')      // CF Challenge 页面的 CSS class
+        || text.includes('turnstile')
+        || (text.length < 3000 && text.includes('Cloudflare'));
+    }
+
     async function doProxy() {
       const url = document.getElementById('proxyUrl').value.trim();
       if (!url) return;
@@ -389,20 +427,28 @@
             const j = JSON.parse(text);
             if (j.blocked) {
               showError('站点拒绝代理访问',
-                '<div><strong>' + j.error + '</strong></div><div style="margin-top:6px">' +
+                '<div><strong>' + escapeHtml(j.error) + '</strong></div><div style="margin-top:6px">' +
                 escapeHtml(j.hint || '该站点使用了严格的 Bot 防护，无法通过代理访问。') + '</div>', false);
             } else {
               showError('HTTP 403 · 访问被拒',
                 '<pre style="font-size:12px;margin:6px 0 0">' + escapeHtml(JSON.stringify(j, null, 2)) + '</pre>', false);
             }
           } catch {
-            showError('HTTP 403 · 访问被拒',
-              '<div style="margin-top:6px">' + escapeHtml(text.substring(0, 500)) + '</div>', false);
+            // 检查是否是 Cloudflare Bot 拦截
+            if (isCFChallenge(text)) {
+              showError('站点安全验证拦截',
+                '<div style="margin-bottom:8px">目标站点使用了 Cloudflare Bot 防护（Turnstile / JS Challenge），Cloudflare Workers 的请求无法通过此类验证。</div>' +
+                '<div style="font-size:12px;color:var(--text-secondary)">这是 Cloudflare-to-Cloudflare 的已知限制，暂无法绕过。建议尝试 API 端点或其他替代站点。</div>', false);
+            } else {
+              showError('HTTP 403 · 访问被拒',
+                '<div style="margin-top:6px">' + escapeHtml(text.substring(0, 500)) + '</div>', false);
+            }
           }
           setStatus('error', 'HTTP 403');
         } else if (resp.status === 429) {
-          showError('速率限制 (HTTP 429)', '目标服务器暂时拒绝了请求。' +
-            (retryCount < MAX_RETRIES ? '点击下方按钮自动重试。' : '请等待 10 秒后手动重试。'),
+          showError('速率限制 (HTTP 429)',
+            '目标服务器暂时限制了请求频率，代理后端已自动重试（换IP+更长间隔）。' +
+            (retryCount < MAX_RETRIES ? '点击下方按钮可手动再次尝试。' : '请等待 10 秒后手动重试。'),
             retryCount < MAX_RETRIES);
           setStatus('error', 'HTTP 429');
         } else if (resp.status >= 500) {
