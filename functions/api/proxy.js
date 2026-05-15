@@ -79,15 +79,23 @@ export async function onRequest(context) {
     });
   }
 
-  // 构建转发请求头
+  // 构建转发请求头（伪装成浏览器以降低被限流概率）
   const forwardHeaders = new Headers();
-  const copyHeaders = ['User-Agent', 'Accept', 'Accept-Language', 'Content-Type', 'Authorization'];
-  for (const h of copyHeaders) {
-    const v = request.headers.get(h);
-    if (v) forwardHeaders.set(h, v);
+  
+  // 优先用用户自己的 UA
+  const userUA = request.headers.get('User-Agent');
+  forwardHeaders.set('User-Agent', userUA ||
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36');
+  
+  forwardHeaders.set('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8');
+  forwardHeaders.set('Accept-Language', request.headers.get('Accept-Language') || 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7');
+  forwardHeaders.set('Accept-Encoding', 'gzip, deflate, br');
+  
+  if (request.headers.get('Content-Type')) {
+    forwardHeaders.set('Content-Type', request.headers.get('Content-Type'));
   }
-  if (!forwardHeaders.has('User-Agent')) {
-    forwardHeaders.set('User-Agent', 'Mozilla/5.0 (compatible; DevToolsBox/1.0)');
+  if (request.headers.get('Authorization')) {
+    forwardHeaders.set('Authorization', request.headers.get('Authorization'));
   }
 
   // 转发
@@ -103,6 +111,34 @@ export async function onRequest(context) {
     }
 
     const response = await fetch(target.toString(), fetchInit);
+
+    // 429 Too Many Requests — 等 2 秒重试一次
+    if (response.status === 429) {
+      await new Promise(r => setTimeout(r, 2000));
+      const retryResponse = await fetch(target.toString(), fetchInit);
+      if (retryResponse.status === 429) {
+        return new Response(JSON.stringify({
+          error: 'Rate limited (429)',
+          hint: 'The target server is rate-limiting. Wait a few seconds and try again.',
+          target: targetUrl,
+        }), {
+          status: 429,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        });
+      }
+      // Use retry response below
+      const responseHeaders2 = new Headers(retryResponse.headers);
+      responseHeaders2.set('Access-Control-Allow-Origin', '*');
+      responseHeaders2.set('X-Proxy-By', 'DevToolsBox');
+      responseHeaders2.set('X-Retry', 'true');
+      responseHeaders2.delete('Content-Security-Policy');
+      responseHeaders2.delete('X-Frame-Options');
+      return new Response(retryResponse.body, {
+        status: retryResponse.status,
+        statusText: retryResponse.statusText,
+        headers: responseHeaders2,
+      });
+    }
 
     // 回传响应
     const responseHeaders = new Headers(response.headers);
