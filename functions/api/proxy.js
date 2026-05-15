@@ -1,7 +1,10 @@
 /**
- * DevToolsBox Reverse Proxy v2
+ * DevToolsBox Reverse Proxy v3
  * Cloudflare Pages Function — 边缘网络中转代理
  * 用法: /api/proxy?url=https://example.com
+ *
+ * v3 新特性：HTML URL 重写。代理返回的 HTML 中所有资源链接（CSS/JS/图片/跳转）
+ * 自动改写为走代理，解决国内加载慢和链接跳转失败问题。
  *
  * 已知硬限制：Cloudflare Workers 的 fetch() 在访问同样受 Cloudflare Bot
  * 防护的站点时会被 1010 浏览器签名检测拦截。Google 搜索、GitHub.com、
@@ -28,17 +31,19 @@ const ALLOWED_DOMAINS = [
   'pypi.org', 'pypi.python.org',
   'crates.io',
   'docs.rs',
+  // CDN（用于 HTML 内资源重写后加载）
+  'cdn.jsdelivr.net', 'unpkg.com', 'cdnjs.cloudflare.com',
   // AI & ML
   'api.openai.com', 'chatgpt.com', 'chat.openai.com',
   'api.anthropic.com', 'claude.ai', 'docs.anthropic.com',
-  'huggingface.co', 'huggingface.co',
+  'huggingface.co',
   // 学术
   'arxiv.org',
   // 博客 & 媒体
   'medium.com', 'www.medium.com',
   'dev.to', 'hashnode.com',
-  'reddit.com', 'www.reddit.com',
-  // X / Twitter（API 可能可用，Web 会被封）
+  'reddit.com', 'www.reddit.com', 'old.reddit.com',
+  // X / Twitter（API 可用，Web 会封）
   'x.com', 'twitter.com', 'api.x.com', 'api.twitter.com',
   'nitter.net',
   // 工具 & 检测
@@ -46,7 +51,7 @@ const ALLOWED_DOMAINS = [
   'icanhazip.com', 'api.ipify.org',
   // Cloudflare
   'cloudflare.com', 'developers.cloudflare.com',
-  // YouTube（只读搜索可能可行）
+  // YouTube（只读搜索可行）
   'www.youtube.com', 'youtube.com',
 ];
 
@@ -74,13 +79,13 @@ const DOMAIN_HEADERS = {
 };
 
 // ============== 已知被 Cloudflare Bot 拦截的域名 ==============
+// chatgpt.com 已移除：允许尝试，让用户看到实际错误而非预判拦截
 const KNOWN_BLOCKED = [
   'www.google.com',      // 建议用 news.google.com
   'google.com',          // 同上
   'github.com',          // 建议用 raw.githubusercontent.com
   'www.reddit.com',      // Reddit 有 Cloudflare 严格防护
   'reddit.com',
-  'chatgpt.com',         // OpenAI 前端有 Turnstile 验证
 ];
 
 function isAllowed(hostname) {
@@ -97,6 +102,110 @@ function pickUA() {
 
 function getDomainHeaders(hostname) {
   return DOMAIN_HEADERS[hostname] || {};
+}
+
+// ============== HTML URL 重写 ==============
+// 把 HTML 里的绝对/协议相对/根相对 URL 全部改写为走代理，
+// 确保 CSS/JS/图片/跳转链接在国内都能加载
+const URL_ATTRS = ['src', 'href', 'action', 'poster', 'data-src', 'data-href'];
+
+function rewriteHtml(html, targetHost, proxyPath) {
+  const targetOrigin = 'https://' + targetHost;
+  const proxyPrefix = proxyPath + '?url=';
+
+  // 1. 构建属性正则，匹配 attr="value" 或 attr='value'
+  const attrNames = URL_ATTRS.join('|');
+  const attrRegex = new RegExp(
+    '(' + attrNames + ')\\s*=\\s*(["\\\'])([^"\\\']*?)\\2',
+    'gi'
+  );
+
+  html = html.replace(attrRegex, (match, attr, quote, value) => {
+    const rewritten = rewriteAttrValue(attr, value, targetOrigin, proxyPrefix, proxyPath);
+    return attr + '=' + quote + rewritten + quote;
+  });
+
+  // 2. 插入 <base> 标签，让相对路径（./style.css）自动走代理
+  const baseHref = proxyPrefix + encodeURIComponent(targetOrigin + '/');
+  if (/<base[\s>]/i.test(html)) {
+    html = html.replace(
+      /(<base\s[^>]*href\s*=\s*)(["'])[^"']*\2/gi,
+      '$1$2' + baseHref + '$2'
+    );
+  } else if (/<head[^>]*>/i.test(html)) {
+    html = html.replace(/(<head[^>]*>)/i, '$1\n<base href="' + baseHref + '">');
+  } else {
+    html = '<base href="' + baseHref + '">\n' + html;
+  }
+
+  return html;
+}
+
+function rewriteAttrValue(attr, value, targetOrigin, proxyPrefix, proxyPath) {
+  const attrLower = attr.toLowerCase();
+
+  if (attrLower === 'srcset') {
+    return rewriteSrcset(value, proxyPrefix, proxyPath);
+  }
+
+  // data-src 可能包含多个 URL（懒加载库），按逗号分割处理
+  if (attrLower === 'data-src') {
+    return value.split(',').map(v => rewriteSingleUrl(v.trim(), targetOrigin, proxyPrefix, proxyPath)).join(', ');
+  }
+
+  return rewriteSingleUrl(value, targetOrigin, proxyPrefix, proxyPath);
+}
+
+function rewriteSingleUrl(url, targetOrigin, proxyPrefix, proxyPath) {
+  if (!url) return url;
+
+  // 跳过非 HTTP 协议
+  if (
+    url.startsWith('#') ||
+    url.startsWith('javascript:') ||
+    url.startsWith('mailto:') ||
+    url.startsWith('tel:') ||
+    url.startsWith('data:') ||
+    url.startsWith('blob:') ||
+    url.startsWith('{{')       // 模板语法，不动
+  ) {
+    return url;
+  }
+
+  // 已经是代理 URL，不重复包裹
+  if (url.includes(proxyPath + '?url=')) {
+    return url;
+  }
+
+  let fullUrl;
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    fullUrl = url;
+  } else if (url.startsWith('//')) {
+    fullUrl = 'https:' + url;
+  } else if (url.startsWith('/')) {
+    fullUrl = targetOrigin + url;
+  } else {
+    // 相对路径，由 <base> 标签处理
+    return url;
+  }
+
+  return proxyPrefix + encodeURIComponent(fullUrl);
+}
+
+function rewriteSrcset(value, proxyPrefix, proxyPath) {
+  return value.split(',').map(part => {
+    const trimmed = part.trim();
+    // srcset 格式: "URL 1x" 或 "URL 640w" 或 纯 "URL"
+    const m = trimmed.match(/^(\S+)(\s+.+)?$/);
+    if (!m) return trimmed;
+    let url = m[1];
+    const desc = m[2] || '';
+    if (url.startsWith('//')) url = 'https:' + url;
+    if ((url.startsWith('http://') || url.startsWith('https://')) && !url.includes(proxyPath)) {
+      return proxyPrefix + encodeURIComponent(url) + desc;
+    }
+    return trimmed;
+  }).join(', ');
 }
 
 // ============== 主处理函数 ==============
@@ -125,7 +234,7 @@ export async function onRequest(context) {
       error: 'Missing url parameter',
       usage: '/api/proxy?url=https://example.com',
       status: 'ok',
-      service: 'DevToolsBox Reverse Proxy v2',
+      service: 'DevToolsBox Reverse Proxy v3',
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
@@ -163,7 +272,6 @@ export async function onRequest(context) {
       'github.com': 'Try raw.githubusercontent.com for file access',
       'www.reddit.com': 'Reddit blocks proxy access. Try old.reddit.com',
       'reddit.com': 'Reddit blocks proxy access. Try old.reddit.com',
-      'chatgpt.com': 'ChatGPT requires browser verification. Use API via api.openai.com',
     };
     return new Response(JSON.stringify({
       error: 'This site blocks proxy access (Cloudflare Bot Protection)',
@@ -237,9 +345,9 @@ export async function onRequest(context) {
         if (attempt > 0) responseHeaders.set('X-Retry', 'true');
         // 移除可能破坏嵌入的安全头
         responseHeaders.delete('Content-Security-Policy');
+        responseHeaders.delete('Content-Security-Policy-Report-Only');
         responseHeaders.delete('X-Frame-Options');
         responseHeaders.delete('Frame-Options');
-        // 不要 strikethrough Strict-Transport-Security — 保留
 
         // raw 模式返回纯文本
         if (rawMode) {
@@ -251,6 +359,21 @@ export async function onRequest(context) {
           });
         }
 
+        // HTML 响应 → 重写 URL
+        const contentType = responseHeaders.get('Content-Type') || '';
+        if (contentType.includes('text/html')) {
+          const html = await response.text();
+          const rewritten = rewriteHtml(html, target.hostname, '/api/proxy');
+          // Cloudflare Workers 自动处理 Content-Length，不需要手动设置
+          responseHeaders.set('X-Proxy-Rewritten', 'true');
+          return new Response(rewritten, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: responseHeaders,
+          });
+        }
+
+        // 非 HTML → 流式透传
         return new Response(response.body, {
           status: response.status,
           statusText: response.statusText,
