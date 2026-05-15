@@ -65,7 +65,7 @@ const UA_POOL = [
 // ============== 域名 → 定制请求头 ==============
 const DOMAIN_HEADERS = {
   'api.github.com': { 'Accept': 'application/vnd.github.v3+json' },
-  'registry.npmjs.org': { 'Accept': 'application/vnd.npm.install-v1+json' },
+  'registry.npmjs.org': { 'Accept': 'application/json' },
   'pypi.org': { 'Accept': 'application/json' },
   'huggingface.co': { 'Accept': 'application/json' },
   'api.openai.com': { 'Accept': 'application/json' },
