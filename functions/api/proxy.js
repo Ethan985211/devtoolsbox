@@ -375,7 +375,12 @@ export async function onRequest(context) {
       service: 'DevToolsBox Reverse Proxy v5',
     }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'X-Proxy-Version': 'v5',
+        'X-Proxy-By': 'DevToolsBox',
+      },
     });
   }
 
@@ -386,7 +391,12 @@ export async function onRequest(context) {
   } catch {
     return new Response(JSON.stringify({ error: 'Invalid URL' }), {
       status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'X-Proxy-Version': 'v5',
+        'X-Proxy-By': 'DevToolsBox',
+      },
     });
   }
 
@@ -398,7 +408,12 @@ export async function onRequest(context) {
       hint: 'Contact site owner to add this domain.',
     }), {
       status: 403,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'X-Proxy-Version': 'v5',
+        'X-Proxy-By': 'DevToolsBox',
+      },
     });
   }
 
@@ -418,7 +433,12 @@ export async function onRequest(context) {
       blocked: true,
     }), {
       status: 403,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'X-Proxy-Version': 'v5',
+        'X-Proxy-By': 'DevToolsBox',
+      },
     });
   }
 
@@ -530,6 +550,11 @@ export async function onRequest(context) {
     target: targetUrl,
   }), {
     status: 502,
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'X-Proxy-Version': 'v5',
+      'X-Proxy-By': 'DevToolsBox',
+    },
   });
 }
