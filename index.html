@@ -13,6 +13,8 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DevToolsBox — 免费在线开发者工具">
 <meta name="twitter:description" content="13款免费在线开发者工具：图片压缩、格式转换、JSON格式化、Base64编解码、二维码生成、时间戳转换、PDF合并、PDF拆分、PDF文本提取、颜色转换、URL编解码、随机密码生成。纯浏览器本地处理，数据零上传。">
+<link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+<link rel="dns-prefetch" href="https://devtoolsbox-1rl.pages.dev">
 <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧰</text></svg>">
@@ -59,7 +61,6 @@ DevToolsBox
 <!-- ═══ Hero ═══ -->
 <section class="hero">
 <div class="hero-badge">
-<div class="badge-dot">✨</div>
 纯浏览器本地处理 · 数据零上传
 </div>
 <h1>
@@ -67,12 +68,12 @@ DevToolsBox
 <span class="gradient-text">免费工具箱</span>
 </h1>
 <p class="hero-subtitle">
-12 款精心打磨的在线工具，所有运算在浏览器内完成。<br>
+13 款精心打磨的在线工具，所有运算在浏览器内完成。<br>
 你的数据从未离开你的设备 — 安全、极速、完全免费。
 </p>
 <div class="hero-stats">
 <div class="hero-stat">
-<div class="stat-number">12</div>
+<div class="stat-number">13</div>
 <div class="stat-label">实用工具</div>
 </div>
 <div class="hero-stat">
@@ -88,10 +89,10 @@ DevToolsBox
 
 <!-- ═══ Trust Strip ═══ -->
 <div class="trust-strip">
-<div class="trust-item"><span class="trust-icon">🔒</span> 零数据收集</div>
-<div class="trust-item"><span class="trust-icon">📱</span> 全平台适配</div>
-<div class="trust-item"><span class="trust-icon">⚡</span> 本地即时处理</div>
-<div class="trust-item"><span class="trust-icon">🌐</span> PWA 可安装</div>
+<div class="trust-item">零数据收集</div>
+<div class="trust-item">全平台适配</div>
+<div class="trust-item">本地即时处理</div>
+<div class="trust-item">PWA 可安装</div>
 </div>
 
 <!-- ═══ Tool Grid ═══ -->
@@ -99,6 +100,10 @@ DevToolsBox
 <div class="section-header">
 <h2>全部工具</h2>
 <p>每个工具都是独立的 HTML 页面，无需网络即可使用</p>
+</div>
+
+<div style="max-width:500px;margin:0 auto 24px;">
+<input type="text" id="toolSearch" placeholder="搜索工具..." oninput="filterTools()" style="width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--surface);color:var(--text);outline:none;">
 </div>
 
 <div class="promo-row">
@@ -217,47 +222,24 @@ DevToolsBox
 </a>
 </div>
 
-<div class="promo-row">
-<a href="https://www.aliyun.com/minisite/goods?source=5176.29345612&userCode=xqdanc4i" class="promo-banner" target="_blank" rel="nofollow sponsored">
-  <div>
-    <span class="promo-tag">推荐</span>
-    <div class="promo-title">阿里云·云小站</div>
-    <div class="promo-desc">热门云产品特惠，新老用户同享</div>
-  </div>
-  <span class="promo-cta">查看</span>
-</a>
-<a href="https://www.vmssr.net/#/register?code=fGN3KQqi" class="promo-banner" target="_blank" rel="nofollow sponsored">
-  <div>
-    <span class="promo-tag">推荐</span>
-    <div class="promo-title">VMSSR 高速网络</div>
-    <div class="promo-desc">稳定低延迟，注册即用</div>
-  </div>
-  <span class="promo-cta">查看</span>
-</a>
-</div>
-
 <!-- ═══ Feature Cards ═══ -->
 <div class="section-header">
 <h2>为什么选择 DevToolsBox</h2>
 </div>
 <div class="feature-grid">
 <div class="feature-card">
-<div class="feat-icon">🔒</div>
 <h4>隐私至上</h4>
 <p>所有处理在浏览器本地完成。无服务器、无上传、无日志。你的文件从未离开你的设备。</p>
 </div>
 <div class="feature-card">
-<div class="feat-icon">⚡</div>
 <h4>极速响应</h4>
 <p>直接调用浏览器原生 API（Canvas、Web Crypto、URL API），无需等待网络往返。</p>
 </div>
 <div class="feature-card">
-<div class="feat-icon">💯</div>
 <h4>永久免费</h4>
 <p>无付费墙、无功能限制、无需注册。零成本运营，靠推荐和广告维持。</p>
 </div>
 <div class="feature-card">
-<div class="feat-icon">🎨</div>
 <h4>简洁高效</h4>
 <p>去掉一切干扰元素，只保留工具本身。暗色模式护眼，移动端完美适配。</p>
 </div>
@@ -331,19 +313,28 @@ DevToolsBox
 </div>
 <div>
 <h5>联系</h5>
-<a href="mailto:2917834376@qq.com">📧 广告合作</a>
+<a href="mailto:2917834376@qq.com">广告合作</a>
 <a href="/">首页</a>
 
 </div>
 </div>
 </div>
 <div class="footer-bottom">
-<span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span>
+<span>© 2026 DevToolsBox · 数据本地处理 · 零收集</span>
 
 </div>
 </footer>
 
 <script>
+// ── Tool Search ──────────────────────────────────
+function filterTools() {
+const q = document.getElementById('toolSearch').value.toLowerCase();
+document.querySelectorAll('.tool-card').forEach(card => {
+const title = card.querySelector('h3').textContent.toLowerCase();
+const desc = card.querySelector('p').textContent.toLowerCase();
+card.style.display = (title.includes(q) || desc.includes(q)) ? '' : 'none';
+});
+}
 // ── Theme Toggle ──────────────────────────────────
 (function() {
 const html = document.documentElement;

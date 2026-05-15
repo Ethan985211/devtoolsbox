@@ -231,7 +231,7 @@ position: relative;
 display: inline-flex;
 align-items: center;
 gap: 8px;
-padding: 4px 14px 4px 6px;
+padding: 6px 14px;
 border: 1px solid var(--border);
 border-radius: 100px;
 font-size: 13px;
@@ -239,23 +239,6 @@ color: var(--text-secondary);
 background: var(--surface);
 margin-bottom: 24px;
 animation: fadeInUp 0.6s ease;
-}
-.hero-badge .badge-dot {
-width: 22px;
-height: 22px;
-border-radius: 50%;
-background: var(--accent);
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 11px;
-color: #fff;
-animation: pulse-dot 2s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
-50% { box-shadow: 0 0 0 8px transparent; }
 }
 
 .hero h1 {
@@ -330,6 +313,14 @@ gap: 6px;
 padding: 4px 14px;
 border-radius: 100px;
 background: var(--bg-secondary);
+}
+.trust-strip .trust-item::before {
+content: '';
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: var(--accent);
+flex-shrink: 0;
 }
 .trust-strip .trust-icon { font-size: 16px; }
 
@@ -994,14 +985,11 @@ border: 1px solid var(--border);
 border-radius: var(--radius);
 background: var(--surface);
 transition: all var(--transition);
+border-left: 3px solid var(--accent);
 }
 .feature-card:hover {
 border-color: var(--accent);
 box-shadow: var(--shadow-sm);
-}
-.feature-card .feat-icon {
-font-size: 24px;
-margin-bottom: 10px;
 }
 .feature-card h4 {
 font-size: 15px;

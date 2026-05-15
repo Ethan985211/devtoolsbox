@@ -1,4 +1,4 @@
-const CACHE = 'devtoolsbox-v2';
+const CACHE = 'devtoolsbox-v3';
 const ASSETS = [
   '/',
   '/css/style.css',
@@ -14,7 +14,8 @@ const ASSETS = [
   '/tools/pdf-split',
   '/tools/color-converter',
   '/tools/url-encode',
-  '/tools/password-gen'
+  '/tools/password-gen',
+  '/tools/proxy'
 ];
 
 self.addEventListener('install', e => {
@@ -32,7 +33,6 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Only handle GET requests
   if (e.request.method !== 'GET') return;
   e.respondWith(
     caches.match(e.request).then(cached => {
