@@ -162,7 +162,7 @@ function injectNavInterceptor(html, targetOrigin, proxyPrefix) {
     } catch(ignore) {}
   }, true);
 })();
-<\\/script>`;
+'<' + '/script>'`;
 
   // 注入到 <head> 末尾或 <body> 开头，确保尽早执行
   if (html.includes('</head>')) {
@@ -503,7 +503,7 @@ export async function onRequest(context) {
           const html = await response.text();
           const rewritten = rewriteHtml(html, target.hostname, '/api/proxy', target.toString());
           responseHeaders.set('X-Proxy-Rewritten', 'true');
-          responseHeaders.set('X-Proxy-Version', 'v4');
+          responseHeaders.set('X-Proxy-Version', 'v5');
           return new Response(rewritten, {
             status: response.status,
             statusText: response.statusText,
