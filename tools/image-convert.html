@@ -126,9 +126,5 @@ function hF(file){if(!file.type.match(/image\//)){alert("请选择图片文件")
 function convert(){if(!si.width)return;var c=document.createElement("canvas");c.width=si.width;c.height=si.height;c.getContext("2d").drawImage(si,0,0);var f=document.getElementById("targetFormat").value,e=f.split("/")[1].replace("jpeg","jpg");c.toBlob(function(b){var u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="converted."+e;a.click();URL.revokeObjectURL(u);fl.textContent="转换后大小: "+fS(b.size)},f)}
 function fS(b){if(b<1024)return b+" B";if(b<1048576)return(b/1024).toFixed(1)+" KB";return(b/1048576).toFixed(2)+" MB"}
 })();</script>
-<footer class="site-footer">
-  &copy; 2025 DevToolsBox &middot; 数据本地处理 &middot; 零收集 &middot;
-  <a href="mailto:2917834376@qq.com">广告合作</a>
-</footer>
 </body>
 </html>

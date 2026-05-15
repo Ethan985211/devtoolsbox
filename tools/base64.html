@@ -123,9 +123,5 @@ document.getElementById("swapBtn").addEventListener("click",function(){if(out.te
 document.getElementById("copyBtn").addEventListener("click",function(){if(!out.textContent){alert("没有可复制的内容");return}navigator.clipboard.writeText(out.textContent).then(function(){var b=document.getElementById("copyBtn");b.textContent="已复制 ✓";setTimeout(function(){b.textContent="复制结果"},1500)})});
 document.getElementById("clearBtn").addEventListener("click",function(){inp.value="";out.textContent="";op.style.display="none"});
 })();</script>
-<footer class="site-footer">
-  &copy; 2025 DevToolsBox &middot; 数据本地处理 &middot; 零收集 &middot;
-  <a href="mailto:2917834376@qq.com">广告合作</a>
-</footer>
 </body>
 </html>

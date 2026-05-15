@@ -138,9 +138,5 @@ document.getElementById("dateBtn").addEventListener("click",dateToTs);
 function tsToDate(){var ts=parseInt(tsI.value.trim());if(isNaN(ts)){tsR.style.display="block";tsR.innerHTML='<span style="color:#ef4444">❌ 请输入有效的时间戳数字</span>';return}var isMs=ts>1e12,d=new Date(isMs?ts:ts*1000);if(isNaN(d.getTime())){tsR.style.display="block";tsR.innerHTML='<span style="color:#ef4444">❌ 时间戳超出范围</span>';return}tsR.style.display="block";tsR.innerHTML='<div style="margin-bottom:6px;color:#10b981">✅ 时间戳'+(isMs?"（毫秒）":"（秒）")+"</div><div><b>本地时间:</b> "+d.toLocaleString("zh-CN")+"</div><div><b>UTC 时间:</b> "+d.toUTCString()+"</div><div><b>ISO 8601:</b> "+d.toISOString()+"</div><div style=\"margin-top:6px\"><b>秒级时间戳:</b> "+Math.floor(d.getTime()/1000)+"</div><div><b>毫秒级时间戳:</b> "+d.getTime()+"</div>"}
 function dateToTs(){var v=di.value;if(!v){dr.style.display="block";dr.innerHTML='<span style="color:#ef4444">❌ 请选择日期时间</span>';return}var d=new Date(v),ts=Math.floor(d.getTime()/1000);dr.style.display="block";dr.innerHTML='<div style="margin-bottom:6px;color:#10b981">✅ 转换结果</div><div><b>秒级时间戳:</b> '+ts+"</div><div><b>毫秒级时间戳:</b> "+d.getTime()+"</div><div style=\"margin-top:6px\"><b>UTC:</b> "+d.toUTCString()+"</div>"}
 })();</script>
-<footer class="site-footer">
-  &copy; 2025 DevToolsBox &middot; 数据本地处理 &middot; 零收集 &middot;
-  <a href="mailto:2917834376@qq.com">广告合作</a>
-</footer>
 </body>
 </html>
