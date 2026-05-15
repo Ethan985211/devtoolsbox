@@ -9,7 +9,7 @@ GitHub: https://github.com/Ethan985211/devtoolsbox
 
 | 维度 | 策略 |
 |------|------|
-| 时长 | 4-6 分钟（B站最佳完播区间） |
+| 时长 | 5-6 分钟（B站最佳完播区间） |
 | 类型 | 工具评测 / 效率推荐 |
 | 风格 | 快节奏、信息密度高、真诚推荐 |
 | 目标观众 | 开发者、设计师、学生、办公族 |
@@ -41,7 +41,7 @@ GitHub: https://github.com/Ethan985211/devtoolsbox
 
 画面: 从 Hero 区域向下滚动，展示工具网格、信任条、特性卡片
 台词:
-"DevToolsBox —— 12款开发者日常工具，全部在这里。
+"DevToolsBox —— 13款开发者日常工具，全部在这里。
 没有注册、没有跳转、没有弹窗。
 所有处理全在浏览器本地完成，你的文件从不离开你的设备。"
 
@@ -138,7 +138,29 @@ GitHub: https://github.com/Ethan985211/devtoolsbox
 
 ---
 
-### 第六段: 其他工具速览 + 结尾（3:45-4:45）
+### 第六段: 代理浏览器演示（3:45-4:20）
+
+画面: 打开代理浏览器，输入 google.com/news，展示页面成功加载
+台词:
+"这个代理浏览器是最近上的新功能，解决了一个大痛点——
+很多开发资源在国内访问不了，GitHub、StackOverflow 动不动就超时。
+它通过 Cloudflare Pages 的边缘网络中转请求，
+帮你直连外网开发资源。"
+
+画面: 点击快捷按钮，依次展示 Google News、GitHub Raw、HuggingFace、npm 等站点
+台词:
+"内置了 40 多个常用开发站点的白名单，
+Google、GitHub、HuggingFace、npm、PyPI、arXiv……
+一行 URL 输入框，点一下就能打开。"
+
+画面: 切换到 iframe 模式，展示代理页面内嵌入渲染
+台词:
+"还支持内嵌预览和响应头查看，
+遇到需要认证的站点也会有明确提示，告诉你问题出在哪。"
+
+---
+
+### 第七段: 其他工具速览 + 结尾（4:20-5:15）
 
 画面: 快速切换时间戳、颜色转换、密码生成器三个工具
 台词:
@@ -167,7 +189,7 @@ GitHub: https://github.com/Ethan985211/devtoolsbox
 B站推荐 1146×717 像素（16:10），文件 < 5MB
 
 ### 封面设计思路
-主标题大字：「12款工具 · 0数据上传」
+主标题大字：「13款工具 · 0数据上传」
 副标题小字：「开发者免费在线工具箱」
 视觉元素: 深色背景 + 工具图标阵列 + "零上传"印章标识
 色调: 紫色到蓝色渐变（#6366f1 → #3b82f6），与站点主题一致
@@ -177,17 +199,17 @@ B站推荐 1146×717 像素（16:10），文件 < 5MB
 
 提示词 1 — 简约现代风格（推荐）:
 ```
-A clean dark-themed technology banner with a grid of 12 minimal tool icons (image, document, lock, QR code, clock, palette, link, key, etc.) arranged in a 4x3 grid. Large bold Chinese title "12款免费开发者工具" in white sans-serif font. A prominent red seal/stamp in the corner reading "数据零上传". Background: dark slate gradient with subtle geometric lines. Modern, minimalist, professional. No people. 16:10 aspect ratio, banner design.
+A clean dark-themed technology banner with a grid of 13 minimal tool icons (image, document, lock, QR code, clock, palette, link, key, proxy, etc.) arranged in a dynamic grid. Large bold Chinese title "13款免费开发者工具" in white sans-serif font. A prominent red seal/stamp in the corner reading "数据零上传". Background: dark slate gradient with subtle geometric lines. Modern, minimalist, professional. No people. 16:10 aspect ratio, banner design.
 ```
 
 提示词 2 — 玻璃质感风格:
 ```
-Dark frosted glass UI layout, floating translucent cards with tool icons. Center text "DevToolsBox" in large gradient purple-to-blue font. Subtitle "免费在线开发者工具 · 12款 · 零上传". Deep navy background with soft glowing orbs. Tech aesthetic, clean, premium feel. Banner 16:10.
+Dark frosted glass UI layout, floating translucent cards with tool icons. Center text "DevToolsBox" in large gradient purple-to-blue font. Subtitle "免费在线开发者工具 · 13款 · 零上传". Deep navy background with soft glowing orbs. Tech aesthetic, clean, premium feel. Banner 16:10.
 ```
 
 提示词 3 — 中文生图平台版（通义万相 / 文心一格 / 即梦）:
 ```
-深色科技风横幅设计，中间大字标题"12款免费在线工具"，副标题"数据零上传·纯浏览器本地处理"，紫色渐变背景，排列12个小工具图标卡片，右下角红色印章"隐私安全"，简洁现代扁平风格，16:10比例，
+深色科技风横幅设计，中间大字标题"13款免费在线工具"，副标题"数据零上传·纯浏览器本地处理"，紫色渐变背景，排列13个小工具图标卡片，右下角红色印章"隐私安全"，简洁现代扁平风格，16:10比例，
 ```
 
 ---
@@ -206,14 +228,14 @@ Dark frosted glass UI layout, floating translucent cards with tool icons. Center
 A laptop computer on a desk. Inside the screen, a document icon is being processed with a circular arrow animation. A glowing red shield barrier surrounds the laptop, blocking data from going out to the cloud. The background is dark blue with faint server icons behind the red barrier — unreachable. Concept: local processing, data privacy. Flat vector illustration, clean and modern, tech blue and warm orange accents. 16:9.
 ```
 
-### 插画 2: "12工具全家福"
+### 插画 2: "13工具全家福"
 
 用途: 第六段速览所有工具时作为背景
-画面描述: 12个工具以卡片形式围绕中心排列，每个卡片有对应的小图标
+画面描述: 13个工具以卡片形式围绕中心排列，每个卡片有对应的小图标
 
 提示词:
 ```
-A circular arrangement of 12 tool cards floating around a glowing center icon. Each card shows a different tool symbol: image compression icon, format conversion arrows, JSON brackets, Base64 lock, QR code square, clock for timestamp, PDF pages, color palette, link chain, key for password, document with text, scissors for split. Dark background, purple-blue gradient lighting, modern app UI aesthetic style. 16:9.
+A circular arrangement of 13 tool cards floating around a glowing center icon. Each card shows a different tool symbol: image compression icon, format conversion arrows, JSON brackets, Base64 lock, QR code square, clock for timestamp, PDF pages, color palette, link chain, key for password, document with text, scissors for split, proxy globe icon. Dark background, purple-blue gradient lighting, modern app UI aesthetic style. 16:9.
 ```
 
 ### 插画 3: "暗色/浅色双主题"
@@ -317,7 +339,7 @@ A technical flowchart illustration showing the QR code generation pipeline. Left
 2. 画布: 1146×717 像素
 3. 使用方案中的 AI 提示词生成底图
 4. 叠加文字:
-   - 主标题: "12款免费工具"（大号，白色，加粗）
+   - 主标题: "13款免费工具"（大号，白色，加粗）
    - 副标题: "数据零上传 | 开发者必备"（稍小）
    - 角落: "纯本地处理" 印章效果
 5. 导出 PNG（不超过 5MB）
@@ -332,26 +354,29 @@ A technical flowchart illustration showing the QR code generation pipeline. Left
 4. 填写信息:
 
 标题:
-  「12款免费在线工具」数据零上传，开发者的干净工具箱 | DevToolsBox
+  「13款免费在线工具」数据零上传，开发者的干净工具箱 | DevToolsBox
 
 或备选标题:
-  这12个工具让我告别了在线工具的广告地狱
+  这13个工具让我告别了在线工具的广告地狱
   一个没有广告、不上传数据的在线工具箱，我用了半年
-  开发者必备！12款纯前端在线工具，数据从不离开你的设备
+  开发者必备！13款纯前端在线工具，数据从不离开你的设备
 
 标签:
   在线工具, 开发者工具, 效率工具, 工具箱, PDF工具, 图片压缩,
-  二维码生成, JSON格式化, 免费工具, DevToolsBox
+  二维码生成, JSON格式化, 免费工具, 代理浏览器, 反向代理, DevToolsBox
 
 分区: 科技 → 软件应用
 
 简介/评论区置顶:
-  DevToolsBox — 12款免费在线开发者工具
+  DevToolsBox — 13款免费在线开发者工具
   所有处理在浏览器本地完成，数据零上传，无注册无广告。
 
   包含: 图片压缩 / 格式转换 / JSON格式化 / Base64编解码
   二维码生成 / 时间戳转换 / PDF合并 / PDF拆分 / PDF文本提取
-  颜色转换 / URL编解码 / 随机密码生成
+  颜色转换 / URL编解码 / 随机密码生成 / 代理浏览器
+
+  代理浏览器通过 Cloudflare 边缘网络中转，可直连 GitHub、Google、
+  HuggingFace、npm、PyPI 等 40+ 外网开发资源，国内直接可用。
 
   在线使用: https://devtoolsbox-1rl.pages.dev
   GitHub: https://github.com/Ethan985211/devtoolsbox
@@ -389,7 +414,7 @@ A technical flowchart illustration showing the QR code generation pipeline. Left
 | 封面尺寸 | 1146×717 px |
 | 封面格式 | PNG 或 JPG, < 5MB |
 | BGM 音量 | 比人声低 -20dB 以上 |
-| 视频时长 | 4-6 分钟 |
+| 视频时长 | 5-6 分钟 |
 
 ---
 
@@ -403,4 +428,4 @@ A technical flowchart illustration showing the QR code generation pipeline. Left
 
 ---
 
-总结: 这个方案的核心策略是——用"零上传隐私安全"做差异化，用"12款工具速览"做信息密度，用自研二维码引擎做记忆点。全流程从录屏到发布，一个人 + 半天时间即可完成。
+总结: 这个方案的核心策略是——用"零上传隐私安全"做差异化，用"13款工具速览"做信息密度，用自研二维码引擎和代理浏览器做记忆点。全流程从录屏到发布，一个人 + 半天时间即可完成。
