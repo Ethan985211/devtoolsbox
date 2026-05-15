@@ -1,8 +1,10 @@
 /**
- * DevToolsBox Reverse Proxy v5
+ * DevToolsBox Reverse Proxy v6
  * Cloudflare Pages Function — 边缘网络中转代理
  * 用法: /api/proxy?url=https://example.com
  *
+ * v6 修复：srcset 属性加入 URL 重写列表 + 429 退避延长(4s/8s) + Referer 头
+ * v5 修复：chatgpt.com 加入已知封禁 + 429 重试逻辑
  * v4 修复：URL 重写正则 JS 转义 bug + 移除 base 标签（query-string 代理不兼容）
  *
  * 已知硬限制：Cloudflare Workers 的 fetch() 在访问同样受 Cloudflare Bot
@@ -202,7 +204,7 @@ function rewriteHtml(html, targetHost, proxyPath, targetUrl) {
 // 所有可能包含 URL 的 HTML 属性
 // 注意：srcset 在循环内外都有单独处理
 const REWRITE_ATTRS = [
-  'src', 'href', 'action', 'poster', 'formaction',
+  'src', 'srcset', 'href', 'action', 'poster', 'formaction',
   'data-src', 'data-href', 'data-url', 'data-uri',
   'cite', 'content',
 ];
@@ -230,7 +232,7 @@ function rewriteAttrValue(attr, value, targetOrigin, proxyPrefix, targetUrl) {
 
   // srcset 特殊格式：url descriptor, url descriptor
   if (attrLower === 'srcset') {
-    return rewriteSrcset(value, proxyPrefix);
+    return rewriteSrcset(value, targetOrigin, proxyPrefix, targetUrl);
   }
 
   // meta content 可能包含 refresh URL
@@ -297,14 +299,21 @@ function rewriteSingleUrl(url, targetOrigin, proxyPrefix, targetUrl) {
   return proxyPrefix + encodeURIComponent(fullUrl);
 }
 
-function rewriteSrcset(value, proxyPrefix) {
+function rewriteSrcset(value, targetOrigin, proxyPrefix, targetUrl) {
   return value.split(',').map(part => {
     const trimmed = part.trim();
     const m = trimmed.match(/^(\S+)(\s+.+)?$/);
     if (!m) return trimmed;
     let url = m[1];
     const desc = m[2] || '';
+    // 协议相对 → 补全协议
     if (url.startsWith('//')) url = 'https:' + url;
+    // 根相对路径 → 补全 origin
+    if (url.startsWith('/')) url = targetOrigin + url;
+    // 纯相对路径 → 基于当前页面 URL 解析
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      try { url = new URL(url, targetUrl).toString(); } catch { url = targetOrigin + '/' + url; }
+    }
     if ((url.startsWith('http://') || url.startsWith('https://')) && !url.includes('/api/proxy')) {
       return proxyPrefix + encodeURIComponent(url) + desc;
     }
@@ -375,13 +384,13 @@ export async function onRequest(context) {
       error: 'Missing url parameter',
       usage: '/api/proxy?url=https://example.com',
       status: 'ok',
-      service: 'DevToolsBox Reverse Proxy v5',
+      service: 'DevToolsBox Reverse Proxy v6',
     }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'X-Proxy-Version': 'v5',
+        'X-Proxy-Version': 'v6',
         'X-Proxy-By': 'DevToolsBox',
       },
     });
@@ -397,7 +406,7 @@ export async function onRequest(context) {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'X-Proxy-Version': 'v5',
+        'X-Proxy-Version': 'v6',
         'X-Proxy-By': 'DevToolsBox',
       },
     });
@@ -414,7 +423,7 @@ export async function onRequest(context) {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'X-Proxy-Version': 'v5',
+        'X-Proxy-Version': 'v6',
         'X-Proxy-By': 'DevToolsBox',
       },
     });
@@ -442,7 +451,7 @@ export async function onRequest(context) {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'X-Proxy-Version': 'v5',
+        'X-Proxy-Version': 'v6',
         'X-Proxy-By': 'DevToolsBox',
       },
     });
@@ -463,6 +472,8 @@ export async function onRequest(context) {
   forwardHeaders.set('Accept-Encoding', 'gzip, deflate, br');
   forwardHeaders.set('Cache-Control', 'no-cache');
   forwardHeaders.set('DNT', '1');
+  // 添加 Referer 降低被目标站反爬检测的概率
+  forwardHeaders.set('Referer', 'https://www.google.com/');
 
   // 域名定制头
   const domainHeaders = getDomainHeaders(target.hostname);
@@ -478,13 +489,15 @@ export async function onRequest(context) {
     forwardHeaders.set('Authorization', request.headers.get('Authorization'));
   }
 
-  // 转发请求（最多重试 2 次，指数退避）
+  // 转发请求（最多重试 2 次，延长退避）
   let lastError = null;
+  let lastStatus = 0;
   for (let attempt = 0; attempt <= 2; attempt++) {
     if (attempt > 0) {
-      await new Promise(r => setTimeout(r, Math.pow(2, attempt) * 1000)); // 2s, 4s
-      // 每次重试换 UA
+      await new Promise(r => setTimeout(r, Math.pow(2, attempt + 1) * 1000)); // 4s, 8s
+      // 每次重试换 UA + 添加 Referer 模拟真实浏览器行为
       forwardHeaders.set('User-Agent', pickUA());
+      forwardHeaders.set('Referer', 'https://www.google.com/');
     }
 
     try {
@@ -500,7 +513,8 @@ export async function onRequest(context) {
 
       const response = await fetch(target.toString(), fetchInit);
 
-      // 成功 → 透传；5xx/429 → 重试（换 UA + 退避）；其他 4xx → 一次性返回
+      // 成功 → 透传；5xx/429 → 重试（换 UA + Referer + 退避）；其他 4xx → 一次性返回
+      lastStatus = response.status;
       const shouldReturn = response.status < 400
         || (response.status !== 429 && response.status < 500)
         || attempt === 2;
@@ -509,7 +523,7 @@ export async function onRequest(context) {
         const responseHeaders = new Headers(response.headers);
         responseHeaders.set('Access-Control-Allow-Origin', '*');
         responseHeaders.set('X-Proxy-By', 'DevToolsBox');
-        responseHeaders.set('X-Proxy-Version', 'v5');
+        responseHeaders.set('X-Proxy-Version', 'v6');
         responseHeaders.set('X-Proxy-Attempt', String(attempt + 1));
         if (attempt > 0) responseHeaders.set('X-Retry', 'true');
         // 移除可能破坏嵌入的安全头
@@ -556,14 +570,15 @@ export async function onRequest(context) {
   // 所有重试失败
   return new Response(JSON.stringify({
     error: 'Upstream request failed after 3 attempts',
-    detail: lastError?.message || 'Unknown error',
+    lastStatus: lastStatus || 0,
+    detail: lastError?.message || 'All retries exhausted',
     target: targetUrl,
   }), {
     status: 502,
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
-      'X-Proxy-Version': 'v5',
+      'X-Proxy-Version': 'v6',
       'X-Proxy-By': 'DevToolsBox',
     },
   });

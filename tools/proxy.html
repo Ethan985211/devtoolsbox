@@ -358,11 +358,17 @@
 
     function isCFChallenge(text) {
       // 检测 Cloudflare Bot 拦截 / JS Challenge / Turnstile 页面
+      // 模式来自实际 CF 拦截页面 (2026-05)
       return text.includes('error code: 1010')
         || text.includes('cf-browser-verification')
-        || text.includes('enlarge-appear')      // CF Challenge 页面的 CSS class
+        || text.includes('cf-challenge')
+        || text.includes('cf-wrapper')
+        || text.includes('challenge-platform')
         || text.includes('turnstile')
-        || (text.length < 3000 && text.includes('Cloudflare'));
+        || text.includes('Checking your browser')
+        || text.includes('Just a moment')
+        || (text.length < 3000 && text.includes('Cloudflare') && text.includes('attention'))
+        || (text.length < 2000 && text.includes('cf-browser'));
     }
 
     async function doProxy() {
@@ -447,14 +453,22 @@
           setStatus('error', 'HTTP 403');
         } else if (resp.status === 429) {
           showError('速率限制 (HTTP 429)',
-            '目标服务器暂时限制了请求频率，代理后端已自动重试（换IP+更长间隔）。' +
-            (retryCount < MAX_RETRIES ? '点击下方按钮可手动再次尝试。' : '请等待 10 秒后手动重试。'),
+            '目标服务器暂时限制了请求频率，代理后端已自动重试 3 次（换IP+Referer+4~8秒退避）。' +
+            (retryCount < MAX_RETRIES ? '点击下方按钮可手动再次尝试。' : '建议等待 30 秒后重新输入网址或换用替代站点。'),
             retryCount < MAX_RETRIES);
           setStatus('error', 'HTTP 429');
         } else if (resp.status >= 500) {
+          let detailMsg = '目标服务器或代理链路返回了内部错误。';
+          try {
+            const j = JSON.parse(text);
+            if (j.lastStatus) {
+              detailMsg = '代理后端已尝试 3 次请求，目标服务器持续返回 HTTP ' + j.lastStatus + '。';
+            }
+            if (j.detail) detailMsg += '<br><small>详情：' + escapeHtml(j.detail) + '</small>';
+          } catch {}
           showError('上游服务器错误 (HTTP ' + resp.status + ')',
-            '目标服务器返回了内部错误。' +
-            (retryCount < MAX_RETRIES ? '点击重试按钮尝试。' : ''),
+            detailMsg +
+            (retryCount < MAX_RETRIES ? '<br>点击重试按钮再次尝试。' : ''),
             retryCount < MAX_RETRIES);
           setStatus('error', 'HTTP ' + resp.status);
         } else {
@@ -523,9 +537,16 @@
       if (ct.includes('text/html')) {
         const proxyIframeUrl = '/api/proxy?url=' + encodeURIComponent(lastResponse.url);
         document.getElementById('resultBody').innerHTML =
-          '<iframe src="' + escapeAttr(proxyIframeUrl) + '" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>' +
+          '<iframe src="' + escapeAttr(proxyIframeUrl) + '" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"' +
+          ' onerror="document.getElementById(\'iframeFallback\').style.display=\'block\'"' +
+          ' onload="this.style.visibility=\'visible\'"' +
+          ' style="width:100%;height:520px;border:none;border-radius:6px;background:#fff;visibility:hidden"></iframe>' +
+          '<div id="iframeFallback" style="display:none;text-align:center;padding:40px 20px;color:var(--text-secondary)">' +
+          '<p style="margin-bottom:12px">此站点禁止被嵌入（X-Frame-Options），但代理本身已成功连接。</p>' +
+          '<a class="open-newtab" href="' + escapeAttr(proxyIframeUrl) + '" target="_blank" rel="noopener" ' +
+          'style="display:inline-flex;margin:0 auto">新窗口打开完整页面</a></div>' +
           '<div style="text-align:center;padding:8px;font-size:11px;color:var(--text-secondary)">' +
-          '部分站点禁止 iframe 嵌套（X-Frame-Options），请使用右上角「新窗口打开」获得完整体验</div>';
+          '若页面空白，请使用右上角「新窗口打开」在新标签页中查看完整页面</div>';
       } else {
         document.getElementById('resultBody').innerHTML =
           '<div style="padding:20px;color:var(--text-secondary);text-align:center">' +
