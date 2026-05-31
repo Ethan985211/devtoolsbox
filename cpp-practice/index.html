@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>传智杯 C++ 刷题训练营</title>
+<meta name="description" content="传智杯全国大学生计算机大赛 C++ 算法刷题平台，涵盖动态规划、贪心、图论、搜索、数据结构、数学等核心考点">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #222632;
+  --border: #2a2d3a;
+  --text: #e1e4ed;
+  --text2: #8b8fa3;
+  --accent: #4f8cff;
+  --accent2: #3d7af5;
+  --green: #34d399;
+  --orange: #fb923c;
+  --red: #f87171;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 2px 12px rgba(0,0,0,.3);
+}
+[data-theme="light"] {
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --surface2: #eef0f6;
+  --border: #dde0e8;
+  --text: #1a1d2e;
+  --text2: #6b7088;
+  --accent: #3d7af5;
+  --accent2: #2563eb;
+  --shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+.navbar{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.navbar-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--text);text-decoration:none}
+.brand-icon{font-size:24px}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-links a{color:var(--text2);text-decoration:none;padding:6px 14px;border-radius:var(--radius-sm);font-size:14px;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--accent);background:var(--surface2)}
+.theme-toggle{background:none;border:1px solid var(--border);color:var(--text);cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s}
+.theme-toggle:hover{border-color:var(--accent)}
+.hero{text-align:center;padding:60px 24px 40px;max-width:800px;margin:0 auto}
+.hero h1{font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--accent),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
+.hero p{color:var(--text2);font-size:16px;margin-bottom:24px}
+.stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-num{font-size:28px;font-weight:700;color:var(--accent)}
+.stat-label{font-size:13px;color:var(--text2)}
+.container{max-width:1200px;margin:0 auto;padding:0 24px 60px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;justify-content:center}
+.filter-btn{padding:8px 18px;border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text2);cursor:pointer;font-size:13px;transition:all .2s;white-space:nowrap}
+.filter-btn:hover{border-color:var(--accent);color:var(--text)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.search-wrap{max-width:500px;margin:0 auto 32px}
+.search-input{width:100%;padding:12px 20px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:15px;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--text2)}
+.problem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.problem-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;cursor:pointer;transition:all .2s}
+.problem-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.card-id{font-size:12px;color:var(--text2);font-weight:600}
+.difficulty{font-size:11px;padding:2px 10px;border-radius:12px;font-weight:600}
+.diff-easy{background:rgba(52,211,153,.15);color:var(--green)}
+.diff-medium{background:rgba(251,146,60,.15);color:var(--orange)}
+.diff-hard{background:rgba(248,113,113,.15);color:var(--red)}
+.card-title{font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)}
+.card-meta{display:flex;gap:16px;font-size:12px;color:var(--text2)}
+.card-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tag{font-size:11px;padding:2px 10px;border-radius:10px;background:var(--surface2);color:var(--text2)}
+.empty{text-align:center;padding:60px 20px;color:var(--text2)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius);max-width:900px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.modal-header{padding:24px 28px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:10}
+.modal-header h2{font-size:22px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--text2);cursor:pointer;font-size:24px;padding:4px 8px;border-radius:var(--radius-sm);transition:all .2s}
+.modal-close:hover{background:var(--surface2);color:var(--text)}
+.modal-body{padding:28px}
+.modal-section{margin-bottom:28px}
+.modal-section h3{font-size:16px;font-weight:700;margin-bottom:12px;color:var(--accent)}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.info-item{background:var(--surface2);padding:12px 16px;border-radius:var(--radius-sm)}
+.info-label{font-size:11px;color:var(--text2);margin-bottom:4px}
+.info-value{font-size:14px;font-weight:600}
+.problem-desc{color:var(--text);line-height:1.8;font-size:15px}
+.problem-desc p{margin-bottom:12px}
+.io-block{background:var(--surface2);border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:12px}
+.io-block h4{font-size:13px;color:var(--accent);margin-bottom:8px}
+.io-block pre{margin:0;font-family:"JetBrains Mono","Fira Code",monospace;font-size:13px;color:var(--text);white-space:pre-wrap}
+.code-block{margin-bottom:16px;position:relative}
+.code-block pre{margin:0;border-radius:var(--radius-sm);overflow-x:auto}
+.code-block code{font-family:"JetBrains Mono","Fira Code",monospace;font-size:13px;line-height:1.7}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:4px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;transition:all .2s;opacity:0}
+.code-block:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.copy-btn.copied{background:var(--green);color:#fff;border-color:var(--green)}
+.explanation{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:16px 20px;line-height:1.8;font-size:14px}
+.explanation h4{color:var(--accent);margin-bottom:8px}
+.explanation p{margin-bottom:8px}
+.explanation ul,.explanation ol{padding-left:20px;margin-bottom:8px}
+footer{text-align:center;padding:40px 24px;color:var(--text2);font-size:13px;border-top:1px solid var(--border)}
+@media(max-width:640px){
+  .hero h1{font-size:26px}
+  .problem-grid{grid-template-columns:1fr}
+  .modal{padding:0}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="#" class="brand"><span class="brand-icon">💻</span>C++ 刷题训练营</a>
+    <div class="nav-links">
+      <a href="#" class="active" onclick="scrollToTop()">题库</a>
+      <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>传智杯国赛 · C++ 算法训练</h1>
+  <p>覆盖动态规划、贪心、图论、搜索、数据结构、数学等全部核心考点，每道题附带完整 C++ 题解与思路分析</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="statTotal">15</div><div class="stat-label">精选题库</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">算法分类</div></div>
+    <div class="stat"><div class="stat-num">C++</div><div class="stat-label">标准语言</div></div>
+  </div>
+</section>
+
+<main class="container">
+  <div class="search-wrap">
+    <input type="text" class="search-input" id="searchInput" placeholder="搜索题目、标签或算法关键词..." oninput="renderProblems()">
+  </div>
+  <div class="filters" id="filters"></div>
+  <div class="problem-grid" id="problemGrid"></div>
+  <div class="empty" id="emptyState" style="display:none">
+    <div class="empty-icon">🔍</div>
+    <p>没有找到匹配的题目</p>
+  </div>
+</main>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal"></div>
+</div>
+
+<footer>&copy; 2026 C++ 刷题训练营 · 为传智杯国赛而生</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/cpp.min.js"></script>
+<script>
+// ═══ Theme ═══
+const themeKey = 'cpp-practice-theme';
+function toggleTheme(){
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme', isDark?'light':'dark');
+  document.querySelector('.theme-toggle').textContent = isDark?'☀️':'🌙';
+  localStorage.setItem(themeKey, isDark?'light':'dark');
+}
+(function(){
+  const saved = localStorage.getItem(themeKey)||'dark';
+  document.documentElement.setAttribute('data-theme',saved);
+  document.querySelector('.theme-toggle').textContent = saved==='dark'?'🌙':'☀️';
+})();
+
+// ═══ Problem Database ═══
+const problems = [
+  {
+    id:1,title:"两数之和",difficulty:"简单",category:"基础算法",
+    tags:["哈希表","数组"],time:"O(n)","mem":"O(n)",
+    desc:"给定一个整数数组 <code>nums</code> 和一个整数目标值 <code>target</code>，请你在该数组中找出和为目标值的那两个整数，并返回它们的数组下标。你可以假设每种输入只会对应一个答案，且同一个元素不能使用两遍。",
+    inputFmt:"第一行输入 n 和 target，第二行输入 n 个整数。",
+    outputFmt:"输出两个下标（空格分隔）。",
+    sampleIn:"4 9\n2 7 11 15",
+    sampleOut:"0 1",
+    constraints:"2 ≤ n ≤ 10<sup>4</sup>，-10<sup>9</sup> ≤ nums[i] ≤ 10<sup>9</sup>",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n, target;
+    cin >> n >> target;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+
+    unordered_map<int, int> mp;
+    for (int i = 0; i < n; i++) {
+        int complement = target - nums[i];
+        if (mp.count(complement)) {
+            cout << mp[complement] << " " << i << endl;
+            return 0;
+        }
+        mp[nums[i]] = i;
+    }
+    return 0;
+}`,
+    explanation:"<p>核心思路：使用<strong>哈希表</strong>存储已经遍历过的元素及其下标。对于每个元素 nums[i]，计算其补数 complement = target - nums[i]，如果 complement 已存在于哈希表中，说明找到了答案。</p><p>时间复杂度 O(n)，空间复杂度 O(n)。这是传智杯初赛高频考点，哈希表的灵活运用是得分关键。</p>"
+  },
+  {
+    id:2,title:"最大子数组和",difficulty:"简单",category:"动态规划",
+    tags:["DP","Kadane算法"],time:"O(n)","mem":"O(1)",
+    desc:"给定一个整数数组 nums，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。这是经典的<strong>最大子段和</strong>问题，也是传智杯 DP 入门必刷题。",
+    inputFmt:"第一行输入 n，第二行输入 n 个整数。",
+    outputFmt:"输出最大子数组和。",
+    sampleIn:"9\n-2 1 -3 4 -1 2 1 -5 4",
+    sampleOut:"6",
+    constraints:"1 ≤ n ≤ 10<sup>5</sup>，-10<sup>4</sup> ≤ nums[i] ≤ 10<sup>4</sup>",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+
+    int maxSum = nums[0], curSum = nums[0];
+    for (int i = 1; i < n; i++) {
+        curSum = max(nums[i], curSum + nums[i]);
+        maxSum = max(maxSum, curSum);
+    }
+    cout << maxSum << endl;
+    return 0;
+}`,
+    explanation:"<p>Kadane 算法：定义 dp[i] 表示以 nums[i] 结尾的最大子数组和。状态转移：<code>dp[i] = max(nums[i], dp[i-1] + nums[i])</code>。由于 dp[i] 只依赖 dp[i-1]，可以用滚动变量优化空间到 O(1)。</p><p>关键理解：如果前面的子数组和是负数，它只会拖累当前元素，所以直接舍弃，从当前元素重新开始。</p>"
+  },
+  {
+    id:3,title:"爬楼梯",difficulty:"简单",category:"动态规划",
+    tags:["DP","斐波那契","滚动数组"],time:"O(n)","mem":"O(1)",
+    desc:"假设你正在爬楼梯，需要 n 阶才能到达楼顶。每次你可以爬 1 或 2 个台阶，问有多少种不同的方法可以爬到楼顶？这是 DP 入门经典题，也是理解<strong>状态转移方程</strong>的绝佳例题。",
+    inputFmt:"输入一个整数 n。",
+    outputFmt:"输出方法数。结果可能很大，请对 10<sup>9</sup>+7 取模。",
+    sampleIn:"4",
+    sampleOut:"5",
+    constraints:"1 ≤ n ≤ 10<sup>5</sup>",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+const int MOD = 1e9 + 7;
+
+int main() {
+    int n;
+    cin >> n;
+    if (n <= 2) { cout << n << endl; return 0; }
+    long long a = 1, b = 2, c;
+    for (int i = 3; i <= n; i++) {
+        c = (a + b) % MOD;
+        a = b;
+        b = c;
+    }
+    cout << b << endl;
+    return 0;
+}`,
+    explanation:"<p>定义 dp[i] 为爬到第 i 阶的方法数。到达第 i 阶可以从第 i-1 阶走 1 步，或从第 i-2 阶走 2 步，所以 <code>dp[i] = dp[i-1] + dp[i-2]</code>。这本质上是斐波那契数列。</p><p>使用滚动变量优化空间为 O(1)。注意取模防止溢出，传智杯中常见对 1e9+7 取模的题目。</p>"
+  },
+  {
+    id:4,title:"零钱兑换",difficulty:"中等",category:"动态规划",
+    tags:["DP","完全背包","最值型"],time:"O(n×amount)","mem":"O(amount)",
+    desc:"给定不同面额的硬币 coins 和一个总金额 amount。计算可以凑成总金额所需的最少硬币个数。如果没有任何一种硬币组合能组成总金额，返回 -1。每种硬币的数量是<strong>无限的</strong>（完全背包模型）。",
+    inputFmt:"第一行输入 n 和 amount，第二行输入 n 种面额。",
+    outputFmt:"输出最少硬币数，无法凑出则输出 -1。",
+    sampleIn:"3 11\n1 2 5",
+    sampleOut:"3",
+    constraints:"1 ≤ n ≤ 12，0 ≤ amount ≤ 10<sup>4</sup>",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n, amount;
+    cin >> n >> amount;
+    vector<int> coins(n);
+    for (int i = 0; i < n; i++) cin >> coins[i];
+
+    vector<int> dp(amount + 1, amount + 1);
+    dp[0] = 0;
+    for (int i = 1; i <= amount; i++) {
+        for (int coin : coins) {
+            if (i >= coin) dp[i] = min(dp[i], dp[i - coin] + 1);
+        }
+    }
+    cout << (dp[amount] > amount ? -1 : dp[amount]) << endl;
+    return 0;
+}`,
+    explanation:"<p>完全背包模型：dp[i] 表示凑出金额 i 所需的最少硬币数。初始化 dp[0]=0，其余为无穷大。对于每个金额 i，遍历每种硬币，如果 i ≥ coin，则 <code>dp[i] = min(dp[i], dp[i-coin] + 1)</code>。</p><p>传智杯国赛中 DP 的背包变形题几乎必考，完全背包、01背包、多重背包都要熟练掌握。</p>"
+  },
+  {
+    id:5,title:"最长递增子序列 (LIS)",difficulty:"中等",category:"动态规划",
+    tags:["DP","二分","贪心"],time:"O(n log n)","mem":"O(n)",
+    desc:"给定一个整数数组 nums，找到其中最长严格递增子序列的长度。子序列不要求连续。这是传智杯进阶 DP 必刷题，需要掌握<strong>O(n log n) 的二分优化解法</strong>。",
+    inputFmt:"第一行输入 n，第二行输入 n 个整数。",
+    outputFmt:"输出最长递增子序列的长度。",
+    sampleIn:"8\n10 9 2 5 3 7 101 18",
+    sampleOut:"4",
+    constraints:"1 ≤ n ≤ 10<sup>5</sup>",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+
+    vector<int> tails;
+    for (int x : nums) {
+        auto it = lower_bound(tails.begin(), tails.end(), x);
+        if (it == tails.end()) tails.push_back(x);
+        else *it = x;
+    }
+    cout << tails.size() << endl;
+    return 0;
+}`,
+    explanation:"<p>朴素 DP 是 O(n²)，对于 10⁵ 的数据量会超时。O(n log n) 的贪心+二分法：维护一个 tails 数组，tails[i] 表示长度为 i+1 的递增子序列的最小末尾元素。</p><p>对于每个元素 x，二分查找 tails 中第一个 ≥ x 的位置，如果不存在则追加，否则替换。tails 始终保持有序，最终 tails 的长度就是 LIS 长度。</p>"
+  },
+  {
+    id:6,title:"01背包问题",difficulty:"中等",category:"动态规划",
+    tags:["DP","背包","经典"],time:"O(n×W)","mem":"O(W)",
+    desc:"有 N 件物品和一个容量为 W 的背包。第 i 件物品的重量是 w[i]，价值是 v[i]。每件物品<strong>只能使用一次</strong>。求解将哪些物品装入背包可使价值总和最大。这是所有背包问题的基础模型。",
+    inputFmt:"第一行输入 N 和 W，接下来 N 行每行输入重量和价值。",
+    outputFmt:"输出最大总价值。",
+    sampleIn:"4 8\n2 3\n3 4\n4 5\n5 6",
+    sampleOut:"10",
+    constraints:"1 ≤ N ≤ 1000，1 ≤ W ≤ 10000",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int N, W;
+    cin >> N >> W;
+    vector<int> w(N), v(N);
+    for (int i = 0; i < N; i++) cin >> w[i] >> v[i];
+
+    vector<int> dp(W + 1, 0);
+    for (int i = 0; i < N; i++) {
+        for (int j = W; j >= w[i]; j--) {
+            dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
+        }
+    }
+    cout << dp[W] << endl;
+    return 0;
+}`,
+    explanation:"<p>01背包核心：dp[j] 表示容量为 j 时的最大价值。内层循环<strong>必须从大到小</strong>反向遍历，确保每件物品只被使用一次。如果正向遍历就变成了完全背包。</p><p>状态转移：<code>dp[j] = max(dp[j], dp[j - w[i]] + v[i])</code>。这是传智杯最常考的 DP 模型，必须熟练到能默写。</p>"
+  },
+  {
+    id:7,title:"合并区间",difficulty:"中等",category:"贪心算法",
+    tags:["贪心","排序","区间"],time:"O(n log n)","mem":"O(1)",
+    desc:"给出一个区间的集合，请合并所有重叠的区间。例如 [1,3] 和 [2,6] 重叠，合并为 [1,6]。这是经典的<strong>区间调度</strong>问题，贪心策略的典型应用。",
+    inputFmt:"第一行输入 n，接下来 n 行每行输入区间起点和终点。",
+    outputFmt:"每行输出一个合并后的区间。",
+    sampleIn:"4\n1 3\n2 6\n8 10\n15 18",
+    sampleOut:"1 6\n8 10\n15 18",
+    constraints:"1 ≤ n ≤ 10<sup>4</sup>",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<pair<int, int>> intervals(n);
+    for (int i = 0; i < n; i++) cin >> intervals[i].first >> intervals[i].second;
+
+    sort(intervals.begin(), intervals.end());
+    vector<pair<int, int>> merged;
+    for (auto& [l, r] : intervals) {
+        if (merged.empty() || merged.back().second < l) {
+            merged.push_back({l, r});
+        } else {
+            merged.back().second = max(merged.back().second, r);
+        }
+    }
+    for (auto& [l, r] : merged) cout << l << " " << r << endl;
+    return 0;
+}`,
+    explanation:"<p>贪心策略：先按区间起点排序，然后遍历。维护一个 merged 结果列表。如果当前区间与 merged 最后一个区间重叠（cur.left ≤ last.right），则更新 last.right = max(last.right, cur.right)；否则直接加入。</p><p>时间复杂度 O(n log n)，瓶颈在排序。这是传智杯常考的贪心题型之一。</p>"
+  },
+  {
+    id:8,title:"跳跃游戏",difficulty:"中等",category:"贪心算法",
+    tags:["贪心","数组"],time:"O(n)","mem":"O(1)",
+    desc:"给定一个非负整数数组 nums，你最初位于数组的第一个下标。数组中的每个元素代表你在该位置可以跳跃的最大长度。判断你是否能够到达最后一个下标。",
+    inputFmt:"第一行输入 n，第二行输入 n 个整数。",
+    outputFmt:"能到达输出 YES，否则输出 NO。",
+    sampleIn:"5\n2 3 1 1 4",
+    sampleOut:"YES",
+    constraints:"1 ≤ n ≤ 10<sup>5</sup>",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+
+    int maxReach = 0;
+    for (int i = 0; i < n; i++) {
+        if (i > maxReach) { cout << "NO" << endl; return 0; }
+        maxReach = max(maxReach, i + nums[i]);
+        if (maxReach >= n - 1) { cout << "YES" << endl; return 0; }
+    }
+    return 0;
+}`,
+    explanation:"<p>贪心思想：维护一个变量 maxReach 表示当前能到达的最远位置。遍历数组，如果当前位置 i 超过了 maxReach，说明无法到达 i，直接返回 false。否则更新 maxReach = max(maxReach, i+nums[i])。</p><p>时间复杂度 O(n)，空间 O(1)。贪心题的关键是找到正确的贪心策略并证明其正确性。</p>"
+  },
+  {
+    id:9,title:"课程表（拓扑排序）",difficulty:"中等",category:"图论",
+    tags:["拓扑排序","BFS","DAG"],time:"O(V+E)","mem":"O(V+E)",
+    desc:"你这个学期必须选修 numCourses 门课程，记为 0 到 numCourses-1。在选修某些课程之前需要先修完一些前置课程。给定课程总量和前置条件列表，判断是否可能完成所有课程的学习。<strong>拓扑排序经典题</strong>。",
+    inputFmt:"第一行 n 和 m（m为前置条件数），接下来 m 行每行输入 a b 表示学 a 前必须先学 b。",
+    outputFmt:"能完成输出 YES，否则输出 NO（存在环则无法完成）。",
+    sampleIn:"4 4\n1 0\n2 1\n3 2\n1 3",
+    sampleOut:"NO",
+    constraints:"1 ≤ n ≤ 10<sup>5</sup>",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> adj(n);
+    vector<int> indegree(n, 0);
+    for (int i = 0; i < m; i++) {
+        int a, b;
+        cin >> a >> b;
+        adj[b].push_back(a);
+        indegree[a]++;
+    }
+    queue<int> q;
+    for (int i = 0; i < n; i++)
+        if (indegree[i] == 0) q.push(i);
+    int cnt = 0;
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        cnt++;
+        for (int v : adj[u]) {
+            if (--indegree[v] == 0) q.push(v);
+        }
+    }
+    cout << (cnt == n ? "YES" : "NO") << endl;
+    return 0;
+}`,
+    explanation:"<p>BFS 拓扑排序（Kahn 算法）：计算每个节点的入度，将所有入度为 0 的节点入队。每次从队列取出节点，将其所有邻接节点的入度减 1，如果减到 0 则入队。最终如果处理的节点数等于 n，说明无环；否则图中存在环。</p><p>时间复杂度 O(V+E)。拓扑排序是图论基础，传智杯国赛图论题常用到。</p>"
+  },
+  {
+    id:10,title:"Dijkstra 最短路径",difficulty:"中等",category:"图论",
+    tags:["最短路","Dijkstra","优先队列"],time:"O((V+E)log V)","mem":"O(V+E)",
+    desc:"给定一个 n 个节点 m 条边的有向带权图，求从起点 s 到其他所有节点的最短距离。如果无法到达则输出 -1。<strong>Dijkstra 算法是传智杯图论必考内容</strong>。",
+    inputFmt:"第一行 n m s，接下来 m 行每行 u v w 表示从 u 到 v 权值为 w 的有向边。",
+    outputFmt:"一行 n 个数，表示起点到每个节点的最短距离（空格分隔），不可达输出 -1。",
+    sampleIn:"5 7 1\n1 2 3\n1 3 7\n2 3 2\n2 4 5\n3 4 1\n3 5 4\n4 5 2",
+    sampleOut:"0 3 5 6 8",
+    constraints:"1 ≤ n ≤ 10<sup>5</sup>，0 ≤ m ≤ 2×10<sup>5</sup>，边权非负",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+const ll INF = 1e18;
+
+int main() {
+    int n, m, s;
+    cin >> n >> m >> s;
+    s--;
+    vector<vector<pair<int, ll>>> adj(n);
+    for (int i = 0; i < m; i++) {
+        int u, v; ll w;
+        cin >> u >> v >> w;
+        u--; v--;
+        adj[u].push_back({v, w});
+    }
+    vector<ll> dist(n, INF);
+    dist[s] = 0;
+    priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<>> pq;
+    pq.push({0, s});
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > dist[u]) continue;
+        for (auto [v, w] : adj[u]) {
+            if (dist[v] > dist[u] + w) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    for (int i = 0; i < n; i++)
+        cout << (dist[i] == INF ? -1 : dist[i]) << " \\n"[i == n - 1];
+    return 0;
+}`,
+    explanation:"<p>Dijkstra 算法使用优先队列（最小堆）优化。核心思想：每次从堆中取出距离最小的未确定节点，松弛其所有邻接边。如果取出的节点距离大于已记录的距离，说明是旧数据，直接跳过。</p><p>时间复杂度 O((V+E)log V)。注意题中边权必须非负（Dijkstra 不支持负权边，负权用 Bellman-Ford 或 SPFA）。传智杯国赛的最短路问题几乎必考。</p>"
+  },
+  {
+    id:11,title:"岛屿数量",difficulty:"中等",category:"搜索",
+    tags:["DFS","BFS","Flood Fill"],time:"O(m×n)","mem":"O(m×n)",
+    desc:"给你一个由 '1'（陆地）和 '0'（水）组成的二维网格，请你计算网格中岛屿的数量。岛屿总是被水包围，并且每座岛屿只能由水平或垂直方向上相邻的陆地连接形成。经典的<strong>Flood Fill</strong>问题。",
+    inputFmt:"第一行输入 m n，接下来 m 行每行 n 个字符（0或1，无空格）。",
+    outputFmt:"输出岛屿数量。",
+    sampleIn:"4 5\n11110\n11010\n11000\n00000",
+    sampleOut:"1",
+    constraints:"1 ≤ m, n ≤ 300",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+int m, n;
+vector<string> grid;
+int dx[4] = {0, 0, 1, -1};
+int dy[4] = {1, -1, 0, 0};
+
+void dfs(int x, int y) {
+    if (x < 0 || x >= m || y < 0 || y >= n || grid[x][y] == '0') return;
+    grid[x][y] = '0';
+    for (int i = 0; i < 4; i++) dfs(x + dx[i], y + dy[i]);
+}
+
+int main() {
+    cin >> m >> n;
+    grid.resize(m);
+    for (int i = 0; i < m; i++) cin >> grid[i];
+    int cnt = 0;
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            if (grid[i][j] == '1') { cnt++; dfs(i, j); }
+    cout << cnt << endl;
+    return 0;
+}`,
+    explanation:"<p>DFS Flood Fill：遍历每个格子，遇到 '1' 就岛屿数 +1，然后 DFS 将所有相连的 '1' 都标记为 '0'（淹没）。四个方向用方向数组简化代码。</p><p>也可以用 BFS 实现，但 DFS 的递归实现更简洁。注意 dfs 可能递归很深（最多 300×300=90000 层），需要调整栈大小或用 BFS 避免爆栈。</p>"
+  },
+  {
+    id:12,title:"全排列",difficulty:"中等",category:"搜索",
+    tags:["回溯","DFS","排列"],time:"O(n×n!)","mem":"O(n)",
+    desc:"给定一个不含重复数字的数组 nums，返回其所有可能的全排列。经典的<strong>回溯算法</strong>模板题，掌握回溯框架对传智杯搜索类题目至关重要。",
+    inputFmt:"第一行输入 n，第二行输入 n 个整数。",
+    outputFmt:"每行输出一个排列（数字间空格分隔），按字典序输出。",
+    sampleIn:"3\n1 2 3",
+    sampleOut:"1 2 3\n1 3 2\n2 1 3\n2 3 1\n3 1 2\n3 2 1",
+    constraints:"1 ≤ n ≤ 8",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+int n;
+vector<int> nums, path;
+vector<bool> used;
+
+void dfs() {
+    if (path.size() == n) {
+        for (int i = 0; i < n; i++)
+            cout << path[i] << " \\n"[i == n - 1];
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        if (used[i]) continue;
+        used[i] = true;
+        path.push_back(nums[i]);
+        dfs();
+        path.pop_back();
+        used[i] = false;
+    }
+}
+
+int main() {
+    cin >> n;
+    nums.resize(n); used.resize(n, false);
+    for (int i = 0; i < n; i++) cin >> nums[i];
+    sort(nums.begin(), nums.end());
+    dfs();
+    return 0;
+}`,
+    explanation:"<p>回溯模板：使用 path 存储当前路径，used 数组标记已使用元素。递归终止条件：path 长度等于 n。每次递归遍历所有元素，跳过已使用的。加入 path → 递归 → 弹出（回溯）。</p><p>先排序保证字典序输出。回溯是传智杯搜索题的常见考点，N皇后、组合、子集等都属于回溯范畴。</p>"
+  },
+  {
+    id:13,title:"并查集",difficulty:"中等",category:"数据结构",
+    tags:["并查集","Union-Find","路径压缩"],time:"O(α(n))","mem":"O(n)",
+    desc:"实现一个并查集（Union-Find）数据结构，支持合并两个集合和查询两个元素是否在同一集合中的操作。并查集是处理<strong>连通性问题</strong>的最优数据结构。",
+    inputFmt:"第一行 n m，n 个元素（1~n），m 个操作。接下来 m 行每行 op a b：op=1 查询 a 和 b 是否同集合（输出 YES/NO），op=2 合并 a 和 b。",
+    outputFmt:"对每个查询操作输出一行结果。",
+    sampleIn:"5 5\n2 1 2\n2 3 4\n1 1 3\n2 2 3\n1 1 3",
+    sampleOut:"NO\nYES",
+    constraints:"1 ≤ n ≤ 10<sup>5</sup>，1 ≤ m ≤ 10<sup>5</sup>",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> parent, rnk;
+
+int find(int x) {
+    return parent[x] == x ? x : parent[x] = find(parent[x]);
+}
+
+void unite(int x, int y) {
+    x = find(x); y = find(y);
+    if (x == y) return;
+    if (rnk[x] < rnk[y]) swap(x, y);
+    parent[y] = x;
+    if (rnk[x] == rnk[y]) rnk[x]++;
+}
+
+int main() {
+    ios::sync_with_stdio(false); cin.tie(nullptr);
+    int n, m;
+    cin >> n >> m;
+    parent.resize(n + 1); rnk.resize(n + 1, 0);
+    for (int i = 1; i <= n; i++) parent[i] = i;
+    while (m--) {
+        int op, a, b;
+        cin >> op >> a >> b;
+        if (op == 1) cout << (find(a) == find(b) ? "YES" : "NO") << endl;
+        else unite(a, b);
+    }
+    return 0;
+}`,
+    explanation:"<p>并查集的两个核心优化：<strong>路径压缩</strong>（find 时将节点直接指向根）和<strong>按秩合并</strong>（将矮树合并到高树上）。两者结合使每次操作均摊复杂度接近 O(1)（阿克曼函数的反函数 α(n)）。</p><p>find 函数的一行写法：<code>return parent[x]==x ? x : parent[x]=find(parent[x]);</code>。并查集在传智杯图论题中常用于判断连通性、Kruskal 最小生成树等场景。</p>"
+  },
+  {
+    id:14,title:"快速幂",difficulty:"简单",category:"数学",
+    tags:["快速幂","二分","模运算"],time:"O(log n)","mem":"O(1)",
+    desc:"实现 pow(x, n)，即计算 x 的 n 次幂函数。请对结果取模 10<sup>9</sup>+7。快速幂（二分幂）是算法竞赛中最常用的<strong>数学技巧</strong>之一，几乎所有涉及大数幂运算的场景都要用。",
+    inputFmt:"输入 x 和 n。",
+    outputFmt:"输出 x<sup>n</sup> mod (10<sup>9</sup>+7) 的结果。",
+    sampleIn:"2 10",
+    sampleOut:"1024",
+    constraints:"0 ≤ x ≤ 10<sup>9</sup>，0 ≤ n ≤ 10<sup>9</sup>",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+const ll MOD = 1e9 + 7;
+
+ll qpow(ll a, ll b) {
+    ll res = 1;
+    a %= MOD;
+    while (b) {
+        if (b & 1) res = (res * a) % MOD;
+        a = (a * a) % MOD;
+        b >>= 1;
+    }
+    return res;
+}
+
+int main() {
+    ll x, n;
+    cin >> x >> n;
+    cout << qpow(x, n) << endl;
+    return 0;
+}`,
+    explanation:"<p>快速幂核心：将指数 n 分解为二进制，利用 <code>a<sup>n</sup> = a<sup>n/2</sup> × a<sup>n/2</sup></code>（n 为偶）或 <code>a<sup>n</sup> = a<sup>n-1</sup> × a</code>（n 为奇）来二分计算。</p><p>循环实现：每次判断 n 的最低位是否为 1，若是则乘入结果；然后 a 自乘，n 右移一位。时间复杂度 O(log n)。快速幂是矩阵快速幂、乘法逆元等高级算法的基础。</p>"
+  },
+  {
+    id:15,title:"LRU 缓存",difficulty:"中等",category:"数据结构",
+    tags:["哈希表","双向链表","设计"],time:"O(1)","mem":"O(capacity)",
+    desc:"设计一个 LRU（最近最少使用）缓存机制，支持 get(key) 获取值（不存在返回 -1）和 put(key, value) 存入键值对。当缓存容量达到上限时，删除最久未使用的键值对。要求<strong>两个操作的时间复杂度都是 O(1)</strong>。",
+    inputFmt:"第一行 capacity，接下来每行一个操作：1 key 表示 get，2 key value 表示 put。输入 0 结束。",
+    outputFmt:"对每个 get 操作输出值或 -1。",
+    sampleIn:"2\n2 1 1\n2 2 2\n1 1\n2 3 3\n1 2\n1 3\n0",
+    sampleOut:"1\n-1\n3",
+    constraints:"1 ≤ capacity ≤ 3000",
+    solution:`#include <bits/stdc++.h>
+using namespace std;
+
+class LRUCache {
+    int cap;
+    list<pair<int, int>> cache;
+    unordered_map<int, list<pair<int, int>>::iterator> mp;
+public:
+    LRUCache(int capacity) : cap(capacity) {}
+
+    int get(int key) {
+        auto it = mp.find(key);
+        if (it == mp.end()) return -1;
+        cache.splice(cache.begin(), cache, it->second);
+        return it->second->second;
+    }
+
+    void put(int key, int value) {
+        auto it = mp.find(key);
+        if (it != mp.end()) {
+            it->second->second = value;
+            cache.splice(cache.begin(), cache, it->second);
+            return;
+        }
+        if (cache.size() == cap) {
+            mp.erase(cache.back().first);
+            cache.pop_back();
+        }
+        cache.push_front({key, value});
+        mp[key] = cache.begin();
+    }
+};
+
+int main() {
+    int cap, op;
+    cin >> cap;
+    LRUCache lru(cap);
+    while (cin >> op && op) {
+        if (op == 1) { int k; cin >> k; cout << lru.get(k) << endl; }
+        else { int k, v; cin >> k >> v; lru.put(k, v); }
+    }
+    return 0;
+}`,
+    explanation:"<p>核心数据结构：<strong>哈希表 + 双向链表</strong>。哈希表提供 O(1) 查找，双向链表维护访问顺序（头部是最近使用的，尾部是最久未使用的）。</p><p>get 操作：找到节点后，用 splice 将其移到链表头部。put 操作：如果 key 已存在则更新值并移到头部；如果容量已满则删除链表尾部节点；然后在头部插入新节点。</p><p>STL 的 list::splice 是 O(1) 的，这是实现 O(1) LRU 的关键。</p>"
+  }
+];
+
+// ═══ Categories ═══
+const categories = [...new Set(problems.map(p=>p.category))];
+const filtersDiv = document.getElementById('filters');
+filtersDiv.innerHTML = '<button class="filter-btn active" onclick="filterCategory(\'all\')">全部</button>' +
+  categories.map(c=>`<button class="filter-btn" onclick="filterCategory('${c}')">${c}</button>`).join('');
+
+let currentFilter = 'all';
+
+function filterCategory(cat){
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.textContent===cat||(cat==='all'&&b.textContent==='全部')));
+  renderProblems();
+}
+
+function renderProblems(){
+  const q = (document.getElementById('searchInput').value||'').toLowerCase();
+  let filtered = problems;
+  if(currentFilter!=='all') filtered = filtered.filter(p=>p.category===currentFilter);
+  if(q) filtered = filtered.filter(p=>p.title.toLowerCase().includes(q)||p.tags.some(t=>t.toLowerCase().includes(q))||p.category.toLowerCase().includes(q));
+
+  const grid = document.getElementById('problemGrid');
+  const empty = document.getElementById('emptyState');
+  if(filtered.length===0){grid.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+
+  grid.innerHTML = filtered.map(p=>{
+    const diffClass = p.difficulty==='简单'?'diff-easy':p.difficulty==='中等'?'diff-medium':'diff-hard';
+    return `<div class="problem-card" onclick="openProblem(${p.id})">
+      <div class="card-header">
+        <span class="card-id">#${p.id}</span>
+        <span class="difficulty ${diffClass}">${p.difficulty}</span>
+      </div>
+      <div class="card-title">${p.title}</div>
+      <div class="card-meta">
+        <span>⏱ ${p.time}</span><span>💾 ${p.mem}</span>
+      </div>
+      <div class="card-tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ Modal ═══
+function openProblem(id){
+  const p = problems.find(p=>p.id===id);
+  if(!p) return;
+  const diffClass = p.difficulty==='简单'?'diff-easy':p.difficulty==='中等'?'diff-medium':'diff-hard';
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div>
+        <span class="difficulty ${diffClass}" style="margin-bottom:8px;display:inline-block">${p.difficulty}</span>
+        <h2>#${p.id} ${p.title}</h2>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-grid">
+        <div class="info-item"><div class="info-label">时间复杂度</div><div class="info-value">${p.time}</div></div>
+        <div class="info-item"><div class="info-label">空间复杂度</div><div class="info-value">${p.mem}</div></div>
+        <div class="info-item"><div class="info-label">算法分类</div><div class="info-value">${p.category}</div></div>
+      </div>
+      <div class="card-tags" style="margin-bottom:20px">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+
+      <div class="modal-section">
+        <h3>题目描述</h3>
+        <div class="problem-desc">${p.desc}</div>
+      </div>
+
+      <div class="modal-section">
+        <h3>输入格式</h3>
+        <p class="problem-desc">${p.inputFmt}</p>
+      </div>
+      <div class="modal-section">
+        <h3>输出格式</h3>
+        <p class="problem-desc">${p.outputFmt}</p>
+      </div>
+
+      <div class="modal-section">
+        <h3>输入样例</h3>
+        <div class="io-block"><pre>${p.sampleIn}</pre></div>
+      </div>
+      <div class="modal-section">
+        <h3>输出样例</h3>
+        <div class="io-block"><pre>${p.sampleOut}</pre></div>
+      </div>
+
+      <div class="modal-section">
+        <h3>约束条件</h3>
+        <p class="problem-desc">${p.constraints}</p>
+      </div>
+
+      <div class="modal-section">
+        <h3>C++ 题解</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">复制代码</button>
+          <pre><code class="language-cpp">${escapeHtml(p.solution)}</code></pre>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h3>思路解析</h3>
+        <div class="explanation">${p.explanation}</div>
+      </div>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalOverlay').scrollTop = 0;
+  setTimeout(()=>hljs.highlightAll(),50);
+}
+
+function closeModal(e){
+  if(e.target===document.getElementById('modalOverlay'))
+    document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function copyCode(btn){
+  const code = btn.parentElement.querySelector('code').textContent;
+  navigator.clipboard.writeText(code).then(()=>{
+    btn.textContent='已复制!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='复制代码';btn.classList.remove('copied');},1500);
+  });
+}
+
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+
+// Init
+renderProblems();
+document.getElementById('statTotal').textContent = problems.length;
+</script>
+</body>
+</html>
