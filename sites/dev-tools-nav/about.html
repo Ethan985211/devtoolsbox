@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="关于 DevToolsNav - 为中国开发者精选的开发者工具导航站">
+  <title>关于 - DevToolsNav</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="canonical" href="https://YOUR-DOMAIN.pages.dev/about.html">
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo">DevTools<span>Nav</span></a>
+    <nav class="header-nav">
+      <a href="/">首页</a>
+      <a href="/about.html">关于</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="切换主题">🌙</button>
+    </nav>
+  </div>
+</header>
+
+<section class="about-hero">
+  <div class="container">
+    <h1 class="hero-title">关于 DevToolsNav</h1>
+    <p class="hero-subtitle">为中国开发者精选优质工具与服务</p>
+  </div>
+</section>
+
+<div class="about-content container">
+  <h2>关于本站</h2>
+  <p>
+    DevToolsNav 是一个面向中国开发者的工具导航网站。我们精心筛选和整理了各类开发者常用的工具、平台和服务，帮助开发者更快地找到适合自己需求的资源。
+  </p>
+  <p>
+    无论你是前端工程师、后端开发者、UI 设计师还是独立开发者，都可以在这里找到提升工作效率的利器。
+  </p>
+
+  <h2>收录标准</h2>
+  <p>我们收录的工具遵循以下原则：</p>
+  <ul>
+    <li>工具真实可用，有稳定用户群体</li>
+    <li>优先推荐免费或有免费层的工具</li>
+    <li>覆盖开发工作流的各个环节</li>
+    <li>兼顾国际主流工具和国内开发者常用服务</li>
+  </ul>
+
+  <h2>赞助与推广</h2>
+  <p>
+    本站通过联盟推广维持运营。部分推广链接带有联盟标识，点击购买后我们可能获得一定佣金。这不会影响我们对工具的客观评价和收录标准。
+  </p>
+  <p>目前合作平台：阿里云、VMSSR</p>
+
+  <h2>友链申请</h2>
+  <p>
+    欢迎优质开发者社区、技术博客、工具平台与我们交换友情链接。
+    请通过邮件联系，注明网站名称、URL 及简介。
+  </p>
+  <p>联系邮箱：<strong>contact@devtoolsnav.com</strong></p>
+
+  <h2>技术栈</h2>
+  <p>本站为纯静态网站，使用 HTML/CSS/JS 构建，部署于 Cloudflare Pages 全球 CDN 加速。</p>
+  <p>支持暗色/亮色主题切换，主题偏好通过浏览器本地存储保存。</p>
+
+  <h2>联系我们</h2>
+  <p>
+    如有工具推荐、Bug 反馈、合作意向，欢迎发送邮件至
+    <strong>contact@devtoolsnav.com</strong>
+  </p>
+</div>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-info">
+      <p>&copy; 2024 DevToolsNav. All rights reserved.</p>
+      <p>友链申请：contact@devtoolsnav.com</p>
+    </div>
+    <div class="footer-links">
+      <a href="/">首页</a>
+      <a href="/about.html">关于</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  var theme = localStorage.getItem('devtoolsnav-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  var btn = document.getElementById('themeToggle');
+  if (btn) {
+    btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  }
+  if (btn) {
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('devtoolsnav-theme', next);
+      btn.textContent = next === 'dark' ? '☀️' : '🌙';
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
