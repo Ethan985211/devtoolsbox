@@ -126,14 +126,14 @@
       <h3>健康检查</h3>
       <div class="endpoint">
         <span class="method get">GET</span>
-        <code>/api/ocr-health</code>
+        <code>GET http://82.156.34.78/api/ocr-health</code>
       </div>
-      <div class="code-block">curl https://devtoolsbox-1rl.pages.dev/api/ocr-health</div>
+      <div class="code-block">curl http://82.156.34.78/api/ocr-health</div>
 
       <h3>图片识别</h3>
       <div class="endpoint">
         <span class="method post">POST</span>
-        <code>/api/ocr</code>
+        <code>POST http://82.156.34.78/api/ocr</code>
       </div>
       <p><strong>Headers:</strong></p>
       <div class="code-block">Content-Type: application/json
@@ -169,14 +169,14 @@ with open('image.png', 'rb') as f:
     img_b64 = base64.b64encode(f.read()).decode()
 
 resp = requests.post(
-    'https://devtoolsbox-1rl.pages.dev/api/ocr',
+    'http://82.156.34.78/api/ocr',
     json={'image': img_b64, 'lang': 'chi_sim+eng'},
     headers={'X-API-Key': 'YOUR_API_KEY'}
 )
 print(resp.json()['text'])</div>
 
       <h3>JavaScript</h3>
-      <div class="code-block">const resp = await fetch('https://devtoolsbox-1rl.pages.dev/api/ocr', {
+      <div class="code-block">const resp = await fetch('http://82.156.34.78/api/ocr', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ const data = await resp.json();
 console.log(data.text);</div>
 
       <h3>curl</h3>
-      <div class="code-block">curl -X POST https://devtoolsbox-1rl.pages.dev/api/ocr \
+      <div class="code-block">curl -X POST http://82.156.34.78/api/ocr \
   -H "Content-Type: application/json" \
   -H "X-API-Key: YOUR_API_KEY" \
   -d '{"image":"'$(base64 -w0 image.png)'","lang":"eng"}'</div>
@@ -251,18 +251,8 @@ function copyKey() {
     setTimeout(function() { document.getElementById('copyMsg').style.display = 'none'; }, 2000);
   });
 }
-// Check API health
-fetch('/api/ocr-health')
-  .then(function(r) { return r.json(); })
-  .then(function(d) {
-    if (d.status === 'ok') {
-      document.getElementById('apiStatus').innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> 服务运行中 · ' + d.languages.join('+');
-    }
-  })
-  .catch(function() {
-    document.getElementById('apiStatus').innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;"></span> 服务不可用';
-    document.getElementById('apiStatus').className = 'api-status';
-  });
+// Health check skipped — API is on CVM (82.156.34.78), direct browser calls blocked by mixed content policy.
+// Developers should call the API from server-side code.
 </script>
 </body>
 </html>
