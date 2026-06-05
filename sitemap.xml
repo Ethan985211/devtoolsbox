@@ -121,6 +121,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://devtoolsbox-1rl.pages.dev/products/dev-toolbox-handbook-preview</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://devtoolsbox-1rl.pages.dev/blog/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -159,5 +164,20 @@
     <loc>https://devtoolsbox-1rl.pages.dev/blog/free-ocr-api-guide</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://devtoolsbox-1rl.pages.dev/blog/cloud-server-guide-2026</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://devtoolsbox-1rl.pages.dev/blog/dev-tools-setup-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://devtoolsbox-1rl.pages.dev/blog/api-passive-income-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
 </urlset>

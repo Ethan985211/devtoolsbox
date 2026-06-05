@@ -8,6 +8,27 @@
     <lastBuildDate>Thu, 05 Jun 2026 08:00:00 GMT</lastBuildDate>
     <atom:link href="https://devtoolsbox-1rl.pages.dev/blog/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>独立开发者如何利用API服务赚取被动收入</title>
+      <link>https://devtoolsbox-1rl.pages.dev/blog/api-passive-income-guide</link>
+      <description>拆解API被动收入的商业模式，从零搭建付费API服务的完整流程。分享DevToolsBox OCR API实践经验，含定价策略和推广渠道。</description>
+      <pubDate>Thu, 05 Jun 2026 08:00:00 GMT</pubDate>
+      <guid>https://devtoolsbox-1rl.pages.dev/blog/api-passive-income-guide</guid>
+    </item>
+    <item>
+      <title>程序员必备的网络工具与开发环境搭建指南</title>
+      <link>https://devtoolsbox-1rl.pages.dev/blog/dev-tools-setup-guide</link>
+      <description>从网络加速到本地开发环境，从云端服务器到在线工具箱，完整梳理程序员高效工作流所需的工具链。</description>
+      <pubDate>Thu, 05 Jun 2026 08:00:00 GMT</pubDate>
+      <guid>https://devtoolsbox-1rl.pages.dev/blog/dev-tools-setup-guide</guid>
+    </item>
+    <item>
+      <title>2026个人开发者云服务推荐：从服务器到API全攻略</title>
+      <link>https://devtoolsbox-1rl.pages.dev/blog/cloud-server-guide-2026</link>
+      <description>全面解析个人开发者需要的云服务类型。阿里云ECS配置指南、大模型API中转推荐、不同预算的选型对比。</description>
+      <pubDate>Thu, 05 Jun 2026 08:00:00 GMT</pubDate>
+      <guid>https://devtoolsbox-1rl.pages.dev/blog/cloud-server-guide-2026</guid>
+    </item>
+    <item>
       <title>2026年开发者必备的22款免费在线工具 — 效率提升指南</title>
       <link>https://devtoolsbox-1rl.pages.dev/blog/22-free-developer-tools-2026</link>
       <description>精选22款经过实际验证的免费在线开发工具，覆盖PDF处理、图片编辑、编码解码、格式转换等场景。所有工具纯前端运行，数据不上传服务器。</description>
