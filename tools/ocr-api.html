@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCR API - DevToolsBox</title>
+  <meta name="description" content="DevToolsBox OCR API — 免费在线图片文字识别接口。支持中英文OCR，每天100次免费调用。">
+  <meta property="og:title" content="OCR API - DevToolsBox">
+  <meta property="og:description" content="免费在线图片文字识别API，每天100次免费调用，支持中英文。">
+  <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/tools/ocr-api.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DevToolsBox">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="OCR API - DevToolsBox">
+  <meta name="twitter:description" content="免费在线图片文字识别API，每天100次免费调用，支持中英文。">
+  <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/tools/ocr-api.html">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <style>
+    .api-key-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: monospace; font-size: 13px; word-break: break-all; user-select: all; margin: 12px 0; }
+    .endpoint { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 12px 0; }
+    .endpoint .method { display: inline-block; padding: 3px 10px; border-radius: 4px; font-weight: 700; font-size: 12px; margin-right: 8px; }
+    .method.post { background: #10b98120; color: #10b981; }
+    .method.get { background: #6366f120; color: #6366f1; }
+    .code-block { background: #1e1e2e; color: #cdd6f4; border-radius: 8px; padding: 16px; overflow-x: auto; font-family: monospace; font-size: 13px; line-height: 1.6; margin: 12px 0; white-space: pre; }
+    .tier-card { background: var(--surface); border: 2px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; transition: all 200ms; }
+    .tier-card.featured { border-color: var(--accent); }
+    .tier-card h3 { font-size: 20px; margin-bottom: 8px; }
+    .tier-card .price { font-size: 36px; font-weight: 800; color: var(--accent); }
+    .tier-card .price small { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
+    .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin: 24px 0; }
+    .tier-features { list-style: none; padding: 0; margin: 16px 0; text-align: left; }
+    .tier-features li { padding: 6px 0; }
+    .tier-features li::before { content: '✓ '; color: #10b981; }
+    .api-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 13px; }
+    .api-status.online { background: #10b98120; color: #10b981; }
+    .refresh-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 16px; cursor: pointer; font-size: 13px; color: var(--text); }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/json-formatter">JSON</a>
+          <a href="/tools/qr-code">二维码</a>
+          <a href="/tools/timestamp">时间戳</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header">
+      <h1>OCR API</h1>
+      <p>图片文字识别 API — 支持中英文，每天100次免费调用</p>
+      <div class="api-status online" id="apiStatus"><span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> 服务运行中</div>
+    </div>
+
+    <a href="https://apikey.fun/register?aff=DFWDYXJJCFSW" class="promo-banner" target="_blank" rel="nofollow sponsored">
+      <div>
+        <span class="promo-tag">推荐</span>
+        <div class="promo-title">需要更多 API 调用？使用 AI 模型 API</div>
+        <div class="promo-desc">OpenAI / Claude 等大模型 API，也可实现OCR识别，准确率更高</div>
+      </div>
+      <span class="promo-cta">了解更多</span>
+    </a>
+
+    <!-- Free API Key -->
+    <div class="tool-panel">
+      <h2>免费 API Key</h2>
+      <p>复制下方 API Key，每天可调用 100 次</p>
+      <div class="api-key-box" id="freeKey">dtb-free-00000000000000000000000000000001</div>
+      <button class="btn btn-primary" onclick="copyKey()">复制 Key</button>
+      <span id="copyMsg" style="margin-left:12px;color:#10b981;display:none;">已复制</span>
+    </div>
+
+    <!-- Pricing -->
+    <div class="tool-section">
+      <h2>套餐方案</h2>
+      <div class="tier-grid">
+        <div class="tier-card featured">
+          <h3>免费版</h3>
+          <div class="price">¥0<small>/月</small></div>
+          <ul class="tier-features">
+            <li>100 次/天</li>
+            <li>中英文 OCR</li>
+            <li>REST API</li>
+            <li>标准响应速度</li>
+          </ul>
+        </div>
+        <div class="tier-card">
+          <h3>标准版</h3>
+          <div class="price">¥9.9<small>/月</small></div>
+          <ul class="tier-features">
+            <li>1000 次/天</li>
+            <li>中英文 OCR</li>
+            <li>优先响应</li>
+            <li>技术支持</li>
+          </ul>
+          <a href="https://afdian.com/a/devtoolsbox" target="_blank" rel="nofollow" class="btn btn-primary" style="margin-top:12px;display:inline-block;text-decoration:none;padding:10px 24px;">立即订阅</a>
+        </div>
+        <div class="tier-card">
+          <h3>无限版</h3>
+          <div class="price">¥29.9<small>/月</small></div>
+          <ul class="tier-features">
+            <li>无限制调用</li>
+            <li>所有语言支持</li>
+            <li>最高优先级</li>
+            <li>专属客服</li>
+          </ul>
+          <a href="https://afdian.com/a/devtoolsbox" target="_blank" rel="nofollow" class="btn btn-primary" style="margin-top:12px;display:inline-block;text-decoration:none;padding:10px 24px;">立即订阅</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Documentation -->
+    <div class="tool-section">
+      <h2>API 文档</h2>
+
+      <h3>健康检查</h3>
+      <div class="endpoint">
+        <span class="method get">GET</span>
+        <code>https://devtoolsbox-1rl.pages.dev/api/ocr-health</code>
+      </div>
+      <div class="code-block">curl https://devtoolsbox-1rl.pages.dev/api/ocr-health</div>
+
+      <h3>图片识别</h3>
+      <div class="endpoint">
+        <span class="method post">POST</span>
+        <code>https://devtoolsbox-1rl.pages.dev/api/ocr</code>
+      </div>
+      <p><strong>Headers:</strong></p>
+      <div class="code-block">Content-Type: application/json
+X-API-Key: YOUR_API_KEY</div>
+      <p><strong>Request Body:</strong></p>
+      <div class="code-block">{
+  "image": "base64编码的图片数据",
+  "lang": "chi_sim+eng"
+}</div>
+      <p><strong>参数说明:</strong></p>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr style="border-bottom:1px solid var(--border);"><th style="text-align:left;padding:8px;">参数</th><th style="text-align:left;padding:8px;">类型</th><th style="text-align:left;padding:8px;">说明</th></tr>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px;">image</td><td style="padding:8px;">string</td><td style="padding:8px;">Base64 编码的图片（支持 data:image 前缀）</td></tr>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px;">lang</td><td style="padding:8px;">string</td><td style="padding:8px;">识别语言：chi_sim（中文）、eng（英文）、chi_sim+eng（中英混合）</td></tr>
+      </table>
+      <p><strong>Response:</strong></p>
+      <div class="code-block">{
+  "text": "识别出的文字内容",
+  "language": "chi_sim+eng",
+  "confidence": 85.3,
+  "remaining_today": 98
+}</div>
+    </div>
+
+    <!-- Code Examples -->
+    <div class="tool-section">
+      <h2>代码示例</h2>
+      <h3>Python</h3>
+      <div class="code-block">import requests
+import base64
+
+with open('image.png', 'rb') as f:
+    img_b64 = base64.b64encode(f.read()).decode()
+
+resp = requests.post(
+    'https://devtoolsbox-1rl.pages.dev/api/ocr',
+    json={'image': img_b64, 'lang': 'chi_sim+eng'},
+    headers={'X-API-Key': 'YOUR_API_KEY'}
+)
+print(resp.json()['text'])</div>
+
+      <h3>JavaScript</h3>
+      <div class="code-block">const resp = await fetch('https://devtoolsbox-1rl.pages.dev/api/ocr', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-Key': 'YOUR_API_KEY'
+  },
+  body: JSON.stringify({ image: base64str, lang: 'eng' })
+});
+const data = await resp.json();
+console.log(data.text);</div>
+
+      <h3>curl</h3>
+      <div class="code-block">curl -X POST https://devtoolsbox-1rl.pages.dev/api/ocr \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -d '{"image":"'$(base64 -w0 image.png)'","lang":"eng"}'</div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>图片预处理能显著提高识别率：确保图片清晰、对比度高、无倾斜。建议在发送前将图片转为 PNG 格式。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>混合语言识别（lang=chi_sim+eng）适合中英文混排文档，但会比单语言略慢。如果确定只有中文，用 chi_sim 更快。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>confidence 字段表示识别置信度（0-100），低于 60 的结果建议人工复核。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">免费版够用吗？</div>
+          <div class="faq-a">每天 100 次免费调用，适合个人项目和小型应用。如果超过限制，返回 429 错误。升级到标准版或无限版可解除限制。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">支持哪些图片格式？</div>
+          <div class="faq-a">支持 PNG、JPG、WebP、BMP、TIFF 等常见格式。使用 PIL 进行预处理，建议发送 PNG 格式以获得最佳效果。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">数据安全吗？</div>
+          <div class="faq-a">图片在识别后立即从服务器删除，不会存储或用于任何其他目的。所有传输通过 HTTPS 加密。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsor-section">
+      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/image-convert">格式转换</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/base64">Base64</a><a href="/tools/qr-code">二维码</a><a href="/tools/timestamp">时间戳</a></div>
+        <div><h5>API</h5><a href="/tools/ocr-api">OCR API</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span></div>
+  </footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>
+function copyKey() {
+  var k = document.getElementById('freeKey').textContent;
+  navigator.clipboard.writeText(k).then(function() {
+    document.getElementById('copyMsg').style.display = 'inline';
+    setTimeout(function() { document.getElementById('copyMsg').style.display = 'none'; }, 2000);
+  });
+}
+// Check API health
+fetch('https://devtoolsbox-1rl.pages.dev/api/ocr-health')
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.status === 'ok') {
+      document.getElementById('apiStatus').innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span> 服务运行中 · ' + d.languages.join('+');
+    }
+  })
+  .catch(function() {
+    document.getElementById('apiStatus').innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;"></span> 服务不可用';
+    document.getElementById('apiStatus').className = 'api-status';
+  });
+</script>
+</body>
+</html>
