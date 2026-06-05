@@ -1,0 +1,96 @@
+{
+  "name": "DevToolsBox Recommended Extensions",
+  "description": "Web 开发必备 VS Code 扩展",
+  "extensions": [
+    {
+      "id": "dbaeumer.vscode-eslint",
+      "name": "ESLint",
+      "description": "JavaScript/TypeScript 代码检查",
+      "category": "代码质量"
+    },
+    {
+      "id": "esbenp.prettier-vscode",
+      "name": "Prettier",
+      "description": "代码自动格式化",
+      "category": "代码质量"
+    },
+    {
+      "id": "bradlc.vscode-tailwindcss",
+      "name": "Tailwind CSS IntelliSense",
+      "description": "Tailwind CSS 智能提示",
+      "category": "CSS"
+    },
+    {
+      "id": "formulahendry.auto-rename-tag",
+      "name": "Auto Rename Tag",
+      "description": "自动重命名配对的 HTML 标签",
+      "category": "HTML"
+    },
+    {
+      "id": "ritwickdey.liveserver",
+      "name": "Live Server",
+      "description": "本地开发服务器，实时刷新",
+      "category": "开发工具"
+    },
+    {
+      "id": "eamodio.gitlens",
+      "name": "GitLens",
+      "description": "Git 增强 — 行历史、blame、差异对比",
+      "category": "Git"
+    },
+    {
+      "id": "ms-python.python",
+      "name": "Python",
+      "description": "Python 语言支持",
+      "category": "语言"
+    },
+    {
+      "id": "ms-vscode.vscode-typescript-next",
+      "name": "TypeScript",
+      "description": "TypeScript 语言支持",
+      "category": "语言"
+    },
+    {
+      "id": "vue.volar",
+      "name": "Volar",
+      "description": "Vue 3 语言支持",
+      "category": "框架"
+    },
+    {
+      "id": "usernamehw.errorlens",
+      "name": "Error Lens",
+      "description": "内联显示错误和警告",
+      "category": "代码质量"
+    },
+    {
+      "id": "pkief.material-icon-theme",
+      "name": "Material Icon Theme",
+      "description": "文件图标主题",
+      "category": "主题"
+    },
+    {
+      "id": "zhuangtongfa.material-theme",
+      "name": "One Dark Pro",
+      "description": "Atom One Dark 主题",
+      "category": "主题"
+    },
+    {
+      "id": "github.copilot",
+      "name": "GitHub Copilot",
+      "description": "AI 代码补全",
+      "category": "AI"
+    },
+    {
+      "id": "streetsidesoftware.code-spell-checker",
+      "name": "Code Spell Checker",
+      "description": "代码拼写检查",
+      "category": "代码质量"
+    },
+    {
+      "id": "wix.vscode-import-cost",
+      "name": "Import Cost",
+      "description": "显示导入包的大小",
+      "category": "性能"
+    }
+  ]
+}

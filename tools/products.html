@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>开发者资源包 - DevToolsBox</title>
+  <meta name="description" content="DevToolsBox 开发者资源包：VS Code 最佳配置、Terminal 美化方案、Notion 开发者模板。一次购买，终身使用。">
+  <meta property="og:title" content="开发者资源包 - DevToolsBox">
+  <meta property="og:description" content="VS Code 最佳配置 + Terminal 美化 + Notion 模板。一次购买，终身使用。">
+  <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/tools/products.html">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/tools/products.html">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <style>
+    .product-hero { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #667eea15, #764ba215); border-radius: 16px; margin-bottom: 40px; }
+    .product-hero h1 { font-size: 2.2em; margin-bottom: 12px; }
+    .product-hero .price-tag { font-size: 2.5em; font-weight: 800; color: var(--accent); }
+    .product-hero .price-tag .original { font-size: 0.5em; color: var(--text-secondary); text-decoration: line-through; margin-right: 8px; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin: 32px 0; }
+    .product-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; transition: all 200ms; }
+    .product-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .product-card h3 { font-size: 1.2em; margin-bottom: 8px; }
+    .product-card .features { list-style: none; padding: 0; margin: 16px 0; }
+    .product-card .features li { padding: 4px 0; color: var(--text-secondary); font-size: 0.95em; }
+    .product-card .features li::before { content: '✓ '; color: #10b981; }
+    .buy-btn { display: inline-block; padding: 12px 32px; background: var(--accent); color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1.05em; transition: all 200ms; }
+    .buy-btn:hover { opacity: 0.9; transform: scale(1.02); }
+    .bonus-box { background: #10b98110; border: 1px solid #10b98130; border-radius: 12px; padding: 20px; margin: 32px 0; }
+    .bonus-box h4 { color: #10b981; }
+    .faq-grid { display: grid; gap: 16px; margin: 24px 0; }
+    .faq-item-new { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .faq-item-new h4 { margin: 0 0 8px 0; font-size: 1em; }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/json-formatter">JSON</a>
+          <a href="/tools/qr-code">二维码</a>
+          <a href="/tools/timestamp">时间戳</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-page">
+    <div class="product-hero">
+      <h1>开发者效率资源包</h1>
+      <p style="font-size:1.1em;color:var(--text-secondary);">VS Code 最佳配置 · Terminal 美化 · Notion 模板 · 持续更新</p>
+      <div style="margin-top:16px;">
+        <span class="price-tag"><span class="original">¥39.9</span>¥9.9</span>
+        <p style="color:var(--text-secondary);font-size:0.9em;">一次购买，终身使用，免费更新</p>
+      </div>
+      <a href="https://afdian.com/a/devtoolsbox" target="_blank" rel="nofollow" class="buy-btn" style="margin-top:16px;">立即获取</a>
+    </div>
+
+    <div class="product-grid">
+      <div class="product-card">
+        <h3>VS Code 专业配置</h3>
+        <p style="color:var(--text-secondary);">为 Web 开发精心调校的编辑器配置</p>
+        <ul class="features">
+          <li>settings.json — 代码格式化、智能提示、性能优化</li>
+          <li>15 款必装扩展推荐（分类整理）</li>
+          <li>React / Vue / Python 项目最佳配置</li>
+          <li>Tailwind CSS + ESLint + Prettier 开箱即用</li>
+          <li>JetBrains Mono 字体 + 连字符号配置</li>
+        </ul>
+      </div>
+      <div class="product-card">
+        <h3>Terminal 美化方案</h3>
+        <p style="color:var(--text-secondary);">让终端变得高效又好看的 Zsh 配置</p>
+        <ul class="features">
+          <li>优化后的 .zshrc（200+ 行精选配置）</li>
+          <li>Git 快捷别名（g, gs, gp, glog...）</li>
+          <li>开发常用别名（venv, serve, nrd...）</li>
+          <li>自定义终端提示符（支持 Git 分支显示）</li>
+          <li>Oh My Zsh 插件推荐</li>
+        </ul>
+      </div>
+      <div class="product-card">
+        <h3>Notion 开发者模板</h3>
+        <p style="color:var(--text-secondary);">3 套精心设计的 Notion 工作模板</p>
+        <ul class="features">
+          <li>项目管理看板（看板 + 甘特图 + 日历视图）</li>
+          <li>代码片段管理器（语法高亮 + 分类检索）</li>
+          <li>API 文档模板（参数表格 + 响应示例）</li>
+          <li>详细的导入说明和使用技巧</li>
+          <li>适配 Notion 暗色模式</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bonus-box">
+      <h4>限时赠品</h4>
+      <p>购买即送：DevToolsBox OCR API 免费额度提升至 500次/天（原100次/天），有效期 1 年。</p>
+    </div>
+
+    <div class="tool-section">
+      <h2>为什么需要这些配置？</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px;">
+        <div style="text-align:center;padding:16px;">
+          <div style="font-size:2em;font-weight:800;color:var(--accent);">30%</div>
+          <p>减少重复性操作时间</p>
+        </div>
+        <div style="text-align:center;padding:16px;">
+          <div style="font-size:2em;font-weight:800;color:var(--accent);">15+</div>
+          <p>精心筛选的 VS Code 扩展</p>
+        </div>
+        <div style="text-align:center;padding:16px;">
+          <div style="font-size:2em;font-weight:800;color:var(--accent);">200+</div>
+          <p>行精选终端配置</p>
+        </div>
+        <div style="text-align:center;padding:16px;">
+          <div style="font-size:2em;font-weight:800;color:var(--accent);">3 套</div>
+          <p>Notion 工作模板</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq-grid">
+        <div class="faq-item-new">
+          <h4>如何获取文件？</h4>
+          <p>通过爱发电赞助后，自动收到下载链接。包含 settings.json、.zshrc、extensions.json、Notion 模板说明。</p>
+        </div>
+        <div class="faq-item-new">
+          <h4>支持哪些操作系统？</h4>
+          <p>VS Code 配置跨平台通用。Terminal 配置面向 macOS / Linux。Windows 用户可使用 WSL2。</p>
+        </div>
+        <div class="faq-item-new">
+          <h4>配置会冲突吗？</h4>
+          <p>不会。所有配置都经过测试，可以直接合并到你现有的 settings.json 和 .zshrc 中。</p>
+        </div>
+        <div class="faq-item-new">
+          <h4>购买后能退款吗？</h4>
+          <p>7 天内不满意可申请退款。联系邮箱 2917834376@qq.com。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsor-section">
+      <h3>如果这些工具有帮助</h3><p>请我喝杯咖啡，支持开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/image-convert">格式转换</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/base64">Base64</a><a href="/tools/qr-code">二维码</a></div>
+        <div><h5>产品</h5><a href="/tools/products">资源包</a><a href="/tools/ocr-api">OCR API</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span></div>
+  </footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+</body>
+</html>
