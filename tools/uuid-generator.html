@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UUID 生成器 - DevToolsBox</title>
+  <meta name="description" content="在线UUID生成器，支持UUID v1（时间戳）和v4（随机）两种版本。一键生成，支持批量生成和复制。">
+  <meta property="og:title" content="UUID 生成器 - DevToolsBox">
+  <meta property="og:description" content="在线UUID生成器，支持UUID v1（时间戳）和v4（随机）两种版本。一键生成，支持批量生成和复制。">
+  <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/tools/uuid-generator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DevToolsBox">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="UUID 生成器 - DevToolsBox">
+  <meta name="twitter:description" content="在线UUID生成器，支持UUID v1（时间戳）和v4（随机）两种版本。一键生成，支持批量生成和复制。">
+  <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/tools/uuid-generator.html">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/json-formatter">JSON</a>
+          <a href="/tools/qr-code">二维码</a>
+          <a href="/tools/timestamp">时间戳</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header"><h1>🆔 UUID 生成器</h1><p>在线UUID生成器，支持 UUID v1（基于时间戳）和 v4（随机）版本，一键生成即可复制</p></div>
+    <a href="https://www.aliyun.com/" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<div>
+<span class="promo-tag">推荐</span>
+<div class="promo-title">阿里云 — 云计算基础设施服务</div>
+<div class="promo-desc">国内领先的云计算平台，ECS、OSS、CDN等全栈云服务，稳定可靠</div>
+</div>
+<span class="promo-cta">了解更多</span>
+</a>
+
+    <div class="tool-panel" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div>
+        <label style="margin-bottom:4px;display:block">UUID 版本</label>
+        <select id="versionSelect" style="padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:15px;background:var(--bg);color:var(--text);min-width:120px">
+          <option value="v4">v4 (随机)</option>
+          <option value="v1">v1 (时间戳)</option>
+        </select>
+      </div>
+      <div>
+        <label style="margin-bottom:4px;display:block">大写</label>
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 0">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="uppercaseCheck"> 输出大写字母</label>
+        </div>
+      </div>
+      <div>
+        <label style="margin-bottom:4px;display:block">批量数量</label>
+        <input type="number" id="batchCount" value="1" min="1" max="100" style="padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:15px;width:80px;background:var(--bg);color:var(--text)">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="genBtn">🎲 生成 UUID</button>
+      <button class="btn btn-success" id="copyAllBtn">📋 复制全部</button>
+      <button class="btn btn-secondary" id="clearUuidBtn">清空</button>
+    </div>
+
+    <div class="tool-panel" id="uuidPanel" style="display:none">
+      <label id="uuidLabel">生成的 UUID</label>
+      <div id="uuidList" style="font-family:monospace;font-size:15px;line-height:2.2"></div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>选择 UUID 版本：v4（纯随机，最常用）或 v1（基于时间戳+MAC地址）</span></div>
+        <div class="step"><span class="step-num">2</span><span>设置是否需要大写，以及批量生成的数量（1-100个）</span></div>
+        <div class="step"><span class="step-num">3</span><span>点击"生成 UUID"按钮，下方立即显示生成的 UUID 列表</span></div>
+        <div class="step"><span class="step-num">4</span><span>点击"复制全部"将结果复制到剪贴板，每个 UUID 一行，方便粘贴使用</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>UUID v4 完全随机，适合绝大多数场景（数据库主键、文件标识、令牌等）。单个 v4 UUID 的碰撞概率极低，可放心使用。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>UUID v1 基于时间戳和节点信息生成，具有时间排序特性。适合需要按时间排序的场景，但会暴露生成时间和机器信息，注意隐私。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>批量生成时，v1 UUID 在同一毫秒内会使用时钟序列递增，确保唯一性。v4 则完全独立随机生成。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">UUID v4 和 v1 有什么区别？</div>
+          <div class="faq-a">v4 基于随机数生成，共 122 位随机位，碰撞概率极低（需生成约 2.71×10¹⁸ 个才有 50% 碰撞概率）。v1 基于时间戳（100纳秒精度）和节点标识（通常是 MAC 地址），保证时空唯一性，可通过时间排序。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">UUID 作为数据库主键有什么优缺点？</div>
+          <div class="faq-a">优点：全局唯一，分布式系统友好，无需中心化ID分配器。缺点：UUID v4 随机无序会导致 B+树索引碎片化，写入性能下降。如果使用 UUID 作主键，建议使用有序版本（v1 或 v7）或使用自增整数主键+UUID 业务键的组合。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">生成的 UUID 是否真的唯一？</div>
+          <div class="faq-a">v4 UUID 的随机位有 122 位，理论上需要生成数十亿亿个才有极小碰撞概率。v1 保证时空唯一（同一节点同一时刻通过时钟序列区分）。本工具 v4 使用浏览器 crypto.randomUUID() 标准 API，v1 使用 crypto.getRandomValues() 模拟实现。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsor-section">
+      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/image-convert">格式转换</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/base64">Base64</a><a href="/tools/qr-code">二维码</a><a href="/tools/timestamp">时间戳</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span></div>
+  </footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>
+(function(){
+  var vs = document.getElementById("versionSelect");
+  var uc = document.getElementById("uppercaseCheck");
+  var bc = document.getElementById("batchCount");
+  var ul = document.getElementById("uuidList");
+  var up = document.getElementById("uuidPanel");
+  var ulabel = document.getElementById("uuidLabel");
+  var vals = [];
+
+  function hex(v, len) {
+    var s = v.toString(16);
+    while (s.length < len) s = "0" + s;
+    return s;
+  }
+
+  // v1 UUID: time-based
+  function generateV1() {
+    var now = Date.now();
+    // Use 100-nanosecond intervals since UUID epoch (1582-10-15 00:00:00)
+    // But for simplicity we use Unix epoch ms * 10000
+    var timestamp = now * 10000 + 122192928000000000; // offset from Unix to UUID epoch
+    var timeLow = timestamp & 0xFFFFFFFF;
+    var timeMid = (timestamp >>> 32) & 0xFFFF;
+    var timeHi = ((timestamp >>> 48) & 0x0FFF) | 0x1000; // version 1
+
+    // Clock sequence (random)
+    var clockSeq = ((Math.floor(Math.random() * 0x4000)) | 0x8000) >>> 0; // variant 10xx
+
+    // Node (random)
+    var node = [];
+    if (window.crypto && window.crypto.getRandomValues) {
+      var rnd = new Uint8Array(6);
+      crypto.getRandomValues(rnd);
+      node[0] = rnd[0] | 0x01; // set multicast bit
+      for (var i = 0; i < 6; i++) node[i] = rnd[i];
+    } else {
+      for (var i = 0; i < 6; i++) node[i] = Math.floor(Math.random() * 256);
+      node[0] |= 0x01;
+    }
+
+    var uuid = hex(timeLow,8) + "-" + hex(timeMid,4) + "-" + hex(timeHi,4) + "-" + hex(clockSeq,4) + "-" + hex(node[0],2)+hex(node[1],2)+hex(node[2],2)+hex(node[3],2)+hex(node[4],2)+hex(node[5],2);
+    return uuid;
+  }
+
+  // v4 UUID: random
+  function generateV4() {
+    if (window.crypto && window.crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    // Fallback
+    var d = new Uint8Array(16);
+    if (window.crypto && window.crypto.getRandomValues) {
+      crypto.getRandomValues(d);
+    } else {
+      for (var i = 0; i < 16; i++) d[i] = Math.floor(Math.random() * 256);
+    }
+    d[6] = (d[6] & 0x0f) | 0x40; // version 4
+    d[8] = (d[8] & 0x3f) | 0x80; // variant 10xx
+    return hex(d[0],2)+hex(d[1],2)+hex(d[2],2)+hex(d[3],2)+"-"+hex(d[4],2)+hex(d[5],2)+"-"+hex(d[6],2)+hex(d[7],2)+"-"+hex(d[8],2)+hex(d[9],2)+"-"+hex(d[10],2)+hex(d[11],2)+hex(d[12],2)+hex(d[13],2)+hex(d[14],2)+hex(d[15],2);
+  }
+
+  function generate() {
+    var ver = vs.value;
+    var count = Math.min(Math.max(parseInt(bc.value) || 1, 1), 100);
+    var upper = uc.checked;
+    vals = [];
+    for (var i = 0; i < count; i++) {
+      var uuid = ver === "v1" ? generateV1() : generateV4();
+      if (upper) uuid = uuid.toUpperCase();
+      vals.push(uuid);
+    }
+    render();
+  }
+
+  function render() {
+    var html = "";
+    for (var i = 0; i < vals.length; i++) {
+      html += '<div style="padding:4px 0;border-bottom:1px solid var(--border);word-break:break-all;display:flex;align-items:center;gap:8px"><span style="color:var(--text-muted);font-size:12px;min-width:24px">' + (i+1) + '.</span><code style="background:var(--bg-secondary);padding:2px 8px;border-radius:4px">' + vals[i] + '</code><button onclick="(function(){navigator.clipboard.writeText(\'' + vals[i].replace(/'/g,"\\'") + '\');var b=event.target;b.textContent=\'已复制\';setTimeout(function(){b.textContent=\'复制\'},1200)})()" style="font-size:12px;padding:2px 8px;cursor:pointer;border:1px solid var(--border);border-radius:4px;background:var(--bg);color:var(--text);white-space:nowrap;margin-left:auto;flex-shrink:0">复制</button></div>';
+    }
+    ul.innerHTML = html;
+    ulabel.textContent = "生成的 UUID (" + vals.length + " 个)";
+    up.style.display = "block";
+  }
+
+  document.getElementById("genBtn").addEventListener("click", generate);
+  document.getElementById("clearUuidBtn").addEventListener("click", function(){ vals = []; ul.innerHTML = ""; up.style.display = "none"; });
+  document.getElementById("copyAllBtn").addEventListener("click", function(){
+    if (vals.length === 0) { alert("没有可复制的内容"); return; }
+    navigator.clipboard.writeText(vals.join("\n")).then(function(){
+      var b = document.getElementById("copyAllBtn");
+      b.textContent = "已复制 ✓";
+      setTimeout(function(){ b.textContent = "📋 复制全部"; }, 1500);
+    });
+  });
+})();
+</script>
+</body>
+</html>

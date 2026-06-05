@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文本差异对比 - DevToolsBox</title>
+  <meta name="description" content="在线文本差异对比工具，快速对比两段文本的差异。高亮显示新增和删除的内容，支持逐行对比。纯浏览器本地运算。">
+  <meta property="og:title" content="文本差异对比 - DevToolsBox">
+  <meta property="og:description" content="在线文本差异对比工具，快速对比两段文本的差异。高亮显示新增和删除的内容，支持逐行对比。纯浏览器本地运算。">
+  <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/tools/text-diff.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DevToolsBox">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="文本差异对比 - DevToolsBox">
+  <meta name="twitter:description" content="在线文本差异对比工具，快速对比两段文本的差异。高亮显示新增和删除的内容，支持逐行对比。纯浏览器本地运算。">
+  <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/tools/text-diff.html">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <style>
+    .diff-panel { display: flex; gap: 12px; margin-bottom: 20px; }
+    .diff-panel .tool-panel { flex: 1; min-width: 0; }
+    .diff-panel textarea { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: monospace; background: var(--bg); color: var(--text); resize: vertical; }
+    .diff-line { padding: 2px 8px; font-family: monospace; font-size: 13px; line-height: 1.8; white-space: pre-wrap; word-break: break-all; }
+    .diff-add { background: #d4edda; color: #155724; }
+    .diff-del { background: #f8d7da; color: #721c24; }
+    .diff-eq  { background: transparent; color: var(--text); }
+    [data-theme="dark"] .diff-add { background: #1a3a2a; color: #7ddf90; }
+    [data-theme="dark"] .diff-del { background: #3a1a1a; color: #e88c8c; }
+    .diff-line-num { display: inline-block; width: 40px; text-align: right; margin-right: 12px; color: var(--text-muted); font-size: 11px; user-select: none; }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/json-formatter">JSON</a>
+          <a href="/tools/qr-code">二维码</a>
+          <a href="/tools/timestamp">时间戳</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header"><h1>📝 文本差异对比</h1><p>在线文本差异对比工具，快速找出两段文本的不同之处。高亮显示新增、删除的内容。</p></div>
+    <a href="https://vmssr.com/" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<div>
+<span class="promo-tag">推荐</span>
+<div class="promo-title">VMSSR — 高性能 VPS 服务</div>
+<div class="promo-desc">稳定的海外 VPS 节点，适合开发者搭建代理、部署项目，低延迟高带宽</div>
+</div>
+<span class="promo-cta">了解更多</span>
+</a>
+
+    <div class="diff-panel">
+      <div class="tool-panel">
+        <label for="leftText">原始文本（旧版）</label>
+        <textarea id="leftText" placeholder="粘贴原始文本..." rows="10"></textarea>
+      </div>
+      <div class="tool-panel">
+        <label for="rightText">修改文本（新版）</label>
+        <textarea id="rightText" placeholder="粘贴修改后的文本..." rows="10"></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="diffBtn">🔍 对比差异</button>
+      <button class="btn btn-secondary" id="swapDiffBtn">⇄ 交换</button>
+      <button class="btn btn-secondary" id="clearDiffBtn">清空</button>
+      <button class="btn btn-secondary" id="copyDiffBtn">复制差异结果</button>
+    </div>
+
+    <div class="tool-panel" id="diffResultPanel" style="display:none">
+      <label id="diffResultLabel">差异对比结果</label>
+      <div id="diffOutput" style="border:1px solid var(--border);border-radius:6px;overflow:auto;max-height:500px;background:var(--bg);"></div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>在"原始文本"框中粘贴旧版本内容（例如修改前的代码或配置）</span></div>
+        <div class="step"><span class="step-num">2</span><span>在"修改文本"框中粘贴新版本内容（例如修改后的代码或配置）</span></div>
+        <div class="step"><span class="step-num">3</span><span>点击"对比差异"按钮，系统逐行对比并在下方显示差异结果</span></div>
+        <div class="step"><span class="step-num">4</span><span>绿色背景表示新增行，红色背景表示删除行，无背景色表示未修改行</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>对比结果中绿色高亮（+）是修改后新增的行，红色高亮（-）是被删除的行。两边行号相同表示该行未变。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>所有对比运算在浏览器本地完成，不会将你的文本上传到服务器。处理敏感代码或配置也无需担心泄露。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>使用"交换"按钮可以快速互换左右两侧的文本，方便从不同方向查看差异。例如从"删除了什么"切换为"新增了什么"的视角。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">对比算法是什么？支持大文本吗？</div>
+          <div class="faq-a">使用经典的 LCS（最长公共子序列）算法进行逐行对比，时间复杂度 O(n×m)。建议单侧文本不超过 5000 行，过大的文本可能导致浏览器卡顿。对于超长文本，建议先分段对比。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">支持哪些文本格式？</div>
+          <div class="faq-a">支持任意纯文本格式，包括代码、配置文件、日志、Markdown、JSON、XML、YAML 等。只要是纯文本，都可以直接粘贴对比。不支持二进制或富文本格式。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">对比结果不准确怎么办？</div>
+          <div class="faq-a">LCS 算法按行对比，如果文本格式差异较大（如大量空行、缩进不同），结果可能不够直观。你可以先使用文本格式化工具（如 JSON 格式化、代码格式化）预处理后再对比，以获得更准确的结果。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsor-section">
+      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/image-convert">格式转换</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/base64">Base64</a><a href="/tools/qr-code">二维码</a><a href="/tools/timestamp">时间戳</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span></div>
+  </footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>
+(function(){
+  var lt = document.getElementById("leftText");
+  var rt = document.getElementById("rightText");
+  var rp = document.getElementById("diffResultPanel");
+  var rl = document.getElementById("diffResultLabel");
+  var ro = document.getElementById("diffOutput");
+
+  // LCS algorithm
+  function lcs(a, b) {
+    var m = a.length, n = b.length;
+    var dp = [];
+    for (var i = 0; i <= m; i++) { dp[i] = []; for (var j = 0; j <= n; j++) dp[i][j] = 0; }
+    for (var i = 1; i <= m; i++) {
+      for (var j = 1; j <= n; j++) {
+        if (a[i-1] === b[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+        else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+      }
+    }
+    var result = [];
+    var i = m, j = n;
+    while (i > 0 && j > 0) {
+      if (a[i-1] === b[j-1]) { result.unshift({type:"eq",val:a[i-1],li:i-1,rj:j-1}); i--; j--; }
+      else if (dp[i-1][j] >= dp[i][j-1]) { result.unshift({type:"del",val:a[i-1],li:i-1,rj:-1}); i--; }
+      else { result.unshift({type:"add",val:b[j-1],li:-1,rj:j-1}); j--; }
+    }
+    while (i > 0) { result.unshift({type:"del",val:a[i-1],li:i-1,rj:-1}); i--; }
+    while (j > 0) { result.unshift({type:"add",val:b[j-1],li:-1,rj:j-1}); j--; }
+    return result;
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function doDiff() {
+    var left = lt.value;
+    var right = rt.value;
+    if (!left && !right) { rp.style.display = "none"; return; }
+    var la = left.split("\n");
+    var ra = right.split("\n");
+    var changes = lcs(la, ra);
+
+    var stats = {add:0, del:0, eq:0};
+    var html = "";
+    var lnum = 1, rnum = 1;
+    for (var k = 0; k < changes.length; k++) {
+      var c = changes[k];
+      var cls = "";
+      var sign = "";
+      var lStr = "", rStr = "";
+      if (c.type === "add") {
+        cls = "diff-add"; sign = "+"; stats.add++;
+        lStr = '<span class="diff-line-num"></span>';
+        rStr = '<span class="diff-line-num">' + (rnum++) + '</span>';
+      } else if (c.type === "del") {
+        cls = "diff-del"; sign = "-"; stats.del++;
+        lStr = '<span class="diff-line-num">' + (lnum++) + '</span>';
+        rStr = '<span class="diff-line-num"></span>';
+      } else {
+        cls = "diff-eq"; stats.eq++;
+        lStr = '<span class="diff-line-num">' + (lnum++) + '</span>';
+        rStr = '<span class="diff-line-num">' + (rnum++) + '</span>';
+      }
+      var val = c.val;
+      if (val === "") val = " "; // show empty lines
+      html += '<div class="diff-line ' + cls + '">' + lStr + sign + ' ' + escapeHtml(val) + '</div>';
+    }
+
+    ro.innerHTML = html;
+    rl.textContent = "差异对比结果 — 新增 " + stats.add + " 行，删除 " + stats.del + " 行，未变 " + stats.eq + " 行";
+    rp.style.display = "block";
+  }
+
+  document.getElementById("diffBtn").addEventListener("click", doDiff);
+  document.getElementById("swapDiffBtn").addEventListener("click", function(){
+    var tmp = lt.value; lt.value = rt.value; rt.value = tmp;
+    doDiff();
+  });
+  document.getElementById("clearDiffBtn").addEventListener("click", function(){
+    lt.value = ""; rt.value = ""; ro.innerHTML = ""; rp.style.display = "none";
+  });
+  document.getElementById("copyDiffBtn").addEventListener("click", function(){
+    var left = lt.value, right = rt.value;
+    if (!left && !right) { alert("没有可复制的内容"); return; }
+    var la = left.split("\n"), ra = right.split("\n");
+    var changes = lcs(la, ra);
+    var text = "";
+    for (var k = 0; k < changes.length; k++) {
+      var c = changes[k];
+      if (c.type === "add") text += "+ " + c.val + "\n";
+      else if (c.type === "del") text += "- " + c.val + "\n";
+      else text += "  " + c.val + "\n";
+    }
+    navigator.clipboard.writeText(text).then(function(){
+      var b = document.getElementById("copyDiffBtn");
+      b.textContent = "已复制 ✓";
+      setTimeout(function(){ b.textContent = "复制差异结果"; }, 1500);
+    });
+  });
+})();
+</script>
+</body>
+</html>

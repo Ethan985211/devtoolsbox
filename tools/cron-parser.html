@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cron 表达式解析 - DevToolsBox</title>
+  <meta name="description" content="Cron表达式在线解析，可视化执行计划。输入Cron表达式即可解析为人类可读的描述，并展示未来5次执行时间。">
+  <meta property="og:title" content="Cron 表达式解析 - DevToolsBox">
+  <meta property="og:description" content="Cron表达式在线解析，可视化执行计划。输入Cron表达式即可解析为人类可读的描述，并展示未来5次执行时间。">
+  <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/tools/cron-parser.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DevToolsBox">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Cron 表达式解析 - DevToolsBox">
+  <meta name="twitter:description" content="Cron表达式在线解析，可视化执行计划。输入Cron表达式即可解析为人类可读的描述，并展示未来5次执行时间。">
+  <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/tools/cron-parser.html">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/json-formatter">JSON</a>
+          <a href="/tools/qr-code">二维码</a>
+          <a href="/tools/timestamp">时间戳</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header"><h1>⏰ Cron 表达式解析</h1><p>Cron表达式在线解析，可视化执行计划，支持标准5段式表达式</p></div>
+    <a href="https://apikey.fun/register?aff=DFWDYXJJCFSW" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<div>
+<span class="promo-tag">推荐</span>
+<div class="promo-title">API Key 中转 — OpenAI / Claude 即开即用</div>
+<div class="promo-desc">国内可直接访问的正规 API 中转，无需翻墙即可使用 GPT-4、Claude 等主流模型</div>
+</div>
+<span class="promo-cta">立即注册</span>
+</a>
+
+    <div class="tool-panel"><label for="cronInput">Cron 表达式</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="cronInput" placeholder="例如: 0 8 * * 1-5 (每个工作日早上8点)" style="flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:15px;font-family:monospace;background:var(--bg);color:var(--text)">
+        <button class="btn btn-primary" id="parseBtn">解析</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-secondary" id="preset1">每5分钟</button>
+      <button class="btn btn-secondary" id="preset2">每小时</button>
+      <button class="btn btn-secondary" id="preset3">每天0点</button>
+      <button class="btn btn-secondary" id="preset4">工作日8:00</button>
+      <button class="btn btn-secondary" id="preset5">每月1日</button>
+      <button class="btn btn-secondary" id="clearCronBtn">清空</button>
+    </div>
+
+    <div class="tool-panel" id="resultPanel" style="display:none">
+      <label>解析结果</label>
+      <div id="humanReadable" style="padding:12px;background:var(--bg-secondary);border-radius:6px;font-size:16px;margin-bottom:12px;border-left:3px solid #6366f1;"></div>
+      <label>未来 5 次执行时间</label>
+      <div id="nextRuns" style="padding:12px;background:var(--bg-secondary);border-radius:6px;font-family:monospace;font-size:14px;line-height:2;"></div>
+    </div>
+
+    <div class="tool-panel" id="copyPanel" style="display:none;margin-top:12px">
+      <button class="btn btn-secondary" id="copyCronBtn">复制全部结果</button>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>在输入框中输入 Cron 表达式（标准5段式：分 时 日 月 周），例如 <code>*/15 9-17 * * 1-5</code></span></div>
+        <div class="step"><span class="step-num">2</span><span>点击"解析"按钮，系统自动将表达式翻译为人类可读的描述</span></div>
+        <div class="step"><span class="step-num">3</span><span>查看下方"未来5次执行时间"列表，确认计划是否符合预期</span></div>
+        <div class="step"><span class="step-num">4</span><span>使用预设表达式快速尝试常见场景，或点击"复制结果"分享执行计划</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>Cron 格式为 <code>分 时 日 月 周</code>（5段），每段之间用空格分隔。支持 *（任意）、数字、-（范围）、/（步长）、,（列表）。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>不确定表达式是否正确？观察"未来5次执行时间"可直观验证。如果显示的时间和你预期不一致，说明表达式需要调整。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>周字段中 0 和 7 都表示周日。常见的 cron 错误是将* * * * 1误以为"每周一执行一次"——实际上它表示每周一每秒都执行。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">Cron 表达式有几段？分别代表什么？</div>
+          <div class="faq-a">标准 Cron 表达式有5段：分钟（0-59）、小时（0-23）、日期（1-31）、月份（1-12）、星期（0-7，0和7都表示周日）。部分系统支持6段（加了秒）或7段（加了年），本工具支持5段标准格式，也兼容6段格式（秒 分 时 日 月 周）。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">为什么解析出来的时间和我的服务器不一致？</div>
+          <div class="faq-a">执行时间基于你的浏览器本地时区计算。如果服务器时区不同，执行时间会有所偏差。Cron 本身不包含时区信息，本工具使用你设备的本地时间。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">支持特殊字符如 L、W、# 吗？</div>
+          <div class="faq-a">本工具支持标准 Cron 表达式（*、-、/、,、数字）。L（最后一天）、W（最近工作日）、#（第几个星期几）等扩展字符在部分 cron 实现（如 Quartz）中可用，但本工具暂不支持。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsor-section">
+      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/image-convert">格式转换</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/base64">Base64</a><a href="/tools/qr-code">二维码</a><a href="/tools/timestamp">时间戳</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span></div>
+  </footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>
+(function(){
+  var inp = document.getElementById("cronInput");
+  var rp = document.getElementById("resultPanel");
+  var cp = document.getElementById("copyPanel");
+  var hr = document.getElementById("humanReadable");
+  var nr = document.getElementById("nextRuns");
+
+  // 星期映射
+  var dayNames = ["周日","周一","周二","周三","周四","周五","周六"];
+  var monthNames = ["","一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"];
+
+  function parseField(field, min, max) {
+    var values = [];
+    var parts = field.split(",");
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i].trim();
+      var step = 1;
+      var stepIdx = p.indexOf("/");
+      if (stepIdx >= 0) {
+        step = parseInt(p.substring(stepIdx + 1)) || 1;
+        p = p.substring(0, stepIdx);
+      }
+      var rangeIdx = p.indexOf("-");
+      if (p === "*") {
+        for (var v = min; v <= max; v++) values.push(v);
+      } else if (rangeIdx >= 0) {
+        var lo = parseInt(p.substring(0, rangeIdx));
+        var hi = parseInt(p.substring(rangeIdx + 1));
+        for (var v = lo; v <= hi; v++) values.push(v);
+      } else {
+        values.push(parseInt(p) || 0);
+      }
+      if (step > 1) {
+        var filtered = [];
+        for (var k = 0; k < values.length; k++) {
+          if ((values[k] - (values[0] || min)) % step === 0) filtered.push(values[k]);
+        }
+        values = filtered;
+      }
+    }
+    values.sort(function(a,b){return a-b});
+    var unique = [];
+    for (var u = 0; u < values.length; u++) {
+      if (unique.indexOf(values[u]) === -1) unique.push(values[u]);
+    }
+    return unique;
+  }
+
+  function describeField(field, name, min, max, namesMap) {
+    if (field === "*") return "每" + name;
+    if (field.indexOf(",") >= 0) {
+      var parts = field.split(",");
+      var list = [];
+      for (var i = 0; i < parts.length; i++) list.push(describeField(parts[i].trim(), name, min, max, namesMap));
+      return list.join("、");
+    }
+    var stepIdx = field.indexOf("/");
+    var step = 1, base = field;
+    if (stepIdx >= 0) {
+      step = parseInt(field.substring(stepIdx + 1));
+      base = field.substring(0, stepIdx);
+    }
+    if (base === "*" && step > 1) return "每" + step + name;
+    var rangeIdx = base.indexOf("-");
+    if (rangeIdx >= 0) {
+      var lo = parseInt(base.substring(0, rangeIdx));
+      var hi = parseInt(base.substring(rangeIdx + 1));
+      var loName = namesMap ? namesMap[lo] : lo;
+      var hiName = namesMap ? namesMap[hi] : hi;
+      var r = loName + "到" + hiName;
+      if (step > 1) r += " 每" + step + name;
+      return r;
+    }
+    var v = parseInt(base);
+    var vName = namesMap ? namesMap[v] : v;
+    if (step > 1) return "从" + vName + "开始每" + step + name;
+    return vName + "";
+  }
+
+  function describeCron(fields) {
+    if (fields.length < 5) return "无效的表达式（需要至少5段）";
+    var min = fields[0], hr = fields[1], dom = fields[2], mon = fields[3], dow = fields[4];
+    // 特殊模式检测
+    if (min === "*" && hr === "*" && dom === "*" && mon === "*" && dow === "*") return "每分钟执行";
+    if (min.indexOf("/")>=0 && hr==="*" && dom==="*" && mon==="*" && dow==="*") return describeField(min,"分钟",0,59,null) + "执行";
+    if (min!="*" && hr==="*" && dom==="*" && mon==="*" && dow==="*") return "每小时的第" + describeField(min,"分钟",0,59,null) + "执行";
+    if (mon==="*" && dom==="*" && dow==="*") return "每天 " + describeField(hr,"点",0,23,null) + ":" + (min==="*"?"00":describeField(min,"分",0,59,null)) + " 执行";
+    if (dow !== "*" && dom === "*") return "每" + describeField(dow,"",0,7,dayNames) + " " + describeField(hr,"点",0,23,null) + ":" + (min==="*"?"00":describeField(min,"分",0,59,null)) + " 执行";
+    if (dom !== "*" && dow === "*") return "每月" + describeField(dom,"日",1,31,null) + " " + describeField(hr,"点",0,23,null) + ":" + (min==="*"?"00":describeField(min,"分",0,59,null)) + " 执行";
+    return describeField(mon,"月",1,12,monthNames) + " " + describeField(dom,"日",1,31,null) + " " + describeField(hr,"点",0,23,null) + ":" + (min==="*"?"00":describeField(min,"分",0,59,null)) + " " + describeField(dow,"",0,7,dayNames) + " 执行";
+  }
+
+  function nextRun(fields, fromDate, count) {
+    var mins = parseField(fields[0], 0, 59);
+    var hrs = parseField(fields[1], 0, 23);
+    var doms = parseField(fields[2], 1, 31);
+    var mons = parseField(fields[3], 1, 12);
+    var dows = parseField(fields[4], 0, 7);
+    // normalize dows: 7 -> 0
+    for (var i = 0; i < dows.length; i++) if (dows[i] === 7) dows[i] = 0;
+
+    var results = [];
+    var d = new Date(fromDate.getTime());
+    d.setSeconds(0, 0);
+    d.setMinutes(d.getMinutes() + 1); // start from next minute
+
+    var maxIter = 525600 * 2; // 2 years of minutes
+    while (results.length < count && maxIter-- > 0) {
+      if (mons.indexOf(d.getMonth() + 1) === -1) { d.setMonth(d.getMonth() + 1); d.setDate(1); d.setHours(0,0,0,0); continue; }
+      var isDomMatch = doms.indexOf(d.getDate()) >= 0;
+      var isDowMatch = dows.indexOf(d.getDay()) >= 0;
+      // If both dom and dow are specified (not *), OR logic (Vixie cron)
+      var dayOk;
+      if (doms.length < 31 && dows.length < 7) dayOk = isDomMatch || isDowMatch;
+      else if (doms.length < 31) dayOk = isDomMatch;
+      else if (dows.length < 7) dayOk = isDowMatch;
+      else dayOk = true;
+
+      if (!dayOk) { d.setDate(d.getDate() + 1); d.setHours(0,0,0,0); continue; }
+      if (hrs.indexOf(d.getHours()) === -1) { d.setHours(d.getHours() + 1); d.setMinutes(0,0,0); continue; }
+      if (mins.indexOf(d.getMinutes()) === -1) { d.setMinutes(d.getMinutes() + 1); d.setSeconds(0,0); continue; }
+
+      results.push(new Date(d.getTime()));
+      d.setMinutes(d.getMinutes() + 1);
+    }
+    return results;
+  }
+
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function fmtDate(dt) {
+    return dt.getFullYear() + "-" + pad(dt.getMonth()+1) + "-" + pad(dt.getDate()) + " " + pad(dt.getHours()) + ":" + pad(dt.getMinutes()) + ":" + pad(dt.getSeconds()) + " " + dayNames[dt.getDay()];
+  }
+
+  function parse() {
+    var expr = inp.value.trim();
+    if (!expr) { rp.style.display = "none"; cp.style.display = "none"; return; }
+    var fields = expr.split(/\s+/);
+    if (fields.length < 5) {
+      hr.innerHTML = '<span style="color:#e53e3e">❌ 表达式格式错误：需要至少5段（分 时 日 月 周），当前仅有 '+fields.length+' 段。</span>';
+      nr.innerHTML = "";
+      rp.style.display = "block";
+      cp.style.display = "none";
+      return;
+    }
+    // If 6 fields, drop the first (seconds)
+    if (fields.length >= 6) fields = fields.slice(fields.length - 5);
+
+    try {
+      var desc = describeCron(fields);
+      hr.innerHTML = '<strong>📋 人类可读描述：</strong><br><span style="font-size:18px;color:#6366f1">' + desc + '</span>';
+      var runs = nextRun(fields, new Date(), 5);
+      var html = "";
+      for (var i = 0; i < runs.length; i++) {
+        html += '<div style="padding:4px 0;border-bottom:1px solid var(--border)">' + (i+1) + '. ' + fmtDate(runs[i]) + '</div>';
+      }
+      if (runs.length === 0) html = '<span style="color:#e53e3e">⚠ 未找到匹配的执行时间，请检查表达式。</span>';
+      nr.innerHTML = html;
+      rp.style.display = "block";
+      cp.style.display = "block";
+    } catch(e) {
+      hr.innerHTML = '<span style="color:#e53e3e">❌ 解析出错：' + e.message + '</span>';
+      nr.innerHTML = "";
+      rp.style.display = "block";
+      cp.style.display = "none";
+    }
+  }
+
+  document.getElementById("parseBtn").addEventListener("click", parse);
+  inp.addEventListener("keydown", function(e) { if (e.key === "Enter") parse(); });
+
+  document.getElementById("preset1").addEventListener("click", function(){ inp.value = "*/5 * * * *"; parse(); });
+  document.getElementById("preset2").addEventListener("click", function(){ inp.value = "0 * * * *"; parse(); });
+  document.getElementById("preset3").addEventListener("click", function(){ inp.value = "0 0 * * *"; parse(); });
+  document.getElementById("preset4").addEventListener("click", function(){ inp.value = "0 8 * * 1-5"; parse(); });
+  document.getElementById("preset5").addEventListener("click", function(){ inp.value = "0 0 1 * *"; parse(); });
+
+  document.getElementById("clearCronBtn").addEventListener("click", function(){
+    inp.value = "";
+    rp.style.display = "none";
+    cp.style.display = "none";
+  });
+
+  document.getElementById("copyCronBtn").addEventListener("click", function(){
+    var text = "Cron 表达式: " + inp.value + "\n";
+    text += "人类可读: " + hr.textContent + "\n\n未来5次执行时间:\n" + nr.textContent;
+    navigator.clipboard.writeText(text).then(function(){
+      var b = document.getElementById("copyCronBtn");
+      b.textContent = "已复制 ✓";
+      setTimeout(function(){ b.textContent = "复制全部结果"; }, 1500);
+    });
+  });
+})();
+</script>
+</body>
+</html>

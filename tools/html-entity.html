@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML实体编解码 - DevToolsBox</title>
+  <meta name="description" content="在线HTML实体编码与解码工具。将特殊字符转义为HTML实体，或将实体还原为原始字符。免费在线使用。">
+  <meta property="og:title" content="HTML实体编解码 - DevToolsBox">
+  <meta property="og:description" content="在线HTML实体编码与解码工具。将特殊字符转义为HTML实体，或将实体还原为原始字符。免费在线使用。">
+  <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/tools/html-entity.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DevToolsBox">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="HTML实体编解码 - DevToolsBox">
+  <meta name="twitter:description" content="在线HTML实体编码与解码工具。将特殊字符转义为HTML实体，或将实体还原为原始字符。免费在线使用。">
+  <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/tools/html-entity.html">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/json-formatter">JSON</a>
+          <a href="/tools/qr-code">二维码</a>
+          <a href="/tools/timestamp">时间戳</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header"><h1>🔤 HTML实体编解码</h1><p>在线将特殊字符转义为 HTML 实体，或将 HTML 实体还原为原始字符</p></div>
+    <a href="https://www.vmssr.net/#/register?code=fGN3KQqi" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<div>
+<span class="promo-tag">推荐</span>
+<div class="promo-title">VMS SR — 高速稳定的网络加速</div>
+<div class="promo-desc">优质网络加速服务，低延迟高带宽。适合开发者访问国际资源，注册即享免费试用</div>
+</div>
+<span class="promo-cta">立即注册</span>
+</a>
+
+    <div class="tool-panel"><label for="inputText">输入内容</label><textarea id="inputText" placeholder="输入要编码或解码的文本..." rows="8"></textarea></div>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="encBtn">编码 (字符→实体)</button>
+      <button class="btn btn-success" id="decBtn">解码 (实体→字符)</button>
+      <button class="btn btn-secondary" id="swapBtn">交换</button>
+      <button class="btn btn-secondary" id="copyBtn">复制结果</button>
+      <button class="btn btn-secondary" id="clearBtn">清空</button>
+      <button class="btn btn-secondary" id="sampleBtn">加载示例</button>
+    </div>
+
+    <div class="tool-panel" id="outputPanel" style="display:none"><label id="outputLabel">结果</label><pre class="code-output" id="outputText" style="white-space:pre-wrap;word-break:break-all"></pre></div>
+
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>在输入框中粘贴或输入需要编解码的文本内容（可以是纯文本或包含 HTML 实体的字符串）</span></div>
+        <div class="step"><span class="step-num">2</span><span>点击"编码"将特殊字符转为 HTML 实体，或点击"解码"将实体还原为原始字符</span></div>
+        <div class="step"><span class="step-num">3</span><span>查看输出结果，点击"复制结果"即可将内容复制到剪贴板</span></div>
+        <div class="step"><span class="step-num">4</span><span>使用"交换"按钮可将输出结果快速填入输入框，方便在编解码之间来回切换</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>编码功能会将 <code>&lt;</code>、<code>&gt;</code>、<code>&amp;</code>、<code>&quot;</code>、<code>&#39;</code> 这5个关键HTML特殊字符转为对应的实体表示，确保在HTML中安全显示。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>解码功能支持常见的命名实体（如 <code>&amp;lt;</code>）和数字实体（如 <code>&amp;#60;</code>），涵盖 HTML5 规范中所有命名字符实体。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>如果你需要展示 HTML 代码片段而不被浏览器解析，请先编码再放入 <code>&lt;pre&gt;&lt;code&gt;</code> 标签中。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">什么是 HTML 实体？</div>
+          <div class="faq-a">HTML 实体是用特殊字符串表示保留字符的方式。例如 <code>&amp;lt;</code> 表示 &lt;，<code>&amp;amp;</code> 表示 &amp;。使用实体可以避免浏览器将这些字符误解析为 HTML 标签。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">编码和解码有什么区别？</div>
+          <div class="faq-a">编码是将特殊字符（如 &lt;、&gt;、&amp;）转换为对应的 HTML 实体（如 &amp;lt;）。解码是反向操作，将实体还原为原始字符。编码用于安全展示，解码用于还原原文。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">数据会不会上传到服务器？</div>
+          <div class="faq-a">不会。所有编解码运算都在你的浏览器本地完成，无需任何 CDN，数据不会离开你的设备。你可以断开网络验证这一点。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsor-section">
+      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/image-convert">格式转换</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/base64">Base64</a><a href="/tools/qr-code">二维码</a><a href="/tools/timestamp">时间戳</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span></div>
+  </footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>
+(function(){
+  var inp = document.getElementById("inputText");
+  var out = document.getElementById("outputText");
+  var op = document.getElementById("outputPanel");
+  var ol = document.getElementById("outputLabel");
+
+  var sampleText = '<div class="example">\n  <p>Hello &amp; Welcome</p>\n  <a href="https://example.com?name=foo&id=1">点击</a>\n</div>';
+
+  function encodeHTML(str){
+    var el = document.createElement("textarea");
+    el.textContent = str;
+    return el.innerHTML;
+  }
+
+  function decodeHTML(str){
+    var el = document.createElement("textarea");
+    el.innerHTML = str;
+    return el.textContent;
+  }
+
+  document.getElementById("encBtn").addEventListener("click", function(){
+    try {
+      out.textContent = encodeHTML(inp.value);
+      ol.textContent = "编码结果（字符→实体）";
+      op.style.display = "block";
+    } catch(e){
+      out.textContent = "编码失败: " + e.message;
+      ol.textContent = "错误";
+      op.style.display = "block";
+    }
+  });
+
+  document.getElementById("decBtn").addEventListener("click", function(){
+    try {
+      out.textContent = decodeHTML(inp.value);
+      ol.textContent = "解码结果（实体→字符）";
+      op.style.display = "block";
+    } catch(e){
+      out.textContent = "解码失败: 请检查输入的HTML实体格式是否正确";
+      ol.textContent = "错误";
+      op.style.display = "block";
+    }
+  });
+
+  document.getElementById("swapBtn").addEventListener("click", function(){
+    if(out.textContent){
+      inp.value = out.textContent;
+      out.textContent = "";
+      op.style.display = "none";
+    }
+  });
+
+  document.getElementById("copyBtn").addEventListener("click", function(){
+    if(!out.textContent){ alert("没有可复制的内容"); return; }
+    navigator.clipboard.writeText(out.textContent).then(function(){
+      var b = document.getElementById("copyBtn");
+      b.textContent = "已复制 ✓";
+      setTimeout(function(){ b.textContent = "复制结果"; }, 1500);
+    });
+  });
+
+  document.getElementById("clearBtn").addEventListener("click", function(){
+    inp.value = "";
+    out.textContent = "";
+    op.style.display = "none";
+  });
+
+  document.getElementById("sampleBtn").addEventListener("click", function(){
+    inp.value = sampleText;
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片缩放裁剪 - DevToolsBox</title>
+  <meta name="description" content="在线图片缩放与裁剪工具，支持按比例或指定尺寸调整图片大小。纯浏览器端处理，无需上传。免费在线使用。">
+  <meta property="og:title" content="图片缩放裁剪 - DevToolsBox">
+  <meta property="og:description" content="在线图片缩放与裁剪工具，支持按比例或指定尺寸调整图片大小。纯浏览器端处理，无需上传。免费在线使用。">
+  <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/tools/image-resize.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DevToolsBox">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="图片缩放裁剪 - DevToolsBox">
+  <meta name="twitter:description" content="在线图片缩放与裁剪工具，支持按比例或指定尺寸调整图片大小。纯浏览器端处理，无需上传。免费在线使用。">
+  <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/tools/image-resize.html">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/json-formatter">JSON</a>
+          <a href="/tools/qr-code">二维码</a>
+          <a href="/tools/timestamp">时间戳</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header"><h1>🖼️ 图片缩放裁剪</h1><p>在线调整图片尺寸，支持按比例缩放或指定宽高，纯浏览器端处理</p></div>
+    <a href="https://apikey.fun/register?aff=DFWDYXJJCFSW" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<div>
+<span class="promo-tag">推荐</span>
+<div class="promo-title">API Key 中转 — OpenAI / Claude 即开即用</div>
+<div class="promo-desc">国内可直接访问的正规 API 中转，无需翻墙即可使用 GPT-4、Claude 等主流模型</div>
+</div>
+<span class="promo-cta">立即注册</span>
+</a>
+
+    <div class="tool-panel">
+      <label for="imageInput">上传图片</label>
+      <input type="file" id="imageInput" accept="image/*" style="margin-bottom:12px;">
+      <div id="imageInfo" style="display:none;margin-bottom:12px;padding:8px;background:var(--bg-secondary);border-radius:6px;font-size:14px;"></div>
+    </div>
+
+    <div class="tool-panel" id="resizePanel" style="display:none">
+      <label>缩放设置</label>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+        <div style="flex:1;min-width:120px">
+          <label for="targetWidth" style="font-size:13px;color:var(--text-secondary)">目标宽度 (px)</label>
+          <input type="number" id="targetWidth" placeholder="宽度" min="1" style="width:100%">
+        </div>
+        <div style="flex:1;min-width:120px">
+          <label for="targetHeight" style="font-size:13px;color:var(--text-secondary)">目标高度 (px)</label>
+          <input type="number" id="targetHeight" placeholder="高度" min="1" style="width:100%">
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <label style="font-size:13px;white-space:nowrap"><input type="checkbox" id="keepAspect" checked> 保持比例</label>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:13px;color:var(--text-secondary)">
+        快捷比例：
+        <button type="button" class="btn btn-secondary" style="font-size:12px;padding:4px 8px" onclick="setRatio(0.5)">50%</button>
+        <button type="button" class="btn btn-secondary" style="font-size:12px;padding:4px 8px" onclick="setRatio(0.75)">75%</button>
+        <button type="button" class="btn btn-secondary" style="font-size:12px;padding:4px 8px" onclick="setRatio(1.5)">150%</button>
+        <button type="button" class="btn btn-secondary" style="font-size:12px;padding:4px 8px" onclick="setRatio(2)">200%</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="resizeBtn" style="display:none">缩放图片</button>
+      <button class="btn btn-success" id="downloadBtn" style="display:none">下载图片</button>
+      <button class="btn btn-secondary" id="resetBtn" style="display:none">重置</button>
+    </div>
+
+    <div class="tool-panel" id="previewPanel" style="display:none">
+      <label>预览</label>
+      <div style="text-align:center;padding:12px;background:var(--bg-secondary);border-radius:6px;min-height:100px;display:flex;align-items:center;justify-content:center">
+        <canvas id="previewCanvas" style="max-width:100%;border:1px dashed var(--border-color)"></canvas>
+      </div>
+      <div id="outputInfo" style="margin-top:8px;font-size:13px;color:var(--text-secondary);text-align:center"></div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>点击上传按钮，选择你要缩放或裁剪的图片文件（支持 JPG、PNG、WebP 等格式）</span></div>
+        <div class="step"><span class="step-num">2</span><span>在缩放设置中输入目标宽度和高度，或使用快捷比例按钮快速缩放</span></div>
+        <div class="step"><span class="step-num">3</span><span>点击"缩放图片"查看预览效果，确认无误后点击"下载图片"保存到本地</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>勾选"保持比例"后只需输入宽度或高度之一，另一个尺寸会自动计算，避免图片变形。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>放大图片时（如200%）可能导致画质下降。建议使用原始分辨率较高的图片进行放大操作。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>所有处理完全在浏览器本地完成，图片不会上传到任何服务器，处理大文件也无需担心隐私泄露。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">支持哪些图片格式？</div>
+          <div class="faq-a">支持浏览器可识别的所有常见图片格式，包括 JPG、PNG、WebP、BMP、GIF（静态帧）、SVG 等。下载时默认输出 PNG 格式以保持最佳质量。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">图片大小有限制吗？</div>
+          <div class="faq-a">由于使用 Canvas API 处理，图片尺寸受浏览器限制。一般来说，10000×10000像素以内的图片都能正常处理。超大的图片可能导致浏览器卡顿。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">如何只裁剪图片的一部分？</div>
+          <div class="faq-a">本工具目前支持整图缩放。如需裁剪特定区域，可以先指定目标尺寸并在其他工具中完成裁剪，或使用浏览器的开发者工具手动调整 Canvas 参数。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsor-section">
+      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/image-convert">格式转换</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/base64">Base64</a><a href="/tools/qr-code">二维码</a><a href="/tools/timestamp">时间戳</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span></div>
+  </footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>
+(function(){
+  var imageInput = document.getElementById("imageInput");
+  var imageInfo = document.getElementById("imageInfo");
+  var resizePanel = document.getElementById("resizePanel");
+  var targetWidth = document.getElementById("targetWidth");
+  var targetHeight = document.getElementById("targetHeight");
+  var keepAspect = document.getElementById("keepAspect");
+  var resizeBtn = document.getElementById("resizeBtn");
+  var downloadBtn = document.getElementById("downloadBtn");
+  var resetBtn = document.getElementById("resetBtn");
+  var previewPanel = document.getElementById("previewPanel");
+  var previewCanvas = document.getElementById("previewCanvas");
+  var outputInfo = document.getElementById("outputInfo");
+  var originalImage = null;
+  var originalWidth = 0;
+  var originalHeight = 0;
+
+  imageInput.addEventListener("change", function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    if(!file.type.match(/image\//)){
+      alert("请选择图片文件");
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var img = new Image();
+      img.onload = function(){
+        originalImage = img;
+        originalWidth = img.width;
+        originalHeight = img.height;
+        imageInfo.style.display = "block";
+        imageInfo.textContent = "原始尺寸：" + originalWidth + " × " + originalHeight + " px | 格式：" + file.type + " | 大小：" + (file.size/1024).toFixed(1) + " KB";
+        targetWidth.value = originalWidth;
+        targetHeight.value = originalHeight;
+        resizePanel.style.display = "block";
+        resizeBtn.style.display = "inline-block";
+        resetBtn.style.display = "inline-block";
+        previewPanel.style.display = "none";
+        downloadBtn.style.display = "none";
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  keepAspect.addEventListener("change", function(){
+    if(keepAspect.checked && targetWidth.value){
+      var ratio = originalHeight / originalWidth;
+      targetHeight.value = Math.round(targetWidth.value * ratio);
+    }
+  });
+
+  targetWidth.addEventListener("input", function(){
+    if(keepAspect.checked && targetWidth.value){
+      var ratio = originalHeight / originalWidth;
+      targetHeight.value = Math.round(targetWidth.value * ratio);
+    }
+  });
+
+  targetHeight.addEventListener("input", function(){
+    if(keepAspect.checked && targetHeight.value && targetWidth.value){
+      keepAspect.checked = false;
+    }
+  });
+
+  window.setRatio = function(ratio){
+    if(!originalImage) return;
+    targetWidth.value = Math.round(originalWidth * ratio);
+    if(keepAspect.checked){
+      targetHeight.value = Math.round(originalHeight * ratio);
+    } else {
+      targetHeight.value = Math.round(originalHeight * ratio);
+    }
+  };
+
+  resizeBtn.addEventListener("click", function(){
+    if(!originalImage) return;
+    var w = parseInt(targetWidth.value) || originalWidth;
+    var h = parseInt(targetHeight.value) || originalHeight;
+    if(w < 1 || h < 1){ alert("请输入有效的尺寸"); return; }
+    previewCanvas.width = w;
+    previewCanvas.height = h;
+    var ctx = previewCanvas.getContext("2d");
+    ctx.drawImage(originalImage, 0, 0, w, h);
+    previewPanel.style.display = "block";
+    downloadBtn.style.display = "inline-block";
+    outputInfo.textContent = "输出尺寸：" + w + " × " + h + " px";
+  });
+
+  downloadBtn.addEventListener("click", function(){
+    if(previewCanvas.width === 0) return;
+    var link = document.createElement("a");
+    link.download = "resized-image.png";
+    link.href = previewCanvas.toDataURL("image/png");
+    link.click();
+  });
+
+  resetBtn.addEventListener("click", function(){
+    targetWidth.value = originalWidth;
+    targetHeight.value = originalHeight;
+    previewPanel.style.display = "none";
+    downloadBtn.style.display = "none";
+  });
+})();
+</script>
+</body>
+</html>

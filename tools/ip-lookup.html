@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IP 地址查询 - DevToolsBox</title>
+  <meta name="description" content="在线IP地址查询工具，支持地理位置和ISP信息查询。自动检测当前IP，也可手动查询任意IP地址。免费在线使用。">
+  <meta property="og:title" content="IP 地址查询 - DevToolsBox">
+  <meta property="og:description" content="在线IP地址查询工具，支持地理位置和ISP信息查询。自动检测当前IP，也可手动查询任意IP地址。免费在线使用。">
+  <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/tools/ip-lookup.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DevToolsBox">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="IP 地址查询 - DevToolsBox">
+  <meta name="twitter:description" content="在线IP地址查询工具，支持地理位置和ISP信息查询。自动检测当前IP，也可手动查询任意IP地址。免费在线使用。">
+  <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/tools/ip-lookup.html">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/json-formatter">JSON</a>
+          <a href="/tools/qr-code">二维码</a>
+          <a href="/tools/timestamp">时间戳</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header"><h1>🌐 IP 地址查询</h1><p>在线IP地址查询工具，支持地理位置和ISP信息</p></div>
+    <a href="https://apikey.fun/register?aff=DFWDYXJJCFSW" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<div>
+<span class="promo-tag">推荐</span>
+<div class="promo-title">API Key 中转 — OpenAI / Claude 即开即用</div>
+<div class="promo-desc">国内可直接访问的正规 API 中转，无需翻墙即可使用 GPT-4、Claude 等主流模型</div>
+</div>
+<span class="promo-cta">立即注册</span>
+</a>
+
+    <div class="tool-panel"><label for="ipInput">输入 IP 地址（留空则查询本机IP）</label><input type="text" id="ipInput" placeholder="例如: 8.8.8.8 或留空自动检测..." style="width:100%;padding:10px;border:1px solid var(--border-color);border-radius:6px;font-size:14px;"></div>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="lookupBtn">查询 IP 信息</button>
+      <button class="btn btn-success" id="myIpBtn">查询我的 IP</button>
+      <button class="btn btn-secondary" id="copyIpBtn">复制结果</button>
+      <button class="btn btn-secondary" id="clearIpBtn">清空</button>
+    </div>
+
+    <div class="tool-panel" id="outputPanel" style="display:none">
+      <label id="outputLabel">查询结果</label>
+      <div id="ipResult" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
+        <div class="ip-info-item"><strong>IP 地址</strong><span id="rIp">-</span></div>
+        <div class="ip-info-item"><strong>国家</strong><span id="rCountry">-</span></div>
+        <div class="ip-info-item"><strong>城市</strong><span id="rCity">-</span></div>
+        <div class="ip-info-item"><strong>地区</strong><span id="rRegion">-</span></div>
+        <div class="ip-info-item"><strong>ISP 运营商</strong><span id="rIsp">-</span></div>
+        <div class="ip-info-item"><strong>组织</strong><span id="rOrg">-</span></div>
+        <div class="ip-info-item"><strong>邮编</strong><span id="rPostal">-</span></div>
+        <div class="ip-info-item"><strong>时区</strong><span id="rTimezone">-</span></div>
+        <div class="ip-info-item" style="grid-column:1/-1"><strong>ASN</strong><span id="rAsn">-</span></div>
+      </div>
+    </div>
+
+    <div class="tool-panel" id="loadingPanel" style="display:none;text-align:center;padding:20px;">
+      <span>⏳ 正在查询，请稍候...</span>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>打开页面后会自动检测并显示你当前的公网 IP 地址，点击"查询我的 IP"可随时重新检测</span></div>
+        <div class="step"><span class="step-num">2</span><span>如需查询其他 IP，在输入框中输入目标 IP 地址（如 8.8.8.8），然后点击"查询 IP 信息"</span></div>
+        <div class="step"><span class="step-num">3</span><span>查看返回的详细信息，包括国家、城市、ISP 运营商、组织、ASN 等</span></div>
+        <div class="step"><span class="step-num">4</span><span>点击"复制结果"可将完整的 IP 信息以文本形式复制到剪贴板</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>本工具使用 ipapi.co 免费 API，查询国内 IP 可能返回的 ISP 信息更为详细。支持 IPv4 和 IPv6 地址查询。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>如果你使用代理或 VPN，检测到的 IP 地址会是你代理服务器的地址，而非你的真实 IP。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>IP 地理位置查询的精度通常在城市级别，无法精准定位到具体街道地址。各 API 服务商的数据库也会有差异。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">IP 地址能精确定位到我的家庭地址吗？</div>
+          <div class="faq-a">不能。公共 IP 地理位置查询的精度一般只能到城市级别，无法精确定位到具体街道或门牌号。只有运营商和执法部门拥有更精确的数据。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">查询 IP 地址会泄露我的隐私吗？</div>
+          <div class="faq-a">本工具通过 ipapi.co 的 API 查询 IP 信息，API 调用过程中你的 IP 会被用于查询。但查询结果只返回公开可获取的地理位置和 ISP 信息，不会泄露个人身份信息。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">为什么我的 IP 显示在其他城市？</div>
+          <div class="faq-a">IP 地理位置数据库由各 ISP 和第三方维护，可能存在延迟更新。如果你使用了 VPN、代理或移动网络，显示的可能是你接入点的位置而非实际位置。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsor-section">
+      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/image-convert">格式转换</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/base64">Base64</a><a href="/tools/qr-code">二维码</a><a href="/tools/timestamp">时间戳</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span></div>
+  </footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>(function(){
+var ipInput=document.getElementById("ipInput");
+var outputPanel=document.getElementById("outputPanel");
+var loadingPanel=document.getElementById("loadingPanel");
+var copyBtn=document.getElementById("copyIpBtn");
+var lastResult=null;
+
+function showLoading(){loadingPanel.style.display="block";outputPanel.style.display="none";}
+function hideLoading(){loadingPanel.style.display="none";}
+
+function renderResult(data){
+  document.getElementById("rIp").textContent=data.ip||"-";
+  document.getElementById("rCountry").textContent=(data.country_name||"-")+" "+(data.country_code||"");
+  document.getElementById("rCity").textContent=data.city||"-";
+  document.getElementById("rRegion").textContent=data.region||"-";
+  document.getElementById("rIsp").textContent=data.org||"-";
+  document.getElementById("rOrg").textContent=data.org||"-";
+  document.getElementById("rPostal").textContent=data.postal||"-";
+  document.getElementById("rTimezone").textContent=data.timezone||"-";
+  document.getElementById("rAsn").textContent=(data.asn||"-")+" / "+(data.asn_org||"-");
+  document.getElementById("outputLabel").textContent="查询结果 — "+data.ip;
+  lastResult=data;
+  outputPanel.style.display="block";
+}
+
+function queryIp(ip){
+  showLoading();
+  var url=ip?"https://ipapi.co/"+encodeURIComponent(ip)+"/json/":"https://ipapi.co/json/";
+  fetch(url).then(function(r){return r.json();}).then(function(data){
+    hideLoading();
+    if(data.error){alert("查询失败: "+(data.reason||data.error));return;}
+    if(ip){ipInput.value=data.ip;}
+    renderResult(data);
+  }).catch(function(e){
+    hideLoading();
+    alert("网络请求失败: "+e.message+"\n请检查网络连接后重试。");
+  });
+}
+
+document.getElementById("lookupBtn").addEventListener("click",function(){
+  var ip=ipInput.value.trim();
+  if(!ip){alert("请输入要查询的 IP 地址，或点击"查询我的 IP"自动检测");return;}
+  queryIp(ip);
+});
+
+document.getElementById("myIpBtn").addEventListener("click",function(){
+  ipInput.value="";
+  queryIp(null);
+});
+
+copyBtn.addEventListener("click",function(){
+  if(!lastResult){alert("没有可复制的内容，请先执行查询");return;}
+  var lines=[
+    "IP 地址: "+lastResult.ip,
+    "国家: "+lastResult.country_name+" ("+lastResult.country_code+")",
+    "城市: "+lastResult.city,
+    "地区: "+lastResult.region,
+    "ISP 运营商: "+lastResult.org,
+    "邮编: "+lastResult.postal,
+    "时区: "+lastResult.timezone,
+    "ASN: "+lastResult.asn_org+" ("+lastResult.asn+")"
+  ].join("\n");
+  navigator.clipboard.writeText(lines).then(function(){
+    copyBtn.textContent="已复制 ✓";
+    setTimeout(function(){copyBtn.textContent="复制结果"},1500);
+  });
+});
+
+document.getElementById("clearIpBtn").addEventListener("click",function(){
+  ipInput.value="";
+  outputPanel.style.display="none";
+  lastResult=null;
+});
+
+// 页面加载时自动查询本机IP
+queryIp(null);
+})();</script>
+</body>
+</html>

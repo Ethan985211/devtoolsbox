@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown 转 HTML - DevToolsBox</title>
+  <meta name="description" content="在线Markdown转HTML工具，支持实时预览。将Markdown文本转换为干净的HTML代码。免费在线使用。">
+  <meta property="og:title" content="Markdown 转 HTML - DevToolsBox">
+  <meta property="og:description" content="在线Markdown转HTML工具，支持实时预览。将Markdown文本转换为干净的HTML代码。免费在线使用。">
+  <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/tools/markdown-to-html.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DevToolsBox">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Markdown 转 HTML - DevToolsBox">
+  <meta name="twitter:description" content="在线Markdown转HTML工具，支持实时预览。将Markdown文本转换为干净的HTML代码。免费在线使用。">
+  <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/tools/markdown-to-html.html">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links">
+          <a href="/">首页</a>
+          <a href="/tools/json-formatter">JSON</a>
+          <a href="/tools/qr-code">二维码</a>
+          <a href="/tools/timestamp">时间戳</a>
+        </nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-header"><h1>📝 Markdown 转 HTML</h1><p>在线将 Markdown 文本转换为 HTML 代码，支持实时预览和代码复制</p></div>
+    <a href="https://www.aliyun.com/minisite/goods?source=5176.29345612&userCode=xqdanc4i" class="promo-banner" target="_blank" rel="nofollow sponsored">
+<div>
+<span class="promo-tag">推荐</span>
+<div class="promo-title">阿里云服务器 — 开发者的云端选择</div>
+<div class="promo-desc">国内领先的云计算服务，稳定可靠。云服务器低至0.4折，适合部署个人项目或企业应用</div>
+</div>
+<span class="promo-cta">立即购买</span>
+</a>
+
+    <div class="tool-panel"><label for="markdownInput">Markdown 输入</label><textarea id="markdownInput" placeholder="在此输入 Markdown 文本..." rows="10"></textarea></div>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" id="convertBtn">转换为 HTML</button>
+      <button class="btn btn-success" id="copyHtmlBtn">复制 HTML 代码</button>
+      <button class="btn btn-secondary" id="copyPreviewBtn">复制预览文本</button>
+      <button class="btn btn-secondary" id="clearBtn">清空</button>
+      <button class="btn btn-secondary" id="sampleBtn">加载示例</button>
+    </div>
+
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div class="tool-panel" id="htmlPanel" style="display:none;flex:1;min-width:280px">
+        <label id="htmlLabel">HTML 代码</label>
+        <pre class="code-output" id="htmlOutput" style="white-space:pre-wrap;word-break:break-all"></pre>
+      </div>
+      <div class="tool-panel" id="previewPanel" style="display:none;flex:1;min-width:280px">
+        <label>HTML 预览</label>
+        <div id="previewOutput" class="md-preview" style="padding:12px;background:var(--bg-secondary);border-radius:6px;min-height:100px;overflow:auto;max-height:500px"></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用方法</h2>
+      <div class="steps">
+        <div class="step"><span class="step-num">1</span><span>在 Markdown 输入框中粘贴或输入你要转换的 Markdown 文本</span></div>
+        <div class="step"><span class="step-num">2</span><span>点击"转换为 HTML"按钮，右侧会同时显示生成的 HTML 代码和实时预览效果</span></div>
+        <div class="step"><span class="step-num">3</span><span>点击"复制 HTML 代码"将 HTML 代码复制到剪贴板，可直接粘贴到网页中使用</span></div>
+        <div class="step"><span class="step-num">4</span><span>如需查看纯文本格式的预览内容，可点击"复制预览文本"按钮</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>使用技巧</h2>
+      <div class="tips">
+        <div class="tip-item"><span class="tip-icon">💡</span><span>支持 GFM（GitHub Flavored Markdown）语法，包括表格、任务列表、删除线等扩展语法。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>生成的 HTML 不包含 <code>&lt;html&gt;</code>、<code>&lt;head&gt;</code>、<code>&lt;body&gt;</code> 等标签，适合直接嵌入已有网页内容区域。</span></div>
+        <div class="tip-item"><span class="tip-icon">💡</span><span>点击"加载示例"可以快速查看本工具支持的 Markdown 语法效果，方便对比学习。</span></div>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h2>常见问题</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">生成的 HTML 安全吗？</div>
+          <div class="faq-a">marked.js 默认会对 HTML 标签进行转义，防止 XSS 攻击。原始 Markdown 中的 HTML 代码会被安全处理。如需嵌入原始 HTML，请自行添加 sanitize 配置。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">支持哪些 Markdown 语法？</div>
+          <div class="faq-a">支持标准 Markdown 语法和 GFM 扩展，包括标题、粗斜体、链接、图片、列表、代码块、表格、任务列表、删除线、引用、分割线等。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">数据会上传到服务器吗？</div>
+          <div class="faq-a">不会。所有转换运算都在浏览器本地完成，Markdown 内容不会离开你的设备。marked.js 通过 CDN 加载后纯前端运行。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsor-section">
+      <h3>如果这些工具对你有帮助</h3><p>请我喝杯咖啡，支持我开发更多免费工具</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/image-convert">格式转换</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/base64">Base64</a><a href="/tools/qr-code">二维码</a><a href="/tools/timestamp">时间戳</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span></div>
+  </footer>
+
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+<script>
+(function(){
+  var mdInput = document.getElementById("markdownInput");
+  var htmlOutput = document.getElementById("htmlOutput");
+  var htmlPanel = document.getElementById("htmlPanel");
+  var previewOutput = document.getElementById("previewOutput");
+  var previewPanel = document.getElementById("previewPanel");
+  var copyHtmlBtn = document.getElementById("copyHtmlBtn");
+  var copyPreviewBtn = document.getElementById("copyPreviewBtn");
+
+  var sampleMd = '# Markdown 示例\n\n## 二级标题\n\n**粗体** 和 *斜体* 文本\n\n- 列表项 1\n- 列表项 2\n- [链接示例](https://example.com)\n\n```javascript\nconsole.log("代码块");\n```\n\n> 引用文本\n\n| 表格 | 示例 |\n|------|------|\n| 行1  | 值1  |\n\n- [x] 任务列表\n- [ ] 待办事项';
+
+  document.getElementById("convertBtn").addEventListener("click", function(){
+    var md = mdInput.value;
+    if(!md.trim()){ alert("请先输入 Markdown 内容"); return; }
+    try {
+      var html = marked.parse(md);
+      htmlOutput.textContent = html;
+      previewOutput.innerHTML = html;
+      htmlPanel.style.display = "block";
+      previewPanel.style.display = "block";
+    } catch(e){
+      alert("转换失败：" + e.message);
+    }
+  });
+
+  copyHtmlBtn.addEventListener("click", function(){
+    if(!htmlOutput.textContent){ alert("请先转换 Markdown"); return; }
+    navigator.clipboard.writeText(htmlOutput.textContent).then(function(){
+      copyHtmlBtn.textContent = "已复制 ✓";
+      setTimeout(function(){ copyHtmlBtn.textContent = "复制 HTML 代码"; }, 1500);
+    });
+  });
+
+  copyPreviewBtn.addEventListener("click", function(){
+    if(!previewOutput.textContent){ alert("请先转换 Markdown"); return; }
+    var text = previewOutput.innerText;
+    navigator.clipboard.writeText(text).then(function(){
+      copyPreviewBtn.textContent = "已复制 ✓";
+      setTimeout(function(){ copyPreviewBtn.textContent = "复制预览文本"; }, 1500);
+    });
+  });
+
+  document.getElementById("clearBtn").addEventListener("click", function(){
+    mdInput.value = "";
+    htmlOutput.textContent = "";
+    previewOutput.innerHTML = "";
+    htmlPanel.style.display = "none";
+    previewPanel.style.display = "none";
+  });
+
+  document.getElementById("sampleBtn").addEventListener("click", function(){
+    mdInput.value = sampleMd;
+  });
+})();
+</script>
+</body>
+</html>
