@@ -126,14 +126,14 @@
       <h3>健康检查</h3>
       <div class="endpoint">
         <span class="method get">GET</span>
-        <code>https://devtoolsbox-1rl.pages.dev/api/ocr-health</code>
+        <code>/api/ocr-health</code>
       </div>
       <div class="code-block">curl https://devtoolsbox-1rl.pages.dev/api/ocr-health</div>
 
       <h3>图片识别</h3>
       <div class="endpoint">
         <span class="method post">POST</span>
-        <code>https://devtoolsbox-1rl.pages.dev/api/ocr</code>
+        <code>/api/ocr</code>
       </div>
       <p><strong>Headers:</strong></p>
       <div class="code-block">Content-Type: application/json
@@ -239,7 +239,7 @@ console.log(data.text);</div>
         <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
       </div>
     </div>
-    <div class="footer-bottom"><span>© 2025 DevToolsBox · 数据本地处理 · 零收集</span></div>
+    <div class="footer-bottom"><span>© 2026 DevToolsBox · 数据本地处理 · 零收集</span></div>
   </footer>
 
 <script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
@@ -252,7 +252,7 @@ function copyKey() {
   });
 }
 // Check API health
-fetch('https://devtoolsbox-1rl.pages.dev/api/ocr-health')
+fetch('/api/ocr-health')
   .then(function(r) { return r.json(); })
   .then(function(d) {
     if (d.status === 'ok') {
