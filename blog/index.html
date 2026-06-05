@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevToolsBox 博客 — 开发者工具指南与技巧</title>
+  <meta name="description" content="DevToolsBox 官方博客，分享开发者工具使用技巧、在线工具推荐、独立开发经验。22款免费在线工具，数据本地处理零收集。">
+  <meta property="og:title" content="DevToolsBox 博客 — 开发者工具指南与技巧">
+  <meta property="og:description" content="DevToolsBox 官方博客，分享开发者工具使用技巧、在线工具推荐、独立开发经验。22款免费在线工具，数据本地处理零收集。">
+  <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/blog/">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/blog/">
+  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .blog-list { max-width: 800px; margin: 0 auto; padding: 20px 40px 60px; }
+    .blog-card { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 20px; text-decoration: none; color: var(--text); transition: all 200ms ease; }
+    .blog-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--accent); }
+    .blog-card h2 { margin: 0 0 8px; font-size: 1.25rem; color: var(--accent); }
+    .blog-card .blog-date { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 10px; }
+    .blog-card p { margin: 0; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+    .blog-card .blog-tags { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .blog-card .blog-tag { font-size: 0.78rem; padding: 3px 10px; border-radius: 12px; background: var(--accent); color: #fff; opacity: 0.85; }
+    .blog-hero { text-align: center; padding: 40px 20px 20px; }
+    .blog-hero h1 { font-size: 2rem; margin-bottom: 8px; }
+    .blog-hero p { color: var(--text-secondary); font-size: 1.05rem; }
+    @media (max-width: 640px) { .blog-list { padding: 10px 16px 40px; } .blog-card { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
+      <div style="display:flex;align-items:center;">
+        <nav class="navbar-links"><a href="/">首页</a><a href="/blog/">博客</a><a href="/tools/products">产品</a></nav>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="blog-hero"><h1>DevToolsBox 博客</h1><p>开发者工具使用指南 · 独立开发经验 · 效率提升技巧</p></div>
+    <div class="blog-list">
+      <a href="/blog/22-free-developer-tools-2026" class="blog-card">
+        <h2>2026年开发者必备的22款免费在线工具</h2>
+        <div class="blog-date">2026-06-05</div>
+        <p>整理22款经过实际验证的免费在线开发工具，覆盖PDF处理、图片编辑、编码解码、格式转换等场景。所有工具纯前端运行，数据不上传服务器。</p>
+        <div class="blog-tags"><span class="blog-tag">工具推荐</span><span class="blog-tag">效率</span></div>
+      </a>
+      <a href="/blog/pdf-online-tools-guide" class="blog-card">
+        <h2>PDF在线处理完全指南：合并、拆分、提取文字一次搞懂</h2>
+        <div class="blog-date">2026-06-04</div>
+        <p>告别安装臃肿的PDF软件。本文详细介绍浏览器端的PDF合并、拆分、文本提取三大核心操作，以及背后的技术原理。</p>
+        <div class="blog-tags"><span class="blog-tag">PDF</span><span class="blog-tag">教程</span></div>
+      </a>
+      <a href="/blog/frontend-encode-decode-tools" class="blog-card">
+        <h2>前端开发必备：10个在线编码解码工具大合集</h2>
+        <div class="blog-date">2026-06-03</div>
+        <p>Base64、URL编码、HTML实体、Unicode转换……前端开发中频繁遇到的编码格式，一个工具站全搞定。附带各编码的应用场景说明。</p>
+        <div class="blog-tags"><span class="blog-tag">前端</span><span class="blog-tag">编码</span></div>
+      </a>
+      <a href="/blog/image-tools-comparison" class="blog-card">
+        <h2>图片在线处理工具对比：压缩、格式转换、缩放哪个适合你</h2>
+        <div class="blog-date">2026-06-02</div>
+        <p>详细对比各种在线图片处理方案，从压缩质量到格式兼容性，帮你选出最适合日常开发需求的图片处理工作流。</p>
+        <div class="blog-tags"><span class="blog-tag">图片</span><span class="blog-tag">对比</span></div>
+      </a>
+      <a href="/blog/build-free-tool-site" class="blog-card">
+        <h2>独立开发者如何零成本搭建一个在线工具箱并实现盈利</h2>
+        <div class="blog-date">2026-06-01</div>
+        <p>从零搭建DevToolsBox的完整复盘：技术选型、部署方案、SEO优化、变现思路。Cloudflare Pages零成本托管，联盟营销+打赏模式。</p>
+        <div class="blog-tags"><span class="blog-tag">独立开发</span><span class="blog-tag">经验</span></div>
+      </a>
+    </div>
+    <div class="sponsor-section">
+      <h3>如果这些内容对你有帮助</h3><p>请我喝杯咖啡，支持我持续输出更多优质内容</p>
+      <div class="sponsor-qrcodes">
+        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
+        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-links">
+        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/qr-code">二维码</a><a href="/tools/base64">Base64</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 DevToolsBox · 数据本地处理 · 零收集</span></div>
+  </footer>
+<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+</body>
+</html>

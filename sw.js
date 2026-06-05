@@ -1,4 +1,4 @@
-const CACHE = 'devtoolsbox-v3';
+const CACHE = 'devtoolsbox-v4';
 const ASSETS = [
   '/',
   '/css/style.css',
