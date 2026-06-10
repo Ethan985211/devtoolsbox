@@ -3,361 +3,511 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ethan 的博客 — 技术分享与独立开发</title>
-  <meta name="description" content="Ethan Jiang 的个人博客。分享独立开发经验、前端技术、云服务实践和开发者工具链。写给我自己，也写给同在路上的独立开发者。">
-  <meta property="og:title" content="Ethan 的博客 — 技术分享与独立开发">
-  <meta property="og:description" content="Ethan Jiang 的个人博客。分享独立开发经验、前端技术、云服务实践和开发者工具链。">
+  <title>Ethan Jiang — 全栈开发者</title>
+  <meta name="description" content="Ethan Jiang 的个人网站。全栈开发者，独立开发，技术分享。">
+  <meta property="og:title" content="Ethan Jiang — 全栈开发者">
+  <meta property="og:description" content="Ethan Jiang 的个人网站。全栈开发者，独立开发，技术分享。">
   <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/blog/">
   <meta property="og:type" content="website">
   <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/blog/">
-  <link rel="alternate" type="application/rss+xml" title="Ethan 的博客 RSS" href="https://devtoolsbox-1rl.pages.dev/blog/feed.xml">
-  <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* ═════════════════════════════════════════════════
-       Ethan's Blog — Dark Tech Aesthetic
-       Independent from global theme toggle
-       ═════════════════════════════════════════════════ */
-
-    /* ── Page-level dark override ── */
-    body { background: #08080d; }
-
-    /* ── Hero ── */
-    .blog-hero {
-      position: relative;
-      text-align: center;
-      padding: 100px 20px 60px;
-      background: linear-gradient(180deg, #0a0a14 0%, #08080d 100%);
-      overflow: hidden;
-    }
-    /* Subtle dot grid overlay */
-    .blog-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle, rgba(129,140,248,0.06) 1px, transparent 1px);
-      background-size: 24px 24px;
-      pointer-events: none;
-    }
-    /* Top accent gradient bar */
-    .blog-hero::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(129,140,248,0.4), transparent);
-    }
-    .blog-hero h1 {
-      position: relative;
-      font-size: clamp(2.2rem, 4vw, 3rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: #e4e4ec;
-      margin: 0 0 14px;
-    }
-    .blog-hero h1 .accent-dot {
-      color: #818cf8;
-    }
-    .blog-hero .subtitle {
-      position: relative;
-      font-size: 1.05rem;
-      color: #9494a8;
-      line-height: 1.8;
-      max-width: 560px;
-      margin: 0 auto;
-    }
-    .blog-hero .blogger-line {
-      position: relative;
-      margin-top: 22px;
-      font-size: 0.9rem;
-      color: #5c5c72;
-    }
-    .blog-hero .blogger-line a {
-      color: #818cf8;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-    .blog-hero .blogger-line a:hover { color: #a5b4fc; }
-
-    /* ── Stats bar ── */
-    .blog-stats {
-      text-align: center;
-      padding: 10px 20px 40px;
-      background: #08080d;
-    }
-    .blog-stats .stat-pill {
-      display: inline-block;
-      padding: 5px 16px;
-      margin: 0 6px 8px;
-      font-size: 0.82rem;
-      color: #9494a8;
-      background: #0f0f1a;
-      border: 1px solid #1e1e30;
-      border-radius: 20px;
-    }
-    .blog-stats .stat-pill strong {
-      color: #c4c4d4;
-      font-weight: 600;
+    /* ═══════════════════════════════════════════
+       Portfolio Dark Theme —独立暗色体系
+       ═══════════════════════════════════════════ */
+    .portfolio-root {
+      --pf-base: #08080d;
+      --pf-surface: #0d0d18;
+      --pf-surface2: #12121f;
+      --pf-surface3: #181827;
+      --pf-border: #1a1a2e;
+      --pf-border-light: #252540;
+      --pf-text: #e4e4ec;
+      --pf-text2: #9494a8;
+      --pf-text3: #5c5c72;
+      --pf-accent: #818cf8;
+      --pf-accent-dim: #6366f1;
+      --pf-accent-glow: rgba(129,140,248,0.12);
+      --pf-radius: 10px;
+      --pf-radius-lg: 16px;
+      --pf-radius-xl: 24px;
+      --pf-ease: cubic-bezier(0.16,1,0.3,1);
+      --pf-max: 1700px;
+      background: var(--pf-base) !important;
+      color: var(--pf-text) !important;
+      font-family: -apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
-    /* ── Blog list ── */
-    .blog-list {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 0 40px 80px;
-      background: #08080d;
-    }
-    .blog-card {
-      display: block;
-      position: relative;
-      background: #0d0d18;
-      border: 1px solid #1a1a2e;
-      border-radius: 12px;
-      padding: 28px 32px;
-      margin-bottom: 16px;
-      text-decoration: none;
-      color: #e4e4ec;
-      transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
-      overflow: hidden;
-    }
-    /* Left accent line */
-    .blog-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 16px; bottom: 16px;
-      width: 3px;
-      border-radius: 0 3px 3px 0;
-      background: #818cf8;
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-    .blog-card:hover {
-      background: #111122;
-      border-color: #2a2a44;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(129,140,248,0.08);
-    }
-    .blog-card:hover::before { opacity: 1; }
-    .blog-card h2 {
-      margin: 0 0 8px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #c4c4ec;
-      letter-spacing: -0.01em;
-      transition: color 0.25s;
-    }
-    .blog-card:hover h2 { color: #818cf8; }
-    .blog-card .blog-date {
-      font-size: 0.82rem;
-      color: #5c5c72;
-      margin-bottom: 10px;
-      font-variant-numeric: tabular-nums;
-    }
-    .blog-card p {
-      margin: 0;
-      color: #78789e;
-      font-size: 0.92rem;
-      line-height: 1.7;
-    }
-    .blog-card .blog-tags {
-      margin-top: 14px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .blog-card .blog-tag {
-      font-size: 0.75rem;
-      font-weight: 500;
-      padding: 3px 12px;
-      border-radius: 14px;
-      background: rgba(129,140,248,0.1);
-      color: #a5b4fc;
-      border: 1px solid rgba(129,140,248,0.15);
-      transition: all 0.2s;
-    }
-    .blog-card:hover .blog-tag {
-      background: rgba(129,140,248,0.18);
-      border-color: rgba(129,140,248,0.3);
+    /* ── Grid texture ── */
+    .pf-grid-texture {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(129,140,248,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(129,140,248,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
     }
 
-    /* ── Sponsor ── */
-    .sponsor-section {
-      text-align: center;
-      padding: 60px 20px 64px;
-      background: #0a0a14;
-      border-top: 1px solid #1a1a2e;
-      border-bottom: 1px solid #1a1a2e;
-    }
-    .sponsor-section h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #e4e4ec;
-      margin: 0 0 8px;
-      letter-spacing: -0.01em;
-    }
-    .sponsor-section p {
-      color: #78789e;
-      font-size: 0.9rem;
-      margin: 0 0 28px;
-    }
-    .sponsor-qrcodes {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-    .sponsor-qr {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-    .sponsor-qr img {
-      width: 130px;
-      height: 130px;
-      border-radius: 10px;
-      border: 1px solid #1e1e30;
-      filter: brightness(0.92);
-    }
-    .sponsor-qr span {
-      font-size: 0.82rem;
-      color: #5c5c72;
-    }
+    /* ── Section skeleton ── */
+    .pf-section { padding: 140px 0; position: relative; }
+    .pf-container { max-width: var(--pf-max); margin: 0 auto; padding: 0 60px; }
+    .pf-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--pf-accent); margin-bottom: 12px; }
+    .pf-title { font-size: clamp(2.2rem, 3.5vw, 2.8rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 20px; }
+    .pf-sub { font-size: 1.1rem; color: var(--pf-text2); max-width: 560px; line-height: 1.7; }
 
-    /* ── Footer (dark override; site-footer is shared) ── */
-    .site-footer {
-      background: #08080d !important;
-      border-top: 1px solid #1a1a2e !important;
-    }
-    .site-footer, .site-footer h5, .site-footer a, .site-footer span,
-    .site-footer .footer-brand, .site-footer .footer-bottom {
-      color: #9494a8 !important;
-    }
-    .site-footer a:hover { color: #818cf8 !important; }
-    .site-footer h5 { color: #5c5c72 !important; }
-    .site-footer .footer-brand strong { color: #e4e4ec !important; }
-    .site-footer .footer-bottom { border-top-color: #1a1a2e !important; }
-    .footer-inner { border-bottom: 1px solid #1a1a2e !important; }
+    /* ── Scroll reveal ── */
+    .pf-reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--pf-ease), transform 0.8s var(--pf-ease); }
+    .pf-reveal.visible { opacity: 1; transform: translateY(0); }
 
-    /* ── Navbar dark backdrop for this page ── */
-    .navbar {
-      background: rgba(8,8,13,0.85) !important;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid #1a1a2e !important;
+    /* ═══════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════ */
+    .pf-hero {
+      position: relative; min-height: 100vh; display: flex; align-items: center;
+      overflow: hidden; background: var(--pf-base);
     }
+    .pf-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 30% 45%, rgba(99,102,241,0.08) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 40% at 70% 50%, rgba(129,140,248,0.05) 0%, transparent 70%);
+    }
+    .pf-hero .pf-orb {
+      position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15;
+    }
+    .pf-orb-1 { width: 500px; height: 500px; background: var(--pf-accent-dim); top: -10%; left: 10%; }
+    .pf-orb-2 { width: 350px; height: 350px; background: #7c3aed; bottom: 0; right: 5%; }
+    .pf-hero-content { position: relative; z-index: 2; max-width: var(--pf-max); margin: 0 auto; padding: 0 60px; width: 100%; }
+    .pf-hero-eyebrow { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.2em; color: var(--pf-accent); margin-bottom: 24px; }
+    .pf-hero-title { font-size: clamp(4rem, 7vw, 7rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 24px; }
+    .pf-hero-dot { color: var(--pf-accent); }
+    .pf-hero-sub { font-size: clamp(1.05rem, 1.4vw, 1.25rem); color: var(--pf-text2); max-width: 600px; line-height: 1.8; margin-bottom: 48px; }
+    .pf-hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+    .pf-btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; background: var(--pf-accent-dim); color: #fff; font-size: 0.95rem; font-weight: 600; border-radius: var(--pf-radius); border: 1px solid transparent; text-decoration: none; transition: all 0.3s var(--pf-ease); }
+    .pf-btn-primary:hover { background: var(--pf-accent); box-shadow: 0 0 30px var(--pf-accent-glow); color: #fff; }
+    .pf-btn-outline { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; background: transparent; color: var(--pf-text); font-size: 0.95rem; font-weight: 600; border-radius: var(--pf-radius); border: 1px solid var(--pf-border-light); text-decoration: none; transition: all 0.3s var(--pf-ease); }
+    .pf-btn-outline:hover { border-color: var(--pf-accent); color: var(--pf-accent); }
+    .pf-scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--pf-text3); font-size: 0.75rem; letter-spacing: 0.1em; }
+    .pf-scroll-line { width: 1px; height: 40px; background: linear-gradient(180deg, var(--pf-accent-dim), transparent); animation: pf-scroll-pulse 2s ease-in-out infinite; }
+    @keyframes pf-scroll-pulse { 0%,100% { opacity: 0.4; transform: scaleY(1); } 50% { opacity: 1; transform: scaleY(1.3); } }
 
+    /* ═══════════════════════════════════════════
+       ABOUT
+       ═══════════════════════════════════════════ */
+    .pf-about { background: var(--pf-base); }
+    .pf-about-grid { display: grid; grid-template-columns: 320px 1fr; gap: 80px; align-items: center; }
+    .pf-avatar-wrap { position: relative; width: 260px; height: 260px; margin: 0 auto; }
+    .pf-avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--pf-surface2); border: 1px solid var(--pf-border-light); display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; overflow: hidden; }
+    .pf-avatar-placeholder { width: 100%; height: 100%; background: radial-gradient(circle at 40% 35%, var(--pf-accent-dim) 0%, transparent 60%), var(--pf-surface2); display: flex; align-items: center; justify-content: center; font-size: 2.8rem; font-weight: 700; color: var(--pf-text); letter-spacing: 0.04em; }
+    .pf-avatar-glow { position: absolute; inset: -3px; border-radius: 50%; background: var(--pf-accent-dim); opacity: 0.08; filter: blur(20px); z-index: 0; }
+    .pf-stats-bar { display: flex; gap: 48px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--pf-border); }
+    .pf-stat-val { display: block; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+    .pf-stat-lbl { display: block; font-size: 0.82rem; color: var(--pf-text3); margin-top: 4px; }
+    .pf-about-links { display: flex; gap: 24px; margin-top: 28px; flex-wrap: wrap; }
+    .pf-about-link { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; color: var(--pf-text2); text-decoration: none; transition: color 0.15s; }
+    .pf-about-link:hover { color: var(--pf-accent); }
+    .pf-about-link svg { opacity: 0.6; }
+
+    /* ═══════════════════════════════════════════
+       BLOG
+       ═══════════════════════════════════════════ */
+    .pf-blog { background: var(--pf-surface); }
+    .pf-blog-list { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+    .pf-blog-card {
+      display: block; position: relative; background: var(--pf-surface2); border: 1px solid var(--pf-border);
+      border-radius: var(--pf-radius-lg); padding: 28px 32px 28px 36px; text-decoration: none; color: var(--pf-text);
+      transition: all 0.25s var(--pf-ease); overflow: hidden;
+    }
+    .pf-blog-card::before {
+      content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 3px;
+      background: var(--pf-accent); border-radius: 0 2px 2px 0; opacity: 0;
+      transition: opacity 0.25s var(--pf-ease);
+    }
+    .pf-blog-card:hover { background: var(--pf-surface3); border-color: var(--pf-border-light); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+    .pf-blog-card:hover::before { opacity: 1; }
+    .pf-blog-card:hover .pf-blog-title { color: var(--pf-accent); }
+    .pf-blog-title { font-size: 1.15rem; font-weight: 600; margin: 0 0 6px; transition: color 0.25s; }
+    .pf-blog-date { font-size: 0.82rem; color: var(--pf-text3); margin-bottom: 8px; }
+    .pf-blog-desc { margin: 0; color: var(--pf-text2); font-size: 0.92rem; line-height: 1.65; }
+    .pf-blog-tags { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .pf-blog-tag { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; background: rgba(129,140,248,0.1); border: 1px solid rgba(129,140,248,0.2); color: var(--pf-accent); }
+
+    /* ═══════════════════════════════════════════
+       PROJECTS
+       ═══════════════════════════════════════════ */
+    .pf-projects { background: var(--pf-base); }
+    .pf-projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+    .pf-project-card {
+      position: relative; background: var(--pf-surface2); border: 1px solid var(--pf-border);
+      border-radius: var(--pf-radius-xl); overflow: hidden; text-decoration: none; color: inherit;
+      transition: all 0.4s var(--pf-ease); display: flex; flex-direction: column;
+    }
+    .pf-project-card:hover { border-color: var(--pf-accent-dim); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .pf-project-thumb { width: 100%; aspect-ratio: 16/9; overflow: hidden; border-bottom: 1px solid var(--pf-border); position: relative; }
+    .pf-project-thumb-bg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform 0.5s var(--pf-ease); }
+    .pf-project-card:hover .pf-project-thumb-bg { transform: scale(1.05); }
+    .pf-project-thumb-icon { font-size: 3.5rem; font-weight: 800; opacity: 0.2; }
+    .pf-project-info { padding: 28px 32px 32px; flex: 1; display: flex; flex-direction: column; }
+    .pf-project-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .pf-project-desc { font-size: 0.9rem; color: var(--pf-text2); line-height: 1.7; flex: 1; margin-bottom: 18px; }
+    .pf-project-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pf-project-tag { font-size: 0.75rem; padding: 4px 12px; background: var(--pf-surface3); border: 1px solid var(--pf-border); border-radius: 20px; color: var(--pf-text3); }
+
+    /* ═══════════════════════════════════════════
+       STRENGTHS
+       ═══════════════════════════════════════════ */
+    .pf-strengths { background: var(--pf-surface); }
+    .pf-strengths-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .pf-str-card {
+      background: var(--pf-surface2); border: 1px solid var(--pf-border); border-radius: var(--pf-radius-lg);
+      padding: 32px 28px; position: relative; overflow: hidden; transition: all 0.35s var(--pf-ease);
+    }
+    .pf-str-card::before {
+      content: ''; position: absolute; inset: 0; border-radius: var(--pf-radius-lg);
+      background: radial-gradient(400px circle at 50% 0%, var(--pf-accent-glow), transparent 70%);
+      opacity: 0; transition: opacity 0.35s var(--pf-ease);
+    }
+    .pf-str-card:hover { border-color: var(--pf-border-light); transform: translateY(-2px); }
+    .pf-str-card:hover::before { opacity: 1; }
+    .pf-str-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: var(--pf-surface3); border-radius: var(--pf-radius); margin-bottom: 20px; color: var(--pf-accent); position: relative; z-index: 1; }
+    .pf-str-name { font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; position: relative; z-index: 1; }
+    .pf-str-desc { font-size: 0.86rem; color: var(--pf-text2); line-height: 1.7; position: relative; z-index: 1; }
+
+    /* ═══════════════════════════════════════════
+       CONTACT
+       ═══════════════════════════════════════════ */
+    .pf-contact { position: relative; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 140px 60px 0; background: var(--pf-base); }
+    .pf-contact .pf-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.05; }
+    .pf-contact .pf-orb-1 { width: 600px; height: 600px; background: var(--pf-accent-dim); top: 20%; left: -10%; }
+    .pf-contact .pf-orb-2 { width: 400px; height: 400px; background: #7c3aed; bottom: 10%; right: -5%; }
+    .pf-contact-inner { position: relative; z-index: 1; text-align: center; max-width: 680px; }
+    .pf-contact-title { font-size: clamp(3rem, 5vw, 5rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 20px; }
+    .pf-contact-sub { font-size: 1.1rem; color: var(--pf-text2); line-height: 1.8; margin-bottom: 48px; }
+    .pf-contact-cta { margin-bottom: 64px; }
+    .pf-contact-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 80px; }
+    .pf-contact-links a { font-size: 0.95rem; color: var(--pf-text2); text-decoration: none; transition: color 0.15s; }
+    .pf-contact-links a:hover { color: var(--pf-accent); }
+    .pf-contact-sep { color: var(--pf-text3); }
+    .pf-contact-footer { position: relative; z-index: 1; width: 100%; max-width: var(--pf-max); padding: 24px 0; display: flex; justify-content: space-between; color: var(--pf-text3); font-size: 0.8rem; border-top: 1px solid var(--pf-border); margin-top: auto; }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .pf-about-grid { grid-template-columns: 1fr; gap: 50px; }
+      .pf-avatar-wrap { width: 180px; height: 180px; }
+      .pf-projects-grid { grid-template-columns: 1fr; }
+      .pf-strengths-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 640px) {
-      .blog-list { padding: 0 16px 60px; }
-      .blog-card { padding: 22px 20px; }
-      .blog-hero { padding: 70px 16px 40px; }
-      .blog-hero h1 { font-size: 1.8rem; }
-      .sponsor-qrcodes { gap: 24px; }
+      .pf-container { padding: 0 24px; }
+      .pf-hero-content { padding: 0 24px; }
+      .pf-section { padding: 80px 0; }
+      .pf-strengths-grid { grid-template-columns: 1fr; }
+      .pf-stats-bar { gap: 24px; flex-wrap: wrap; }
+      .pf-contact { padding: 100px 24px 0; }
+      .pf-hero-actions { flex-direction: column; }
+      .pf-btn-primary, .pf-btn-outline { justify-content: center; }
     }
+
+    /* ── Override DevToolsBox shared styles ── */
+    .portfolio-root body,
+    .portfolio-root main { background: var(--pf-base) !important; }
+
+    /* Shared footer override */
+    .portfolio-root ~ .site-footer,
+    body:has(.portfolio-root) .site-footer { display: none !important; }
+
+    /* Hide DevToolsBox navbar when on portfolio page */
+    .devtoolsbox-navbar { display: none !important; }
   </style>
 </head>
 <body>
-  <header class="navbar">
-    <div class="navbar-inner">
-      <a href="/" class="navbar-brand"><div class="brand-icon">&#x1F9F0;</div>DevToolsBox</a>
-      <div style="display:flex;align-items:center;">
-        <nav class="navbar-links"><a href="/">首页</a><a href="/blog/">博客</a><a href="/tools/products">产品</a></nav>
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换暗色模式">🌙</button>
+  <main class="portfolio-root">
+
+    <!-- ═══════════ HERO ═══════════ -->
+    <section class="pf-hero">
+      <div class="pf-grid-texture"></div>
+      <div class="pf-orb pf-orb-1"></div>
+      <div class="pf-orb pf-orb-2"></div>
+      <div class="pf-hero-content pf-reveal visible">
+        <p class="pf-hero-eyebrow">FULL-STACK DEVELOPER</p>
+        <h1 class="pf-hero-title">Ethan Jiang<span class="pf-hero-dot">.</span></h1>
+        <p class="pf-hero-sub">独立开发者，热衷于构建让其他开发者更高效的工具。<br>从在线工具箱到游戏Wiki，把想法变成被人真正使用的产品。</p>
+        <div class="pf-hero-actions">
+          <a href="#projects" class="pf-btn-primary">
+            查看项目
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#contact" class="pf-btn-outline">联系我</a>
+        </div>
       </div>
-    </div>
-  </header>
-  <main>
-    <div class="blog-hero">
-      <h1>Ethan 的博客<span class="accent-dot">.</span></h1>
-      <p class="subtitle">独立开发者的知识库 — 记录技术实践、产品思考和工具链搭建。写给我自己，也写给同在路上的你。</p>
-      <p class="blogger-line">by <a href="https://github.com/Ethan985211" target="_blank" rel="noopener">Ethan Jiang</a> · 全栈开发者 · 持续学习中</p>
-    </div>
-    <div class="blog-stats">
-      <span class="stat-pill"><strong>10</strong> 篇文章</span>
-      <span class="stat-pill">持续更新</span>
-      <span class="stat-pill">技术 &middot; 独立开发 &middot; 工具</span>
-    </div>
-    <div class="blog-list">
-      <a href="/blog/api-passive-income-guide" class="blog-card">
-        <h2>独立开发者如何利用API服务赚取被动收入</h2>
-        <div class="blog-date">2026-06-05</div>
-        <p>拆解API被动收入的商业模式，从零搭建付费API服务的完整流程。分享DevToolsBox OCR API实践经验，含定价策略和推广渠道。</p>
-        <div class="blog-tags"><span class="blog-tag">API</span><span class="blog-tag">变现</span></div>
-      </a>
-      <a href="/blog/dev-tools-setup-guide" class="blog-card">
-        <h2>程序员必备的网络工具与开发环境搭建指南</h2>
-        <div class="blog-date">2026-06-05</div>
-        <p>从网络加速到本地开发环境，从云端服务器到在线工具箱，完整梳理程序员高效工作流所需的工具链。VMSSR+阿里云实战配置。</p>
-        <div class="blog-tags"><span class="blog-tag">开发环境</span><span class="blog-tag">工具链</span></div>
-      </a>
-      <a href="/blog/cloud-server-guide-2026" class="blog-card">
-        <h2>2026个人开发者云服务推荐：从服务器到API全攻略</h2>
-        <div class="blog-date">2026-06-05</div>
-        <p>全面解析个人开发者需要的云服务类型。阿里云ECS配置指南、大模型API中转推荐、不同预算的选型对比，帮你用最少钱做最多事。</p>
-        <div class="blog-tags"><span class="blog-tag">云服务</span><span class="blog-tag">推荐</span></div>
-      </a>
-      <a href="/blog/22-free-developer-tools-2026" class="blog-card">
-        <h2>2026年开发者必备的22款免费在线工具</h2>
-        <div class="blog-date">2026-06-05</div>
-        <p>整理22款经过实际验证的免费在线开发工具，覆盖PDF处理、图片编辑、编码解码、格式转换等场景。所有工具纯前端运行，数据不上传服务器。</p>
-        <div class="blog-tags"><span class="blog-tag">工具推荐</span><span class="blog-tag">效率</span></div>
-      </a>
-      <a href="/blog/pdf-online-tools-guide" class="blog-card">
-        <h2>PDF在线处理完全指南：合并、拆分、提取文字一次搞懂</h2>
-        <div class="blog-date">2026-06-04</div>
-        <p>告别安装臃肿的PDF软件。本文详细介绍浏览器端的PDF合并、拆分、文本提取三大核心操作，以及背后的技术原理。</p>
-        <div class="blog-tags"><span class="blog-tag">PDF</span><span class="blog-tag">教程</span></div>
-      </a>
-      <a href="/blog/frontend-encode-decode-tools" class="blog-card">
-        <h2>前端开发必备：10个在线编码解码工具大合集</h2>
-        <div class="blog-date">2026-06-03</div>
-        <p>Base64、URL编码、HTML实体、Unicode转换……前端开发中频繁遇到的编码格式，一个工具站全搞定。附带各编码的应用场景说明。</p>
-        <div class="blog-tags"><span class="blog-tag">前端</span><span class="blog-tag">编码</span></div>
-      </a>
-      <a href="/blog/image-tools-comparison" class="blog-card">
-        <h2>图片在线处理工具对比：压缩、格式转换、缩放哪个适合你</h2>
-        <div class="blog-date">2026-06-02</div>
-        <p>详细对比各种在线图片处理方案，从压缩质量到格式兼容性，帮你选出最适合日常开发需求的图片处理工作流。</p>
-        <div class="blog-tags"><span class="blog-tag">图片</span><span class="blog-tag">对比</span></div>
-      </a>
-      <a href="/blog/online-generator-tools" class="blog-card">
-        <h2>程序员必备的5个在线生成器工具 — UUID、密码、二维码、Cron、时间戳</h2>
-        <div class="blog-date">2026-06-03</div>
-        <p>盘点5个开发者日常使用频率最高的在线生成器。UUID生成、安全密码、二维码、Cron表达式、时间戳转换——一个工具箱全搞定。</p>
-        <div class="blog-tags"><span class="blog-tag">生成器</span><span class="blog-tag">效率</span></div>
-      </a>
-      <a href="/blog/free-ocr-api-guide" class="blog-card">
-        <h2>免费OCR API对比与使用指南 — 图片文字识别零成本方案</h2>
-        <div class="blog-date">2026-06-02</div>
-        <p>全面对比免费OCR方案。DevToolsBox OCR API每天100次免费调用、含curl/Python/JS代码示例。Tesseract自建与云服务选择指南。</p>
-        <div class="blog-tags"><span class="blog-tag">OCR</span><span class="blog-tag">API</span></div>
-      </a>
-      <a href="/blog/build-free-tool-site" class="blog-card">
-        <h2>独立开发者如何零成本搭建一个在线工具箱并实现盈利</h2>
-        <div class="blog-date">2026-06-01</div>
-        <p>从零搭建DevToolsBox的完整复盘：技术选型、部署方案、SEO优化、变现思路。Cloudflare Pages零成本托管，联盟营销+打赏模式。</p>
-        <div class="blog-tags"><span class="blog-tag">独立开发</span><span class="blog-tag">经验</span></div>
-      </a>
-    </div>
-    <div class="sponsor-section">
-      <h3>觉得有用？请我喝杯咖啡</h3><p>你的支持让我有动力持续输出优质内容</p>
-      <div class="sponsor-qrcodes">
-        <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="130" height="130"><span>支付宝</span></div>
-        <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="130" height="130"><span>微信支付</span></div>
+      <div class="pf-scroll-hint"><span>Scroll</span><div class="pf-scroll-line"></div></div>
+    </section>
+
+    <!-- ═══════════ ABOUT ═══════════ -->
+    <section id="about" class="pf-section pf-about">
+      <div class="pf-container">
+        <div class="pf-about-grid">
+          <div class="pf-reveal">
+            <div class="pf-avatar-wrap">
+              <div class="pf-avatar-glow"></div>
+              <div class="pf-avatar-inner">
+                <div class="pf-avatar-placeholder">EJ</div>
+              </div>
+            </div>
+          </div>
+          <div class="pf-reveal">
+            <p class="pf-label">关于我</p>
+            <h2 class="pf-title">自学编程，<br>为 Web 而构建。</h2>
+            <p class="pf-sub">全栈开发者，专注于前端架构、API 设计和开源贡献。从在线工具箱到游戏Wiki平台，我交付的是人们真正使用的产品。</p>
+            <p class="pf-sub" style="margin-top:16px">目前专注于前端架构、API 设计和开源贡献。持续学习中。</p>
+            <div class="pf-stats-bar">
+              <div><span class="pf-stat-val">12+</span><span class="pf-stat-lbl">项目上线</span></div>
+              <div><span class="pf-stat-val">4+</span><span class="pf-stat-lbl">年编程</span></div>
+              <div><span class="pf-stat-val">200+</span><span class="pf-stat-lbl">GitHub Stars</span></div>
+              <div><span class="pf-stat-val">10+</span><span class="pf-stat-lbl">技术栈</span></div>
+            </div>
+            <div class="pf-about-links">
+              <a href="mailto:2917834376@qq.com" class="pf-about-link">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3h12a1 1 0 011 1v8a1 1 0 01-1 1H2a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.2"/><path d="M1 4l7 5 7-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                2917834376@qq.com
+              </a>
+              <a href="https://github.com/Ethan985211" target="_blank" rel="noopener" class="pf-about-link">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1a7 7 0 00-2.21 13.64c.35.06.48-.15.48-.33v-1.16c-1.96.43-2.37-.94-2.37-.94-.32-.81-.78-1.03-.78-1.03-.64-.44.05-.43.05-.43.71.05 1.08.73 1.08.73.63 1.08 1.65.77 2.06.59.06-.46.25-.77.45-.95-1.57-.18-3.22-.78-3.22-3.5 0-.77.28-1.4.73-1.9-.07-.17-.32-.9.07-1.87 0 0 .6-.19 1.95.73A6.78 6.78 0 018 4.35c.6 0 1.21.08 1.78.24 1.35-.92 1.95-.73 1.95-.73.39.97.14 1.7.07 1.87.45.5.73 1.13.73 1.9 0 2.73-1.66 3.32-3.23 3.49.25.22.48.65.48 1.3v1.93c0 .18.12.4.48.33A7 7 0 008 1z" stroke="currentColor" stroke-width="1.2"/></svg>
+                github.com/Ethan985211
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- ═══════════ BLOG ═══════════ -->
+    <section id="blog" class="pf-section pf-blog">
+      <div class="pf-container">
+        <div class="pf-reveal" style="text-align:center;margin-bottom:56px">
+          <p class="pf-label">最新文章</p>
+          <h2 class="pf-title">技术分享与思考。</h2>
+          <p class="pf-sub" style="margin:0 auto">记录技术实践、产品思考和工具链搭建。写给自己，也写给同在路上的开发者。</p>
+        </div>
+        <div class="pf-blog-list pf-reveal">
+          <a href="/blog/api-passive-income-guide" class="pf-blog-card">
+            <h3 class="pf-blog-title">独立开发者如何利用API服务赚取被动收入</h3>
+            <div class="pf-blog-date">2026-06-05</div>
+            <p class="pf-blog-desc">拆解API被动收入的商业模式，从零搭建付费API服务的完整流程。分享DevToolsBox OCR API实践经验，含定价策略和推广渠道。</p>
+            <div class="pf-blog-tags"><span class="pf-blog-tag">API</span><span class="pf-blog-tag">变现</span></div>
+          </a>
+          <a href="/blog/dev-tools-setup-guide" class="pf-blog-card">
+            <h3 class="pf-blog-title">程序员必备的网络工具与开发环境搭建指南</h3>
+            <div class="pf-blog-date">2026-06-05</div>
+            <p class="pf-blog-desc">从网络加速到本地开发环境，从云端服务器到在线工具箱，完整梳理程序员高效工作流所需的工具链。VMSSR+阿里云实战配置。</p>
+            <div class="pf-blog-tags"><span class="pf-blog-tag">开发环境</span><span class="pf-blog-tag">工具链</span></div>
+          </a>
+          <a href="/blog/cloud-server-guide-2026" class="pf-blog-card">
+            <h3 class="pf-blog-title">2026个人开发者云服务推荐：从服务器到API全攻略</h3>
+            <div class="pf-blog-date">2026-06-05</div>
+            <p class="pf-blog-desc">全面解析个人开发者需要的云服务类型。阿里云ECS配置指南、大模型API中转推荐、不同预算的选型对比，帮你用最少钱做最多事。</p>
+            <div class="pf-blog-tags"><span class="pf-blog-tag">云服务</span><span class="pf-blog-tag">推荐</span></div>
+          </a>
+          <a href="/blog/22-free-developer-tools-2026" class="pf-blog-card">
+            <h3 class="pf-blog-title">2026年开发者必备的22款免费在线工具</h3>
+            <div class="pf-blog-date">2026-06-05</div>
+            <p class="pf-blog-desc">整理22款经过实际验证的免费在线开发工具，覆盖PDF处理、图片编辑、编码解码、格式转换等场景。所有工具纯前端运行，数据不上传服务器。</p>
+            <div class="pf-blog-tags"><span class="pf-blog-tag">工具推荐</span><span class="pf-blog-tag">效率</span></div>
+          </a>
+          <a href="/blog/pdf-online-tools-guide" class="pf-blog-card">
+            <h3 class="pf-blog-title">PDF在线处理完全指南：合并、拆分、提取文字一次搞懂</h3>
+            <div class="pf-blog-date">2026-06-04</div>
+            <p class="pf-blog-desc">告别安装臃肿的PDF软件。本文详细介绍浏览器端的PDF合并、拆分、文本提取三大核心操作，以及背后的技术原理。</p>
+            <div class="pf-blog-tags"><span class="pf-blog-tag">PDF</span><span class="pf-blog-tag">教程</span></div>
+          </a>
+          <a href="/blog/frontend-encode-decode-tools" class="pf-blog-card">
+            <h3 class="pf-blog-title">前端开发必备：10个在线编码解码工具大合集</h3>
+            <div class="pf-blog-date">2026-06-03</div>
+            <p class="pf-blog-desc">Base64、URL编码、HTML实体、Unicode转换……前端开发中频繁遇到的编码格式，一个工具站全搞定。附带各编码的应用场景说明。</p>
+            <div class="pf-blog-tags"><span class="pf-blog-tag">前端</span><span class="pf-blog-tag">编码</span></div>
+          </a>
+          <a href="/blog/image-tools-comparison" class="pf-blog-card">
+            <h3 class="pf-blog-title">图片在线处理工具对比：压缩、格式转换、缩放哪个适合你</h3>
+            <div class="pf-blog-date">2026-06-02</div>
+            <p class="pf-blog-desc">详细对比各种在线图片处理方案，从压缩质量到格式兼容性，帮你选出最适合日常开发需求的图片处理工作流。</p>
+            <div class="pf-blog-tags"><span class="pf-blog-tag">图片</span><span class="pf-blog-tag">对比</span></div>
+          </a>
+          <a href="/blog/online-generator-tools" class="pf-blog-card">
+            <h3 class="pf-blog-title">程序员必备的5个在线生成器工具 — UUID、密码、二维码、Cron、时间戳</h3>
+            <div class="pf-blog-date">2026-06-03</div>
+            <p class="pf-blog-desc">盘点5个开发者日常使用频率最高的在线生成器。UUID生成、安全密码、二维码、Cron表达式、时间戳转换——一个工具箱全搞定。</p>
+            <div class="pf-blog-tags"><span class="pf-blog-tag">生成器</span><span class="pf-blog-tag">效率</span></div>
+          </a>
+          <a href="/blog/free-ocr-api-guide" class="pf-blog-card">
+            <h3 class="pf-blog-title">免费OCR API对比与使用指南 — 图片文字识别零成本方案</h3>
+            <div class="pf-blog-date">2026-06-02</div>
+            <p class="pf-blog-desc">全面对比免费OCR方案。DevToolsBox OCR API每天100次免费调用、含curl/Python/JS代码示例。Tesseract自建与云服务选择指南。</p>
+            <div class="pf-blog-tags"><span class="pf-blog-tag">OCR</span><span class="pf-blog-tag">API</span></div>
+          </a>
+          <a href="/blog/build-free-tool-site" class="pf-blog-card">
+            <h3 class="pf-blog-title">独立开发者如何零成本搭建一个在线工具箱并实现盈利</h3>
+            <div class="pf-blog-date">2026-06-01</div>
+            <p class="pf-blog-desc">从零搭建DevToolsBox的完整复盘：技术选型、部署方案、SEO优化、变现思路。Cloudflare Pages零成本托管，联盟营销+打赏模式。</p>
+            <div class="pf-blog-tags"><span class="pf-blog-tag">独立开发</span><span class="pf-blog-tag">经验</span></div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ PROJECTS ═══════════ -->
+    <section id="projects" class="pf-section pf-projects">
+      <div class="pf-container">
+        <div class="pf-reveal">
+          <p class="pf-label">精选项目</p>
+          <h2 class="pf-title">我构建的产品。</h2>
+          <p class="pf-sub" style="margin-bottom:60px">从开发工具到全栈平台，几个已经在线上稳定运行的项目。</p>
+        </div>
+        <div class="pf-projects-grid pf-reveal">
+          <a href="https://devtoolsbox-1rl.pages.dev" target="_blank" rel="noopener" class="pf-project-card">
+            <div class="pf-project-thumb">
+              <div class="pf-project-thumb-bg" style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(99,102,241,0.04))">
+                <span class="pf-project-thumb-icon" style="color:#6366f1">D</span>
+              </div>
+            </div>
+            <div class="pf-project-info">
+              <h3 class="pf-project-name">DevToolsBox</h3>
+              <p class="pf-project-desc">22款免费在线开发者工具 — JSON格式化、Base64编码、PDF工具、图片转换等。纯前端运行，零数据收集。</p>
+              <div class="pf-project-tags"><span class="pf-project-tag">JavaScript</span><span class="pf-project-tag">CSS</span><span class="pf-project-tag">Cloudflare Pages</span></div>
+            </div>
+          </a>
+          <a href="https://github.com/Ethan985211" target="_blank" rel="noopener" class="pf-project-card">
+            <div class="pf-project-thumb">
+              <div class="pf-project-thumb-bg" style="background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(139,92,246,0.04))">
+                <span class="pf-project-thumb-icon" style="color:#8b5cf6">G</span>
+              </div>
+            </div>
+            <div class="pf-project-info">
+              <h3 class="pf-project-name">游戏攻略平台</h3>
+              <p class="pf-project-desc">综合游戏Wiki — 41款游戏、123篇文章、149个角色资料。Django后端+静态前端部署的全栈平台。</p>
+              <div class="pf-project-tags"><span class="pf-project-tag">Python</span><span class="pf-project-tag">Django</span><span class="pf-project-tag">MySQL</span><span class="pf-project-tag">Nginx</span></div>
+            </div>
+          </a>
+          <a href="https://cpp-practice.pages.dev" target="_blank" rel="noopener" class="pf-project-card">
+            <div class="pf-project-thumb">
+              <div class="pf-project-thumb-bg" style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.04))">
+                <span class="pf-project-thumb-icon" style="color:#3b82f6">C</span>
+              </div>
+            </div>
+            <div class="pf-project-info">
+              <h3 class="pf-project-name">C++ 刷题训练站</h3>
+              <p class="pf-project-desc">在线算法练习平台，内置判题系统 — 编译运行C++代码，自动化测试用例验证，D1数据库存储题目。</p>
+              <div class="pf-project-tags"><span class="pf-project-tag">C++</span><span class="pf-project-tag">JavaScript</span><span class="pf-project-tag">Cloudflare D1</span><span class="pf-project-tag">Linux</span></div>
+            </div>
+          </a>
+          <a href="https://github.com/Ethan985211" target="_blank" rel="noopener" class="pf-project-card">
+            <div class="pf-project-thumb">
+              <div class="pf-project-thumb-bg" style="background:linear-gradient(135deg,rgba(6,182,212,0.15),rgba(6,182,212,0.04))">
+                <span class="pf-project-thumb-icon" style="color:#06b6d4">O</span>
+              </div>
+            </div>
+            <div class="pf-project-info">
+              <h3 class="pf-project-name">OCR API 服务</h3>
+              <p class="pf-project-desc">基于Tesseract部署在腾讯云CVM上的OCR API — 支持中文和英文文字识别，FastAPI后端+Nginx反向代理。</p>
+              <div class="pf-project-tags"><span class="pf-project-tag">Python</span><span class="pf-project-tag">FastAPI</span><span class="pf-project-tag">Tesseract</span><span class="pf-project-tag">Nginx</span></div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ STRENGTHS ═══════════ -->
+    <section id="strengths" class="pf-section pf-strengths">
+      <div class="pf-container">
+        <div class="pf-reveal">
+          <p class="pf-label">我的优势</p>
+          <h2 class="pf-title">核心能力。</h2>
+          <p class="pf-sub" style="margin-bottom:60px">我能为团队或项目带来最大价值的领域。</p>
+        </div>
+        <div class="pf-strengths-grid pf-reveal">
+          <div class="pf-str-card">
+            <div class="pf-str-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <h3 class="pf-str-name">前端架构</h3>
+            <p class="pf-str-desc">构建可扩展的组件化 UI。React、现代 CSS、性能优先、可访问性意识。</p>
+          </div>
+          <div class="pf-str-card">
+            <div class="pf-str-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h5.34"/><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/></svg>
+            </div>
+            <h3 class="pf-str-name">API 与后端</h3>
+            <p class="pf-str-desc">设计 RESTful API，FastAPI 和 Django。数据库建模、认证流程、Linux 服务器部署。</p>
+          </div>
+          <div class="pf-str-card">
+            <div class="pf-str-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94"/><path d="M21.75 12.84c-6.62-.41-10.96 1.3-16.87 7.9"/></svg>
+            </div>
+            <h3 class="pf-str-name">开源贡献</h3>
+            <p class="pf-str-desc">GitHub 活跃，多个公开项目。面向中文开发者社区的开发工具和教育资源贡献。</p>
+          </div>
+          <div class="pf-str-card">
+            <div class="pf-str-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <h3 class="pf-str-name">技术写作</h3>
+            <p class="pf-str-desc">10+ 篇博客文章，覆盖开发工具、云基础设施和 SEO 策略。自然融入联盟营销的内容创作。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ CONTACT ═══════════ -->
+    <section id="contact" class="pf-contact">
+      <div class="pf-orb pf-orb-1"></div>
+      <div class="pf-orb pf-orb-2"></div>
+      <div class="pf-contact-inner pf-reveal">
+        <p class="pf-label">联系我</p>
+        <h2 class="pf-contact-title">开始一个项目<span class="pf-hero-dot">.</span></h2>
+        <p class="pf-contact-sub">无论你有想法要构建，有项目要讨论，<br>还是只想打个招呼 — 都很期待你的来信。</p>
+        <a href="mailto:2917834376@qq.com" class="pf-btn-primary pf-contact-cta">
+          发送邮件
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3h12a1 1 0 011 1v8a1 1 0 01-1 1H2a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M1 4l7 5 7-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </a>
+        <div class="pf-contact-links">
+          <a href="https://github.com/Ethan985211" target="_blank" rel="noopener">GitHub</a>
+          <span class="pf-contact-sep">·</span>
+          <a href="https://afdian.com/a/Jiang_Ethan" target="_blank" rel="noopener">爱发电</a>
+          <span class="pf-contact-sep">·</span>
+          <a href="https://devtoolsbox-1rl.pages.dev" target="_blank" rel="noopener">DevToolsBox</a>
+          <span class="pf-contact-sep">·</span>
+          <a href="/blog/">博客</a>
+        </div>
+      </div>
+      <div class="pf-contact-footer">
+        <span>&copy; 2026 Ethan Jiang</span>
+        <span>独立开发 · 持续写作</span>
+      </div>
+    </section>
+
   </main>
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-brand"><strong>Ethan Jiang</strong> 的个人博客<br>分享技术 · 记录成长 · 独立开发</div>
-      <div class="footer-links">
-        <div><h5>导航</h5><a href="/">DevToolsBox 工具箱</a><a href="/blog/">所有文章</a><a href="https://github.com/Ethan985211" target="_blank" rel="noopener">GitHub</a></div>
-        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">邮件合作</a></div>
-      </div>
-    </div>
-    <div class="footer-bottom"><span>&copy; 2026 Ethan Jiang &middot; 独立思考 &middot; 持续写作</span></div>
-  </footer>
-<script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
+
+  <!-- Scroll reveal + theme fix -->
+  <script>
+    (function() {
+      // Force dark on this page
+      var h = document.documentElement;
+      h.setAttribute('data-theme', 'dark');
+      // Disable theme toggle for this page
+      window.toggleTheme = function(){};
+
+      // Scroll reveal
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) e.target.classList.add('visible');
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.pf-reveal:not(.visible)').forEach(function(el) {
+        observer.observe(el);
+      });
+    })();
+  </script>
 </body>
 </html>
