@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DevToolsBox 博客 — 开发者工具指南与技巧</title>
-  <meta name="description" content="DevToolsBox 官方博客，分享开发者工具使用技巧、在线工具推荐、独立开发经验。22款免费在线工具，数据本地处理零收集。">
-  <meta property="og:title" content="DevToolsBox 博客 — 开发者工具指南与技巧">
-  <meta property="og:description" content="DevToolsBox 官方博客，分享开发者工具使用技巧、在线工具推荐、独立开发经验。22款免费在线工具，数据本地处理零收集。">
+  <title>Ethan 的博客 — 技术分享与独立开发</title>
+  <meta name="description" content="Ethan Jiang 的个人博客。分享独立开发经验、前端技术、云服务实践和开发者工具链。写给我自己，也写给同在路上的独立开发者。">
+  <meta property="og:title" content="Ethan 的博客 — 技术分享与独立开发">
+  <meta property="og:description" content="Ethan Jiang 的个人博客。分享独立开发经验、前端技术、云服务实践和开发者工具链。">
   <meta property="og:url" content="https://devtoolsbox-1rl.pages.dev/blog/">
   <meta property="og:type" content="website">
   <link rel="canonical" href="https://devtoolsbox-1rl.pages.dev/blog/">
-  <link rel="alternate" type="application/rss+xml" title="DevToolsBox 博客 RSS" href="https://devtoolsbox-1rl.pages.dev/blog/feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="Ethan 的博客 RSS" href="https://devtoolsbox-1rl.pages.dev/blog/feed.xml">
   <link rel="preconnect" href="https://devtoolsbox-1rl.pages.dev">
   <link rel="stylesheet" href="../css/style.css">
   <style>
@@ -22,10 +22,23 @@
     .blog-card p { margin: 0; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
     .blog-card .blog-tags { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
     .blog-card .blog-tag { font-size: 0.78rem; padding: 3px 10px; border-radius: 12px; background: var(--accent); color: #fff; opacity: 0.85; }
-    .blog-hero { text-align: center; padding: 40px 20px 20px; }
-    .blog-hero h1 { font-size: 2rem; margin-bottom: 8px; }
-    .blog-hero p { color: var(--text-secondary); font-size: 1.05rem; }
-    @media (max-width: 640px) { .blog-list { padding: 10px 16px 40px; } .blog-card { padding: 20px; } }
+
+    .blog-hero { text-align: center; padding: 60px 20px 36px; }
+    .blog-hero h1 { font-size: 2rem; margin: 0 0 10px; font-weight: 700; }
+    .blog-hero .subtitle { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7; max-width: 600px; margin: 0 auto; }
+    .blog-hero .blogger-line { margin-top: 18px; font-size: 0.92rem; color: var(--text-secondary); opacity: 0.7; }
+    .blog-hero .blogger-line a { color: var(--accent); text-decoration: none; }
+
+    .blog-stats { text-align: center; padding: 0 20px 10px; }
+    .blog-stats span { display: inline-block; margin: 0 16px; font-size: 0.85rem; color: var(--text-secondary); }
+    .blog-stats strong { color: var(--text); }
+
+    @media (max-width: 640px) {
+      .blog-list { padding: 10px 16px 40px; }
+      .blog-card { padding: 20px; }
+      .blog-hero { padding: 40px 16px 20px; }
+      .blog-hero h1 { font-size: 1.6rem; }
+    }
   </style>
 </head>
 <body>
@@ -39,7 +52,16 @@
     </div>
   </header>
   <main>
-    <div class="blog-hero"><h1>DevToolsBox 博客</h1><p>开发者工具使用指南 · 独立开发经验 · 效率提升技巧</p></div>
+    <div class="blog-hero">
+      <h1>Ethan 的博客</h1>
+      <p class="subtitle">独立开发者的知识库 — 记录技术实践、产品思考和工具链搭建。写给我自己，也写给同在路上的你。</p>
+      <p class="blogger-line">by <a href="https://github.com/Ethan985211" target="_blank" rel="noopener">Ethan Jiang</a> · 全栈开发者 · 持续学习中</p>
+    </div>
+    <div class="blog-stats">
+      <span><strong>10</strong> 篇文章</span>
+      <span>持续更新</span>
+      <span>技术 &middot; 独立开发 &middot; 工具</span>
+    </div>
     <div class="blog-list">
       <a href="/blog/api-passive-income-guide" class="blog-card">
         <h2>独立开发者如何利用API服务赚取被动收入</h2>
@@ -103,7 +125,7 @@
       </a>
     </div>
     <div class="sponsor-section">
-      <h3>如果这些内容对你有帮助</h3><p>请我喝杯咖啡，支持我持续输出更多优质内容</p>
+      <h3>觉得有用？请我喝杯咖啡</h3><p>你的支持让我有动力持续输出优质内容</p>
       <div class="sponsor-qrcodes">
         <div class="sponsor-qr"><img src="../支付宝收款码.jpeg" alt="支付宝收款码" loading="lazy" width="120" height="120"><span>支付宝</span></div>
         <div class="sponsor-qr"><img src="../微信收款码.jpeg" alt="微信收款码" loading="lazy" width="120" height="120"><span>微信支付</span></div>
@@ -112,13 +134,13 @@
   </main>
   <footer class="site-footer">
     <div class="footer-inner">
-      <div class="footer-brand"><strong>🧰 DevToolsBox</strong> 开发者的免费在线工具箱<br>所有运算在浏览器本地完成</div>
+      <div class="footer-brand"><strong>Ethan Jiang</strong> 的个人博客<br>分享技术 · 记录成长 · 独立开发</div>
       <div class="footer-links">
-        <div><h5>工具</h5><a href="/tools/image-compress">图片压缩</a><a href="/tools/json-formatter">JSON 格式化</a><a href="/tools/qr-code">二维码</a><a href="/tools/base64">Base64</a></div>
-        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">广告合作</a></div>
+        <div><h5>导航</h5><a href="/">DevToolsBox 工具箱</a><a href="/blog/">所有文章</a><a href="https://github.com/Ethan985211" target="_blank" rel="noopener">GitHub</a></div>
+        <div><h5>联系</h5><a href="mailto:2917834376@qq.com">邮件合作</a></div>
       </div>
     </div>
-    <div class="footer-bottom"><span>© 2026 DevToolsBox · 数据本地处理 · 零收集</span></div>
+    <div class="footer-bottom"><span>&copy; 2026 Ethan Jiang &middot; 独立思考 &middot; 持续写作</span></div>
   </footer>
 <script>(function(){var h=document.documentElement,t=document.querySelector(".theme-toggle"),s=localStorage.getItem("devtoolsbox-theme");s&&h.setAttribute("data-theme",s);window.toggleTheme=function(){var n=h.getAttribute("data-theme")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem("devtoolsbox-theme",n);t.textContent=n==="dark"?"☀️":"🌙"};t.textContent=h.getAttribute("data-theme")==="dark"?"☀️":"🌙"})();</script>
 </body>
